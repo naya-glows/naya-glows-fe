@@ -12,6 +12,7 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://nayaglows.skin"),
   title: "Naya Glows | Radiance-Boosting Skincare for Healthy, Glowing Skin",
   description: "Discover clean, potent skincare designed to brighten, hydrate, and renew your complexion. Shop serums, creams, cleansers, and body care for radiant results.",
   keywords: [
@@ -50,7 +51,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Naya Glows | Radiance-Boosting Skincare",
     description: "Reveal your natural glow with clean, potent ingredients. Kojic acid, niacinamide, and hyaluronic acid for brighter, healthier skin.",
-    url: "https://nayaglows.com",
+    url: "https://nayaglows.skin",
     siteName: "Naya Glows",
     locale: "en_US",
     type: "website",

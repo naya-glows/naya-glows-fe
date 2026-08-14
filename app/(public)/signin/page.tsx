@@ -5,82 +5,93 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import GlassCard from "../helpers/glass/GlassCard";
-import PasswordInput from "../../components/PasswordInput";
 import { useUserAuth } from "../../store/useUserAuth";
 import { getApiErrorMessage } from "../../store/apiError";
 import { countries } from "@/lib/countries";
-import { isApiConfigured } from "@/lib/api";
 
 const inputClass =
   "w-full bg-white/70 border border-white/60 rounded-xl px-4 py-3 text-sm outline-none placeholder:text-[#16241a]/35 focus:border-[#8ab88e] transition-colors";
 
 type Mode = "signin" | "create";
-// "form" collects account details and requests the OTP; "otp" verifies it
-// and actually creates the account — nothing exists server-side until then.
-type CreateStep = "form" | "otp";
+// "form" collects the account details (or just an email, for signin) and
+// requests an OTP; "otp" verifies it and actually signs in / creates the
+// account — nothing changes server-side until then.
+type Step = "form" | "otp";
 
 // Split out from SignInForm and mounted with key={mode} below — this is
 // what actually fixes the shared-loading-state bug: useUserAuth()'s
-// login/register/requestSignupOtp mutations each track isLoading locally
-// to the *hook instance* that called them, not globally. With one shared
-// SignInForm instance calling all three unconditionally, submitting the
-// Create Account tab left `registering`/`requestingSignupOtp` sitting at
-// true, and switching to Sign In showed that same stale flag on an
-// unrelated button. Remounting this component on every mode switch (via
-// the `key` on its usage below) throws that whole hook subscription away
-// and starts a brand new one at isLoading:false, regardless of whatever
-// the previous mode's request is still doing in the background.
+// loginWithOtp/register/requestSignupOtp/requestLoginOtp mutations each
+// track isLoading locally to the *hook instance* that called them, not
+// globally. With one shared SignInForm instance calling all of them
+// unconditionally, submitting the Create Account tab left
+// `registering`/`requestingSignupOtp` sitting at true, and switching to
+// Sign In showed that same stale flag on an unrelated button. Remounting
+// this component on every mode switch (via the `key` on its usage below)
+// throws that whole hook subscription away and starts a brand new one at
+// isLoading:false, regardless of whatever the previous mode's request is
+// still doing in the background.
 function AuthSubmitForm({
   mode,
-  createStep,
-  setCreateStep,
+  step,
+  setStep,
   name,
   setName,
   email,
   setEmail,
-  password,
-  setPassword,
   country,
   setCountry,
   referralCode,
   setReferralCode,
+  signupAsInfluencer,
+  setSignupAsInfluencer,
   otpCode,
   setOtpCode,
   error,
   setError,
-  backendReady,
   redirectAfterAuth,
 }: {
   mode: Mode;
-  createStep: CreateStep;
-  setCreateStep: (step: CreateStep) => void;
+  step: Step;
+  setStep: (step: Step) => void;
   name: string;
   setName: (v: string) => void;
   email: string;
   setEmail: (v: string) => void;
-  password: string;
-  setPassword: (v: string) => void;
   country: string;
   setCountry: (v: string) => void;
   referralCode: string;
   setReferralCode: (v: string) => void;
+  signupAsInfluencer: boolean;
+  setSignupAsInfluencer: (v: boolean) => void;
   otpCode: string;
   setOtpCode: (v: string) => void;
   error: string | null;
   setError: (v: string | null) => void;
-  backendReady: boolean;
   redirectAfterAuth: (role: string) => void;
 }) {
-  const { login, loggingIn, register, registering, requestSignupOtp, requestingSignupOtp } =
-    useUserAuth();
-  const submitting = loggingIn || registering || requestingSignupOtp;
-  const resending = requestingSignupOtp;
-  const showingOtpStep = mode === "create" && createStep === "otp";
+  const router = useRouter();
+  const {
+    requestLoginOtp,
+    requestingLoginOtp,
+    loginWithOtp,
+    loggingIn,
+    register,
+    registering,
+    requestSignupOtp,
+    requestingSignupOtp,
+  } = useUserAuth();
+  const requestingOtp = mode === "signin" ? requestingLoginOtp : requestingSignupOtp;
+  const submitting = mode === "signin" ? requestingOtp || loggingIn : requestingOtp || registering;
+  const showingOtpStep = step === "otp";
 
   const handleResend = async () => {
     setError(null);
     try {
-      await requestSignupOtp(email);
+      if (mode === "signin") {
+        await requestLoginOtp(email);
+      } else {
+        await requestSignupOtp(email);
+      }
     } catch (err) {
       setError(getApiErrorMessage(err));
     }
@@ -90,35 +101,36 @@ function AuthSubmitForm({
     e.preventDefault();
     setError(null);
 
-    if (!backendReady) {
-      setError(
-        "The backend isn't connected yet (NEXT_PUBLIC_API_URL isn't set), so accounts can't be created right now.",
-      );
-      return;
-    }
-
     try {
       if (mode === "signin") {
-        const user = await login(email, password);
+        if (step === "form") {
+          await requestLoginOtp(email);
+          setStep("otp");
+          return;
+        }
+        const user = await loginWithOtp(email, otpCode);
         redirectAfterAuth(user.role);
         return;
       }
 
-      if (createStep === "form") {
+      if (step === "form") {
         await requestSignupOtp(email);
-        setCreateStep("otp");
+        setStep("otp");
         return;
       }
 
       const user = await register({
         email,
-        password,
         name,
         country,
         referralCode: referralCode || undefined,
         otpCode,
       });
-      redirectAfterAuth(user.role);
+      if (signupAsInfluencer) {
+        router.push("/influencer/apply");
+      } else {
+        redirectAfterAuth(user.role);
+      }
     } catch (err) {
       setError(getApiErrorMessage(err));
     }
@@ -126,7 +138,7 @@ function AuthSubmitForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      {mode === "create" && showingOtpStep ? (
+      {showingOtpStep ? (
         <>
           <input
             required
@@ -142,7 +154,7 @@ function AuthSubmitForm({
             <button
               type="button"
               onClick={() => {
-                setCreateStep("form");
+                setStep("form");
                 setOtpCode("");
                 setError(null);
               }}
@@ -153,10 +165,10 @@ function AuthSubmitForm({
             <button
               type="button"
               onClick={handleResend}
-              disabled={resending}
+              disabled={requestingOtp}
               className="font-medium hover:text-[#16241a] transition-colors disabled:opacity-50"
             >
-              {resending ? "Sending…" : "Resend code"}
+              {requestingOtp ? "Sending…" : "Resend code"}
             </button>
           </div>
         </>
@@ -181,23 +193,6 @@ function AuthSubmitForm({
             className={inputClass}
             autoComplete="email"
           />
-          <PasswordInput
-            required
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className={inputClass}
-            minLength={8}
-            autoComplete={mode === "signin" ? "current-password" : "new-password"}
-          />
-          {mode === "signin" && (
-            <Link
-              href="/forgot-password"
-              className="text-xs font-medium text-[#16241a]/50 hover:text-[#16241a] transition-colors -mt-2 self-end"
-            >
-              Forgot password?
-            </Link>
-          )}
           {mode === "create" && (
             <select
               required
@@ -220,6 +215,17 @@ function AuthSubmitForm({
               className={inputClass}
             />
           )}
+          {mode === "create" && (
+            <label className="flex items-center gap-2.5 text-sm text-[#16241a]/70 -mt-1">
+              <input
+                type="checkbox"
+                checked={signupAsInfluencer}
+                onChange={(e) => setSignupAsInfluencer(e.target.checked)}
+                className="w-4 h-4 rounded border-[#16241a]/30 accent-[#4f7957]"
+              />
+              Sign up as an influencer
+            </label>
+          )}
         </>
       )}
 
@@ -232,11 +238,11 @@ function AuthSubmitForm({
       >
         {submitting
           ? "Please wait…"
-          : mode === "signin"
-            ? "Sign In"
-            : showingOtpStep
-              ? "Verify & Create Account"
-              : "Send Verification Code"}
+          : showingOtpStep
+            ? mode === "signin"
+              ? "Verify & Sign In"
+              : "Verify & Create Account"
+            : "Send Verification Code"}
       </button>
     </form>
   );
@@ -245,18 +251,16 @@ function AuthSubmitForm({
 function SignInForm() {
   const searchParams = useSearchParams();
   const [mode, setMode] = useState<Mode>("signin");
-  const [createStep, setCreateStep] = useState<CreateStep>("form");
+  const [step, setStep] = useState<Step>("form");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [country, setCountry] = useState("NG");
   const [referralCode, setReferralCode] = useState("");
+  const [signupAsInfluencer, setSignupAsInfluencer] = useState(false);
   const [otpCode, setOtpCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const { user, loading: authLoading } = useUserAuth();
   const router = useRouter();
-
-  const backendReady = isApiConfigured();
 
   // Already signed in — this page has nothing to offer, and letting a
   // signed-in visitor sit on the sign-in/create-account form is confusing.
@@ -284,7 +288,7 @@ function SignInForm() {
   // OTP step) from the other tab has no business following you here.
   const switchMode = (next: Mode) => {
     setMode(next);
-    setCreateStep("form");
+    setStep("form");
     setOtpCode("");
     setError(null);
   };
@@ -301,7 +305,7 @@ function SignInForm() {
     }
   };
 
-  const showingOtpStep = mode === "create" && createStep === "otp";
+  const showingOtpStep = step === "otp";
 
   // Loading (auth still resolving) or already signed in (the effect above
   // is about to redirect away) — either way, the form has nothing useful
@@ -358,50 +362,43 @@ function SignInForm() {
               </div>
 
               <h1 className="text-2xl font-light mb-2">
-                {mode === "signin"
-                  ? "Welcome back"
-                  : showingOtpStep
-                    ? "Check your email"
+                {showingOtpStep
+                  ? "Check your email"
+                  : mode === "signin"
+                    ? "Welcome back"
                     : "Join Naya Glows"}
               </h1>
               <p className="text-sm text-[#16241a]/50 mb-8">
-                {mode === "signin"
-                  ? "Sign in to view your orders and saved products."
-                  : showingOtpStep
-                    ? `We sent a 6-digit code to ${email}. Enter it below to finish creating your account.`
+                {showingOtpStep
+                  ? `We sent a 6-digit code to ${email}. Enter it below to ${
+                      mode === "signin" ? "sign in" : "finish creating your account"
+                    }.`
+                  : mode === "signin"
+                    ? "Enter your email and we'll send you a sign-in code."
                     : "Create an account to track orders and save favorites."}
               </p>
 
               <AuthSubmitForm
                 key={mode}
                 mode={mode}
-                createStep={createStep}
-                setCreateStep={setCreateStep}
+                step={step}
+                setStep={setStep}
                 name={name}
                 setName={setName}
                 email={email}
                 setEmail={setEmail}
-                password={password}
-                setPassword={setPassword}
                 country={country}
                 setCountry={setCountry}
                 referralCode={referralCode}
                 setReferralCode={setReferralCode}
+                signupAsInfluencer={signupAsInfluencer}
+                setSignupAsInfluencer={setSignupAsInfluencer}
                 otpCode={otpCode}
                 setOtpCode={setOtpCode}
                 error={error}
                 setError={setError}
-                backendReady={backendReady}
                 redirectAfterAuth={redirectAfterAuth}
               />
-
-              {!backendReady && (
-                <p className="text-xs text-[#16241a]/35 mt-6 leading-relaxed">
-                  This is a preview experience — the backend isn&apos;t
-                  connected yet, so sign in/create account won&apos;t work
-                  until it is.
-                </p>
-              )}
             </div>
           </GlassCard>
         </div>

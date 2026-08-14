@@ -13,7 +13,6 @@ import {
   MapPin,
   X,
   Pencil,
-  KeyRound,
   Repeat,
   Sparkles,
   Truck,
@@ -24,7 +23,6 @@ import {
 } from "lucide-react";
 import GlassCard from "../helpers/glass/GlassCard";
 import ProductGridCard from "../helpers/ProductGridCard";
-import PasswordInput from "../../components/PasswordInput";
 import { useUserAuth } from "../../store/useUserAuth";
 import { useCurrencyDisplay } from "../../store/useCurrencyDisplay";
 import { useCart } from "../../store/cartSlice";
@@ -125,62 +123,6 @@ function EditProfileModal({
   );
 }
 
-function ChangePasswordModal({ onClose }: { onClose: () => void }) {
-  const { changePassword, changingPassword: saving } = useUserAuth();
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    try {
-      await changePassword(currentPassword, newPassword);
-      toast.success("Password updated");
-      onClose();
-    } catch (err) {
-      toast.error(getApiErrorMessage(err, "Couldn't update your password. Please try again."));
-    }
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-5">
-      <GlassCard className="max-w-sm w-full py-8 px-6">
-        <div className="flex items-center justify-between mb-5">
-          <h2 className="text-lg font-semibold">Change Password</h2>
-          <button onClick={onClose} aria-label="Close">
-            <X size={18} />
-          </button>
-        </div>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <PasswordInput
-            required
-            placeholder="Current password"
-            value={currentPassword}
-            onChange={(e) => setCurrentPassword(e.target.value)}
-            className={inputClass}
-            autoComplete="current-password"
-          />
-          <PasswordInput
-            required
-            minLength={8}
-            placeholder="New password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            className={inputClass}
-            autoComplete="new-password"
-          />
-          <button
-            type="submit"
-            disabled={saving}
-            className="mt-2 bg-[#16241a] text-white text-sm font-semibold px-6 py-3 rounded-full hover:bg-[#233324] transition-colors disabled:opacity-60"
-          >
-            {saving ? "Updating…" : "Update Password"}
-          </button>
-        </form>
-      </GlassCard>
-    </div>
-  );
-}
-
 export default function AccountPage() {
   const router = useRouter();
   const { user, loading, logout } = useUserAuth();
@@ -199,7 +141,6 @@ export default function AccountPage() {
   const { addItem } = useCart();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [showEditProfile, setShowEditProfile] = useState(false);
-  const [showChangePassword, setShowChangePassword] = useState(false);
   const [justAdded, setJustAdded] = useState<string | null>(null);
 
   const handleAddSavedToCart = (product: (typeof savedProducts)[number], e: MouseEvent<HTMLButtonElement>) => {
@@ -293,13 +234,6 @@ export default function AccountPage() {
               >
                 <Pencil size={14} />
                 Edit Profile
-              </button>
-              <button
-                onClick={() => setShowChangePassword(true)}
-                className="flex items-center gap-2 text-sm font-medium text-[#16241a]/60 hover:text-[#16241a] transition-colors"
-              >
-                <KeyRound size={14} />
-                Change Password
               </button>
               <button
                 onClick={() => setShowLogoutConfirm(true)}
@@ -503,10 +437,6 @@ export default function AccountPage() {
           currentEmail={user.email}
           currentCountry={user.country}
         />
-      )}
-
-      {showChangePassword && (
-        <ChangePasswordModal onClose={() => setShowChangePassword(false)} />
       )}
 
       {showLogoutConfirm && (

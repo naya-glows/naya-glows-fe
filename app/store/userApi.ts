@@ -45,11 +45,11 @@ const rawBaseQuery = fetchBaseQuery({
   },
 });
 
-// Login/register 401s (wrong password, duplicate email, etc.) are just a
-// failed attempt, not an expired session — exempt them so the interceptor
-// below doesn't fire a bogus "session expired" toast and redirect while
-// someone's simply mistyping their password on /signin.
-const AUTH_ENDPOINTS = ["/auth/login", "/auth/register"];
+// Login/register 401s (wrong/expired OTP code, duplicate email, etc.) are
+// just a failed attempt, not an expired session — exempt them so the
+// interceptor below doesn't fire a bogus "session expired" toast and
+// redirect while someone's simply mistyping their code on /signin.
+const AUTH_ENDPOINTS = ["/auth/login-otp", "/auth/register"];
 function isAuthEndpoint(args: string | FetchArgs): boolean {
   const url = typeof args === "string" ? args : args.url;
   return AUTH_ENDPOINTS.some((endpoint) => url.includes(endpoint));
@@ -87,7 +87,6 @@ export const userApi = createApi({
       { user: AuthUser; token: string },
       {
         email: string;
-        password: string;
         name: string;
         country?: string;
         referralCode?: string;
@@ -96,11 +95,15 @@ export const userApi = createApi({
     >({
       query: (body) => ({ url: "/auth/register", method: "POST", body }),
     }),
-    login: builder.mutation<
+    // Customer signin is OTP-only — request a code, then verify it below.
+    requestLoginOtp: builder.mutation<{ sent: boolean }, { email: string }>({
+      query: (body) => ({ url: "/auth/otp/login-request", method: "POST", body }),
+    }),
+    loginWithOtp: builder.mutation<
       { user: AuthUser; token: string },
-      { email: string; password: string }
+      { email: string; otpCode: string }
     >({
-      query: (body) => ({ url: "/auth/login", method: "POST", body }),
+      query: (body) => ({ url: "/auth/login-otp", method: "POST", body }),
     }),
     getMe: builder.query<{ user: AuthUser }, void>({
       query: () => "/auth/me",
@@ -112,21 +115,6 @@ export const userApi = createApi({
     >({
       query: (body) => ({ url: "/auth/me", method: "PATCH", body }),
       invalidatesTags: ["Me"],
-    }),
-    changePassword: builder.mutation<
-      { ok: boolean },
-      { currentPassword: string; newPassword: string }
-    >({
-      query: (body) => ({ url: "/auth/me/password", method: "PATCH", body }),
-    }),
-    requestPasswordReset: builder.mutation<{ sent: boolean }, { email: string }>({
-      query: (body) => ({ url: "/auth/password-reset/request", method: "POST", body }),
-    }),
-    confirmPasswordReset: builder.mutation<
-      { ok: boolean },
-      { email: string; otpCode: string; newPassword: string }
-    >({
-      query: (body) => ({ url: "/auth/password-reset/confirm", method: "POST", body }),
     }),
     // Mirrors the signed-in customer's cart server-side purely so the
     // backend can notice an abandoned one and send a reminder — see
@@ -352,12 +340,10 @@ export const userApi = createApi({
 export const {
   useRequestSignupOtpMutation,
   useRegisterMutation,
-  useLoginMutation,
+  useRequestLoginOtpMutation,
+  useLoginWithOtpMutation,
   useGetMeQuery,
   useUpdateProfileMutation,
-  useChangePasswordMutation,
-  useRequestPasswordResetMutation,
-  useConfirmPasswordResetMutation,
   useSyncCartMutation,
   useCreateOrderMutation,
   useListMyOrdersQuery,

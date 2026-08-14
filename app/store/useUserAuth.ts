@@ -3,14 +3,12 @@
 import { useAppDispatch, useAppSelector } from "./hooks";
 import {
   userApi,
-  useLoginMutation,
+  useRequestLoginOtpMutation,
+  useLoginWithOtpMutation,
   useRegisterMutation,
   useRequestSignupOtpMutation,
   useUpgradeInfluencerMutation,
   useUpdateProfileMutation,
-  useChangePasswordMutation,
-  useRequestPasswordResetMutation,
-  useConfirmPasswordResetMutation,
   useGetMeQuery,
 } from "./userApi";
 import { setCredentials, clearAuth, USER_TOKEN_KEY, SHIPPING_STORAGE_KEY } from "./userAuthSlice";
@@ -21,22 +19,24 @@ export function useUserAuth() {
   const storedUser = useAppSelector((s) => s.userAuth.user);
   const hydrated = useAppSelector((s) => s.userAuth.hydrated);
 
-  const [loginMutation, { isLoading: loggingIn }] = useLoginMutation();
+  const [requestLoginOtpMutation, { isLoading: requestingLoginOtp }] = useRequestLoginOtpMutation();
+  const [loginWithOtpMutation, { isLoading: loggingIn }] = useLoginWithOtpMutation();
   const [registerMutation, { isLoading: registering }] = useRegisterMutation();
   const [requestSignupOtpMutation, { isLoading: requestingSignupOtp }] =
     useRequestSignupOtpMutation();
   const [upgradeInfluencerMutation, { isLoading: upgradingInfluencer }] =
     useUpgradeInfluencerMutation();
   const [updateProfileMutation, { isLoading: updatingProfile }] = useUpdateProfileMutation();
-  const [changePasswordMutation, { isLoading: changingPassword }] = useChangePasswordMutation();
-  const [requestPasswordResetMutation, { isLoading: requestingPasswordReset }] =
-    useRequestPasswordResetMutation();
-  const [confirmPasswordResetMutation, { isLoading: confirmingPasswordReset }] =
-    useConfirmPasswordResetMutation();
   const { data: meData, isLoading: meLoading } = useGetMeQuery(undefined, { skip: !token });
 
   const user = meData?.user ?? storedUser;
   const loading = !hydrated || (Boolean(token) && meLoading);
+
+  // Customer signin is OTP-only, mirroring signup: request a code, then
+  // verify it to actually get a token.
+  const requestLoginOtp = async (email: string) => {
+    await requestLoginOtpMutation({ email }).unwrap();
+  };
 
   // Every cached query (getMe, saved products, orders, referral codes...)
   // is keyed independently of the auth token, so RTK Query has no way to
@@ -46,9 +46,9 @@ export function useUserAuth() {
   // exactly what made logout look broken (the token/user cleared, but a
   // stale getMe result kept `user` populated) and let one account's data
   // bleed into the next sign-in in the same tab.
-  const login = async (email: string, password: string) => {
+  const loginWithOtp = async (email: string, otpCode: string) => {
     dispatch(userApi.util.resetApiState());
-    const res = await loginMutation({ email, password }).unwrap();
+    const res = await loginWithOtpMutation({ email, otpCode }).unwrap();
     localStorage.setItem(USER_TOKEN_KEY, res.token);
     dispatch(setCredentials(res));
     return res.user;
@@ -60,7 +60,6 @@ export function useUserAuth() {
 
   const register = async (input: {
     email: string;
-    password: string;
     name: string;
     country?: string;
     referralCode?: string;
@@ -90,18 +89,6 @@ export function useUserAuth() {
     return res.user;
   };
 
-  const changePassword = async (currentPassword: string, newPassword: string) => {
-    await changePasswordMutation({ currentPassword, newPassword }).unwrap();
-  };
-
-  const requestPasswordReset = async (email: string) => {
-    await requestPasswordResetMutation({ email }).unwrap();
-  };
-
-  const confirmPasswordReset = async (email: string, otpCode: string, newPassword: string) => {
-    await confirmPasswordResetMutation({ email, otpCode, newPassword }).unwrap();
-  };
-
   const logout = () => {
     localStorage.removeItem(USER_TOKEN_KEY);
     localStorage.removeItem(SHIPPING_STORAGE_KEY);
@@ -113,7 +100,9 @@ export function useUserAuth() {
     user: user ?? null,
     token,
     loading,
-    login,
+    requestLoginOtp,
+    requestingLoginOtp,
+    loginWithOtp,
     loggingIn,
     register,
     registering,
@@ -123,12 +112,6 @@ export function useUserAuth() {
     upgradingInfluencer,
     updateProfile,
     updatingProfile,
-    changePassword,
-    changingPassword,
-    requestPasswordReset,
-    requestingPasswordReset,
-    confirmPasswordReset,
-    confirmingPasswordReset,
     logout,
   };
 }
