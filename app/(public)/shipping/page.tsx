@@ -5,15 +5,16 @@ import { Truck, RotateCcw, PackageCheck } from "lucide-react";
 import GlassCard from "../helpers/glass/GlassCard";
 import PageHeader from "../helpers/PageHeader";
 import { useCurrencyDisplay } from "../../store/useCurrencyDisplay";
-import { FREE_SHIPPING_THRESHOLD_NGN, FLAT_SHIPPING_NGN } from "@/lib/products";
+import { useSettings } from "../../store/useSettings";
+import { FREE_SHIPPING_THRESHOLD_NGN } from "@/lib/products";
 
-function buildSections(shippingFree: string, shippingFlat: string) {
+function buildSections(shippingFree: string, shippingLagos: string, shippingOutsideLagos: string) {
   return [
     {
       icon: Truck,
       title: "Shipping",
       body: [
-        `Orders ship within 1–2 business days of being placed. Shipping is free on orders over ${shippingFree} — orders below that ship for a flat ${shippingFlat} fee.`,
+        `Orders ship within 1–2 business days of being placed. Shipping is free on orders over ${shippingFree} — orders below that ship for ${shippingLagos} within Lagos, or ${shippingOutsideLagos} outside Lagos.`,
         "Domestic (Nigeria) orders typically arrive in 2–5 business days. International orders usually take 7–14 business days, depending on destination and customs processing.",
         "You'll receive a confirmation email with a tracking link as soon as your order ships — you can also check status anytime on our Track Order page.",
       ],
@@ -40,9 +41,11 @@ function buildSections(shippingFree: string, shippingFlat: string) {
 
 export default function ShippingPage() {
   const { format: formatPrice } = useCurrencyDisplay();
+  const { shippingFeeLagosNgn, shippingFeeOutsideLagosNgn } = useSettings();
   const sections = buildSections(
     formatPrice(FREE_SHIPPING_THRESHOLD_NGN),
-    formatPrice(FLAT_SHIPPING_NGN),
+    formatPrice(shippingFeeLagosNgn),
+    formatPrice(shippingFeeOutsideLagosNgn),
   );
 
   return (

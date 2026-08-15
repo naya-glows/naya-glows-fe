@@ -49,7 +49,7 @@ export default function AdminSubscriptionsPage() {
               {data.productSubscriptions.map((s) => (
                 <tr key={s.id} className="border-b border-[#16241a]/5 last:border-0">
                   <td className="p-4">
-                    <p className="font-medium">{s.user.name}</p>
+                    <p className="font-medium">{s.user.firstName} {s.user.lastName}</p>
                     <p className="text-xs text-[#16241a]/45">{s.user.email}</p>
                   </td>
                   <td className="p-4 text-[#16241a]/70">{s.product.name}</td>
@@ -88,7 +88,7 @@ export default function AdminSubscriptionsPage() {
               {data.plans.map((p) => (
                 <tr key={p.id} className="border-b border-[#16241a]/5 last:border-0">
                   <td className="p-4">
-                    <p className="font-medium">{p.user.name}</p>
+                    <p className="font-medium">{p.user.firstName} {p.user.lastName}</p>
                     <p className="text-xs text-[#16241a]/45">{p.user.email}</p>
                   </td>
                   <td className="p-4 text-[#16241a]/70">{termLabels[p.term] ?? p.term}</td>

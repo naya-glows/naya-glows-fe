@@ -25,7 +25,8 @@ export default function AdminInfluencersPage() {
             <thead>
               <tr className="text-left text-[#16241a]/45 border-b border-[#16241a]/10">
                 <th className="p-4 font-medium">Name</th>
-                <th className="p-4 font-medium">Platform</th>
+                <th className="p-4 font-medium">Code Name</th>
+                <th className="p-4 font-medium">Socials</th>
                 <th className="p-4 font-medium">Codes</th>
                 <th className="p-4 font-medium">Signups</th>
                 <th className="p-4 font-medium">Joined</th>
@@ -42,9 +43,15 @@ export default function AdminInfluencersPage() {
                     <p className="font-medium">{inf.name}</p>
                     <p className="text-xs text-[#16241a]/45">{inf.email}</p>
                   </td>
+                  <td className="p-4 text-[#16241a]/60 font-mono">{inf.codeName}</td>
                   <td className="p-4 text-[#16241a]/60">
-                    {inf.platform || "—"}
-                    {inf.socialHandle ? ` · ${inf.socialHandle}` : ""}
+                    {[
+                      inf.twitterHandle && `X: ${inf.twitterHandle}`,
+                      inf.instagramHandle && `IG: ${inf.instagramHandle}`,
+                      inf.tiktokHandle && `TikTok: ${inf.tiktokHandle}`,
+                    ]
+                      .filter(Boolean)
+                      .join(" · ") || "—"}
                   </td>
                   <td className="p-4 text-[#16241a]/60">{inf.codes.length}</td>
                   <td className="p-4">
@@ -70,8 +77,10 @@ export default function AdminInfluencersPage() {
         >
           <div className="flex flex-col">
             <DetailRow label="Email" value={selected.email} />
-            <DetailRow label="Platform" value={selected.platform || "—"} />
-            <DetailRow label="Social Handle" value={selected.socialHandle || "—"} />
+            <DetailRow label="Code Name" value={selected.codeName} />
+            <DetailRow label="X (Twitter)" value={selected.twitterHandle || "—"} />
+            <DetailRow label="Instagram" value={selected.instagramHandle || "—"} />
+            <DetailRow label="TikTok" value={selected.tiktokHandle || "—"} />
             <DetailRow label="Bio" value={selected.bio || "—"} />
             <DetailRow label="Total Signups" value={selected.totalSignups} />
             <DetailRow

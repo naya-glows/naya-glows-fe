@@ -87,11 +87,21 @@ export default function InfluencerDashboardPage() {
             <p className="text-[11px] tracking-[0.3em] uppercase text-[#6a9a72] mb-2 font-medium">
               Influencer Dashboard
             </p>
-            <h1 className="text-2xl font-light mb-1">Welcome back, {profile?.name ?? user.name}</h1>
-            {profile?.platform && (
+            <h1 className="text-2xl font-light mb-1">
+              Welcome back, {profile?.name ?? `${user.firstName} ${user.lastName}`}
+            </h1>
+            {profile && (
               <p className="text-sm text-[#16241a]/50">
-                {profile.platform}
-                {profile.socialHandle ? ` · ${profile.socialHandle}` : ""}
+                Code name:{" "}
+                <span className="font-mono font-semibold text-[#16241a]/70">{profile.codeName}</span>
+                {[
+                  profile.twitterHandle && `X: ${profile.twitterHandle}`,
+                  profile.instagramHandle && `IG: ${profile.instagramHandle}`,
+                  profile.tiktokHandle && `TikTok: ${profile.tiktokHandle}`,
+                ]
+                  .filter(Boolean)
+                  .map((s) => ` · ${s}`)
+                  .join("")}
               </p>
             )}
           </GlassCard>

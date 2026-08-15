@@ -60,7 +60,8 @@ export function useUserAuth() {
 
   const register = async (input: {
     email: string;
-    name: string;
+    firstName: string;
+    lastName: string;
     country?: string;
     referralCode?: string;
     otpCode: string;
@@ -73,8 +74,10 @@ export function useUserAuth() {
   };
 
   const upgradeInfluencer = async (input: {
-    platform?: string;
-    socialHandle?: string;
+    codeName: string;
+    twitterHandle?: string;
+    instagramHandle?: string;
+    tiktokHandle?: string;
     bio?: string;
   }) => {
     const res = await upgradeInfluencerMutation(input).unwrap();
@@ -84,7 +87,12 @@ export function useUserAuth() {
     return res.user;
   };
 
-  const updateProfile = async (input: { name?: string; email?: string; country?: string }) => {
+  const updateProfile = async (input: {
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    country?: string;
+  }) => {
     const res = await updateProfileMutation(input).unwrap();
     return res.user;
   };

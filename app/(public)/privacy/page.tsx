@@ -1,5 +1,13 @@
+import type { Metadata } from "next";
 import GlassCard from "../helpers/glass/GlassCard";
 import PageHeader from "../helpers/PageHeader";
+
+export const metadata: Metadata = {
+  title: "Privacy Policy | Naya Glows",
+  description: "How Naya Glows collects, uses, and protects your information.",
+  alternates: { canonical: "/privacy" },
+  openGraph: { title: "Privacy Policy | Naya Glows", url: "/privacy" },
+};
 
 const sections = [
   {

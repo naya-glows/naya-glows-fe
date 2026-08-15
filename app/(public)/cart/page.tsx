@@ -5,12 +5,19 @@ import Link from "next/link";
 import { Minus, Plus, X, ShoppingBag } from "lucide-react";
 import { useCart, itemUnitPrice } from "../../store/cartSlice";
 import { useCurrencyDisplay } from "../../store/useCurrencyDisplay";
-import { FREE_SHIPPING_THRESHOLD_NGN, FLAT_SHIPPING_NGN } from "@/lib/products";
+import { useSettings } from "../../store/useSettings";
+import { FREE_SHIPPING_THRESHOLD_NGN } from "@/lib/products";
 import GlassCard from "../helpers/glass/GlassCard";
 
 export default function CartPage() {
   const { items, updateQty, removeItem, subtotal, discountBySlug } = useCart();
   const { format: formatPrice } = useCurrencyDisplay();
+  const { shippingFeeLagosNgn, shippingFeeOutsideLagosNgn } = useSettings();
+  // No address yet at this point in the flow — the real fee (Lagos vs.
+  // outside-Lagos) is only known once shipping details are entered at
+  // checkout, so this is an optimistic "from" estimate using the lower of
+  // the two admin-set rates.
+  const estimatedShippingFee = Math.min(shippingFeeLagosNgn, shippingFeeOutsideLagosNgn);
 
   return (
     <main className="bg-gradient-to-b from-[#eafbf0] to-[#f4faf3] text-[#16241a] min-h-screen">
@@ -123,12 +130,17 @@ export default function CartPage() {
                     <span className="text-[#16241a]/60">Subtotal</span>
                     <span className="font-semibold">{formatPrice(subtotal)}</span>
                   </div>
-                  <div className="flex items-center justify-between text-sm mb-5">
+                  <div className="flex items-center justify-between text-sm mb-1">
                     <span className="text-[#16241a]/60">Shipping</span>
                     <span className="font-semibold">
-                      {subtotal >= FREE_SHIPPING_THRESHOLD_NGN ? "Free" : formatPrice(FLAT_SHIPPING_NGN)}
+                      {subtotal >= FREE_SHIPPING_THRESHOLD_NGN
+                        ? "Free"
+                        : `From ${formatPrice(estimatedShippingFee)}`}
                     </span>
                   </div>
+                  <p className="text-[11px] text-[#16241a]/40 mb-4">
+                    Exact fee depends on delivery location, calculated at checkout.
+                  </p>
                   <div className="w-full h-px bg-[#16241a]/10 mb-5" />
                   <div className="flex items-center justify-between text-base font-bold mb-6">
                     <span>Total</span>
@@ -137,7 +149,7 @@ export default function CartPage() {
                         subtotal +
                           (subtotal >= FREE_SHIPPING_THRESHOLD_NGN || subtotal === 0
                             ? 0
-                            : FLAT_SHIPPING_NGN),
+                            : estimatedShippingFee),
                       )}
                     </span>
                   </div>

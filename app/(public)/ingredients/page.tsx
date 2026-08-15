@@ -1,7 +1,16 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Sparkles, Droplet, Leaf, Sun } from "lucide-react";
 import GlassCard from "../helpers/glass/GlassCard";
 import PageHeader from "../helpers/PageHeader";
+
+export const metadata: Metadata = {
+  title: "Key Ingredients | Naya Glows",
+  description:
+    "What's actually in your skincare, and what it does — Kojic Acid, Niacinamide, Hyaluronic Acid, and more, explained plainly.",
+  alternates: { canonical: "/ingredients" },
+  openGraph: { title: "Key Ingredients | Naya Glows", url: "/ingredients" },
+};
 
 const groups = [
   {

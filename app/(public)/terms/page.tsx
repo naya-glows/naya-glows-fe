@@ -1,5 +1,13 @@
+import type { Metadata } from "next";
 import GlassCard from "../helpers/glass/GlassCard";
 import PageHeader from "../helpers/PageHeader";
+
+export const metadata: Metadata = {
+  title: "Terms of Service | Naya Glows",
+  description: "The terms that govern using the Naya Glows website and placing an order.",
+  alternates: { canonical: "/terms" },
+  openGraph: { title: "Terms of Service | Naya Glows", url: "/terms" },
+};
 
 const sections = [
   {

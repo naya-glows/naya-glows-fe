@@ -351,11 +351,13 @@ export const skincareCategories: ProductCategory[] = [
   "Body Care",
 ];
 
-// Mirrors orders.service.ts's server-side constants of the same name —
+// Mirrors orders.service.ts's server-side constant of the same name —
 // duplicated (not imported) because this is a separate frontend/backend
 // codebase, same as the rest of this app's price logic. Keep both in sync.
+// The actual shipping fee itself is no longer flat — see useSettings()'s
+// shippingFeeLagosNgn/shippingFeeOutsideLagosNgn, admin-configurable and
+// resolved per order based on the shipping address.
 export const FREE_SHIPPING_THRESHOLD_NGN = 120_000;
-export const FLAT_SHIPPING_NGN = 9_600;
 
 export function isInStock(product: Pick<Product, "inStock">): boolean {
   return product.inStock !== false;

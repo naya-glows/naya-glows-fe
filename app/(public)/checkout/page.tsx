@@ -9,12 +9,15 @@ import { toast } from "sonner";
 import { useCart, itemUnitPrice } from "../../store/cartSlice";
 import { useCurrencyDisplay } from "../../store/useCurrencyDisplay";
 import { useUserAuth } from "../../store/useUserAuth";
+import { useSettings } from "../../store/useSettings";
 import { SHIPPING_STORAGE_KEY } from "../../store/userAuthSlice";
 import GlassCard from "../helpers/glass/GlassCard";
 import { useCreateOrderMutation, useInitializePaymentMutation } from "../../store/userApi";
 import { getApiErrorMessage } from "../../store/apiError";
 import { isApiConfigured } from "@/lib/api";
-import { FREE_SHIPPING_THRESHOLD_NGN, FLAT_SHIPPING_NGN } from "@/lib/products";
+import { FREE_SHIPPING_THRESHOLD_NGN } from "@/lib/products";
+import { countries } from "@/lib/countries";
+import { NIGERIA_STATES } from "@/lib/nigeriaStates";
 
 // Paystack's Inline JS SDK — opens its own modal/iframe on top of the page
 // instead of redirecting away, so the customer never leaves the site.
@@ -45,9 +48,14 @@ type ShippingForm = {
   address: string;
   city: string;
   state: string;
+  country: string;
   zip: string;
 };
 
+// Defaults to Nigeria since the storefront is Naira-first and the vast
+// majority of customers are Nigerian — the state dropdown only actually
+// needs to be "disabled until a country is chosen" for the rarer case
+// someone switches away from it, not on first load.
 const emptyForm: ShippingForm = {
   firstName: "",
   lastName: "",
@@ -56,6 +64,7 @@ const emptyForm: ShippingForm = {
   address: "",
   city: "",
   state: "",
+  country: "NG",
   zip: "",
 };
 
@@ -64,8 +73,11 @@ export default function CheckoutPage() {
   const { items, subtotal, discountBySlug } = useCart();
   const { format: formatPrice } = useCurrencyDisplay();
   const { user, loading: authLoading } = useUserAuth();
+  const { shippingFeeLagosNgn, shippingFeeOutsideLagosNgn } = useSettings();
   const [form, setForm] = useState<ShippingForm>(emptyForm);
-  const shipping = subtotal >= FREE_SHIPPING_THRESHOLD_NGN || subtotal === 0 ? 0 : FLAT_SHIPPING_NGN;
+  const isLagos = form.country === "NG" && form.state.trim().toLowerCase() === "lagos";
+  const locationShippingFee = isLagos ? shippingFeeLagosNgn : shippingFeeOutsideLagosNgn;
+  const shipping = subtotal >= FREE_SHIPPING_THRESHOLD_NGN || subtotal === 0 ? 0 : locationShippingFee;
   const backendReady = isApiConfigured();
   const [paystackReady, setPaystackReady] = useState(false);
   const [openingPopup, setOpeningPopup] = useState(false);
@@ -111,8 +123,18 @@ export default function CheckoutPage() {
   const [initializePayment, { isLoading: initializingPayment }] = useInitializePaymentMutation();
   const submitting = creatingOrder || initializingPayment || openingPopup;
 
-  const updateField = (field: keyof ShippingForm) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm((f) => ({ ...f, [field]: e.target.value }));
+  const updateField =
+    (field: keyof ShippingForm) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+      setForm((f) => ({ ...f, [field]: e.target.value }));
+    };
+
+  // Switching country invalidates whatever was picked/typed for state (a
+  // Nigerian state name means nothing once the country's no longer NG, and
+  // vice versa) — same values on both frontend and backend for the
+  // Lagos/outside-Lagos fee lookup only works if this never gets stale.
+  const updateCountry = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setForm((f) => ({ ...f, country: e.target.value, state: "" }));
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -251,7 +273,17 @@ export default function CheckoutPage() {
                 onChange={updateField("address")}
                 className={`${inputClass} mb-4`}
               />
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <select required value={form.country} onChange={updateCountry} className={inputClass}>
+                  <option value="" disabled>
+                    Select country
+                  </option>
+                  {countries.map((c) => (
+                    <option key={c.code} value={c.code}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
                 <input
                   required
                   placeholder="City"
@@ -259,13 +291,35 @@ export default function CheckoutPage() {
                   onChange={updateField("city")}
                   className={inputClass}
                 />
-                <input
-                  required
-                  placeholder="State"
-                  value={form.state}
-                  onChange={updateField("state")}
-                  className={inputClass}
-                />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-2">
+                {form.country === "NG" ? (
+                  <select
+                    required
+                    disabled={!form.country}
+                    value={form.state}
+                    onChange={updateField("state")}
+                    className={`${inputClass} disabled:opacity-50`}
+                  >
+                    <option value="" disabled>
+                      Select state
+                    </option>
+                    {NIGERIA_STATES.map((s) => (
+                      <option key={s} value={s}>
+                        {s}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    required
+                    disabled={!form.country}
+                    placeholder="State / Province"
+                    value={form.state}
+                    onChange={updateField("state")}
+                    className={`${inputClass} disabled:opacity-50`}
+                  />
+                )}
                 <input
                   required
                   placeholder="ZIP / Postal code"
@@ -334,7 +388,7 @@ export default function CheckoutPage() {
                 </div>
                 <div className="flex items-center justify-between text-sm mb-5">
                   <span className="text-[#16241a]/60">Shipping</span>
-                  <span className="font-semibold">{shipping === 0 ? "Free" : formatPrice(FLAT_SHIPPING_NGN)}</span>
+                  <span className="font-semibold">{shipping === 0 ? "Free" : formatPrice(shipping)}</span>
                 </div>
                 <div className="w-full h-px bg-[#16241a]/10 mb-5" />
                 <div className="flex items-center justify-between text-base font-bold mb-6">

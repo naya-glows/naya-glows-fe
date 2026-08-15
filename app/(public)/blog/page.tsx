@@ -1,7 +1,16 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import GlassCard from "../helpers/glass/GlassCard";
 import PageHeader from "../helpers/PageHeader";
+
+export const metadata: Metadata = {
+  title: "Skincare Journal | Naya Glows",
+  description:
+    "Layering actives, reading your skin, and building a routine that actually works — skincare guides from Naya Glows.",
+  alternates: { canonical: "/blog" },
+  openGraph: { title: "Skincare Journal | Naya Glows", url: "/blog" },
+};
 
 const articles = [
   {

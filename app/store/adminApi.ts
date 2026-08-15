@@ -50,7 +50,8 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
 export type AdminUserRow = {
   id: string;
   email: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   role: string;
   country: string | null;
   currency: string;
@@ -64,7 +65,7 @@ export type AdminOrderRow = {
   total: number;
   createdAt: string;
   manualStage: string | null;
-  user: { name: string; email: string } | null;
+  user: { firstName: string; lastName: string; email: string } | null;
   shippingDetails: Record<string, string> | null;
   items: { qty: number; isSubscription: boolean; product: { name: string } }[];
 };
@@ -110,6 +111,8 @@ export type SettingsPayload = {
   subscriptionB6MonthPercent: number;
   subscriptionB12MonthPercent: number;
   subscriptionBFulfillmentMode: "immediate" | "recurring";
+  shippingFeeLagosNgn: number;
+  shippingFeeOutsideLagosNgn: number;
 };
 
 export type BudgetSummary = {
@@ -134,8 +137,10 @@ export type AdminInfluencerRow = {
   id: string;
   name: string;
   email: string;
-  platform: string | null;
-  socialHandle: string | null;
+  codeName: string;
+  twitterHandle: string | null;
+  instagramHandle: string | null;
+  tiktokHandle: string | null;
   bio: string | null;
   createdAt: string;
   codes: { code: string; signupCount: number }[];
@@ -149,7 +154,7 @@ export type AdminProductSubscriptionRow = {
   code: string;
   discountPercent: number;
   createdAt: string;
-  user: { name: string; email: string };
+  user: { firstName: string; lastName: string; email: string };
   product: { name: string; slug: string };
 };
 
@@ -164,7 +169,7 @@ export type AdminSubscriptionPlanRow = {
   remainingShipments: number;
   nextShipmentDate: string | null;
   createdAt: string;
-  user: { name: string; email: string };
+  user: { firstName: string; lastName: string; email: string };
 };
 
 export type ConsultationRow = {

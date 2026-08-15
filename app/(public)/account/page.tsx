@@ -53,24 +53,27 @@ const inputClass =
 
 function EditProfileModal({
   onClose,
-  currentName,
+  currentFirstName,
+  currentLastName,
   currentEmail,
   currentCountry,
 }: {
   onClose: () => void;
-  currentName: string;
+  currentFirstName: string;
+  currentLastName: string;
   currentEmail: string;
   currentCountry: string | null;
 }) {
   const { updateProfile, updatingProfile: saving } = useUserAuth();
-  const [name, setName] = useState(currentName);
+  const [firstName, setFirstName] = useState(currentFirstName);
+  const [lastName, setLastName] = useState(currentLastName);
   const [email, setEmail] = useState(currentEmail);
   const [country, setCountry] = useState(currentCountry ?? "NG");
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      await updateProfile({ name, email, country });
+      await updateProfile({ firstName, lastName, email, country });
       toast.success("Profile updated");
       onClose();
     } catch (err) {
@@ -88,13 +91,22 @@ function EditProfileModal({
           </button>
         </div>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <input
-            required
-            placeholder="Full name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className={inputClass}
-          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <input
+              required
+              placeholder="First name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              className={inputClass}
+            />
+            <input
+              required
+              placeholder="Last name"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              className={inputClass}
+            />
+          </div>
           <input
             required
             type="email"
@@ -212,36 +224,45 @@ export default function AccountPage() {
     <main className="bg-gradient-to-b from-[#eafbf0] to-[#f4faf3] text-[#16241a] min-h-screen">
       <section className="pt-32 sm:pt-36 pb-24 px-5 sm:px-8 lg:px-12">
         <div className="max-w-[900px] mx-auto">
-          {/* Greeting header */}
-          <GlassCard className="px-5 py-8 sm:p-8 flex items-center gap-5 mb-6 flex-wrap">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#8ab88e] to-[#16241a] flex items-center justify-center flex-shrink-0 text-white text-xl font-semibold shadow-[inset_0_1px_0_rgba(255,255,255,0.4)]">
-              {user.name.charAt(0).toUpperCase()}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-lg font-semibold">Hey, {user.name.split(" ")[0]}</p>
-              <p className="text-sm text-[#16241a]/50">{user.email}</p>
-              {user.country && (
-                <p className="text-xs text-[#6a9a72] flex items-center gap-1 mt-1">
-                  <MapPin size={11} />
-                  {countryName} · {user.currency}
-                </p>
-              )}
-            </div>
-            <div className="flex items-center gap-4 flex-wrap">
-              <button
-                onClick={() => setShowEditProfile(true)}
-                className="flex items-center gap-2 text-sm font-medium text-[#16241a]/60 hover:text-[#16241a] transition-colors"
-              >
-                <Pencil size={14} />
-                Edit Profile
-              </button>
-              <button
-                onClick={() => setShowLogoutConfirm(true)}
-                className="flex items-center gap-2 text-sm font-medium text-[#16241a]/60 hover:text-[#16241a] transition-colors"
-              >
-                <LogOut size={15} />
-                Sign Out
-              </button>
+          {/* Greeting header — a stacked column on mobile (avatar+info row,
+              then a separated actions row) so long names/emails truncate
+              instead of wrapping and dragging the buttons out of place;
+              reverts to one row once there's enough width. */}
+          <GlassCard className="px-5 py-6 sm:p-8 mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-5">
+              <div className="flex items-center gap-4 min-w-0">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#8ab88e] to-[#16241a] flex items-center justify-center flex-shrink-0 text-white text-xl font-semibold shadow-[inset_0_1px_0_rgba(255,255,255,0.4)]">
+                  {user.firstName.charAt(0).toUpperCase()}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-lg font-semibold truncate">Hey, {user.firstName}</p>
+                  <p className="text-sm text-[#16241a]/50 truncate">{user.email}</p>
+                  {user.country && (
+                    <p className="text-xs text-[#6a9a72] flex items-center gap-1 mt-1 min-w-0">
+                      <MapPin size={11} className="flex-shrink-0" />
+                      <span className="truncate">
+                        {countryName} · {user.currency}
+                      </span>
+                    </p>
+                  )}
+                </div>
+              </div>
+              <div className="flex items-center gap-4 pt-4 sm:pt-0 sm:ml-auto border-t border-[#16241a]/10 sm:border-t-0 flex-shrink-0">
+                <button
+                  onClick={() => setShowEditProfile(true)}
+                  className="flex items-center gap-2 text-sm font-medium text-[#16241a]/60 hover:text-[#16241a] transition-colors"
+                >
+                  <Pencil size={14} />
+                  Edit Profile
+                </button>
+                <button
+                  onClick={() => setShowLogoutConfirm(true)}
+                  className="flex items-center gap-2 text-sm font-medium text-[#16241a]/60 hover:text-[#16241a] transition-colors"
+                >
+                  <LogOut size={15} />
+                  Sign Out
+                </button>
+              </div>
             </div>
           </GlassCard>
 
@@ -433,7 +454,8 @@ export default function AccountPage() {
       {showEditProfile && (
         <EditProfileModal
           onClose={() => setShowEditProfile(false)}
-          currentName={user.name}
+          currentFirstName={user.firstName}
+          currentLastName={user.lastName}
           currentEmail={user.email}
           currentCountry={user.country}
         />

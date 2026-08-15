@@ -18,6 +18,17 @@ type Mode = "signin" | "create";
 // account — nothing changes server-side until then.
 type Step = "form" | "otp";
 
+// Matches the backend's OTP_RESEND_COOLDOWN_MS (auth.service.ts) — kept in
+// sync so the button's countdown and the server's actual enforcement agree;
+// a resend tap before this elapses would just 400 from the server anyway.
+const RESEND_COOLDOWN_SECONDS = 120;
+
+function formatCooldown(seconds: number): string {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m}:${String(s).padStart(2, "0")}`;
+}
+
 // Split out from SignInForm and mounted with key={mode} below — this is
 // what actually fixes the shared-loading-state bug: useUserAuth()'s
 // loginWithOtp/register/requestSignupOtp/requestLoginOtp mutations each
@@ -34,8 +45,10 @@ function AuthSubmitForm({
   mode,
   step,
   setStep,
-  name,
-  setName,
+  firstName,
+  setFirstName,
+  lastName,
+  setLastName,
   email,
   setEmail,
   country,
@@ -53,8 +66,10 @@ function AuthSubmitForm({
   mode: Mode;
   step: Step;
   setStep: (step: Step) => void;
-  name: string;
-  setName: (v: string) => void;
+  firstName: string;
+  setFirstName: (v: string) => void;
+  lastName: string;
+  setLastName: (v: string) => void;
   email: string;
   setEmail: (v: string) => void;
   country: string;
@@ -84,6 +99,17 @@ function AuthSubmitForm({
   const submitting = mode === "signin" ? requestingOtp || loggingIn : requestingOtp || registering;
   const showingOtpStep = step === "otp";
 
+  // Starts (or restarts) the resend cooldown — called once right after an
+  // OTP is actually sent (both the initial send and every successful
+  // resend), never on failure, so a rate-limited/errored attempt doesn't
+  // lock the button for no reason.
+  const [cooldown, setCooldown] = useState(0);
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const timer = setInterval(() => setCooldown((c) => Math.max(c - 1, 0)), 1000);
+    return () => clearInterval(timer);
+  }, [cooldown > 0]);
+
   const handleResend = async () => {
     setError(null);
     try {
@@ -92,6 +118,7 @@ function AuthSubmitForm({
       } else {
         await requestSignupOtp(email);
       }
+      setCooldown(RESEND_COOLDOWN_SECONDS);
     } catch (err) {
       setError(getApiErrorMessage(err));
     }
@@ -106,6 +133,7 @@ function AuthSubmitForm({
         if (step === "form") {
           await requestLoginOtp(email);
           setStep("otp");
+          setCooldown(RESEND_COOLDOWN_SECONDS);
           return;
         }
         const user = await loginWithOtp(email, otpCode);
@@ -116,12 +144,14 @@ function AuthSubmitForm({
       if (step === "form") {
         await requestSignupOtp(email);
         setStep("otp");
+        setCooldown(RESEND_COOLDOWN_SECONDS);
         return;
       }
 
       const user = await register({
         email,
-        name,
+        firstName,
+        lastName,
         country,
         referralCode: referralCode || undefined,
         otpCode,
@@ -157,6 +187,7 @@ function AuthSubmitForm({
                 setStep("form");
                 setOtpCode("");
                 setError(null);
+                setCooldown(0);
               }}
               className="font-medium hover:text-[#16241a] transition-colors"
             >
@@ -165,24 +196,38 @@ function AuthSubmitForm({
             <button
               type="button"
               onClick={handleResend}
-              disabled={requestingOtp}
+              disabled={requestingOtp || cooldown > 0}
               className="font-medium hover:text-[#16241a] transition-colors disabled:opacity-50"
             >
-              {requestingOtp ? "Sending…" : "Resend code"}
+              {requestingOtp
+                ? "Sending…"
+                : cooldown > 0
+                  ? `Resend code (${formatCooldown(cooldown)})`
+                  : "Resend code"}
             </button>
           </div>
         </>
       ) : (
         <>
           {mode === "create" && (
-            <input
-              required
-              placeholder="Full name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className={inputClass}
-              autoComplete="name"
-            />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <input
+                required
+                placeholder="First name"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                className={inputClass}
+                autoComplete="given-name"
+              />
+              <input
+                required
+                placeholder="Last name"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                className={inputClass}
+                autoComplete="family-name"
+              />
+            </div>
           )}
           <input
             required
@@ -252,7 +297,8 @@ function SignInForm() {
   const searchParams = useSearchParams();
   const [mode, setMode] = useState<Mode>("signin");
   const [step, setStep] = useState<Step>("form");
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [country, setCountry] = useState("NG");
   const [referralCode, setReferralCode] = useState("");
@@ -383,8 +429,10 @@ function SignInForm() {
                 mode={mode}
                 step={step}
                 setStep={setStep}
-                name={name}
-                setName={setName}
+                firstName={firstName}
+                setFirstName={setFirstName}
+                lastName={lastName}
+                setLastName={setLastName}
                 email={email}
                 setEmail={setEmail}
                 country={country}

@@ -17,6 +17,8 @@ export default function AdminSettingsPage() {
   const [subscriptionB6MonthPercent, setSubscriptionB6MonthPercent] = useState("");
   const [subscriptionB12MonthPercent, setSubscriptionB12MonthPercent] = useState("");
   const [fulfillmentMode, setFulfillmentMode] = useState<"immediate" | "recurring">("immediate");
+  const [shippingFeeLagosNgn, setShippingFeeLagosNgn] = useState("");
+  const [shippingFeeOutsideLagosNgn, setShippingFeeOutsideLagosNgn] = useState("");
 
   useEffect(() => {
     if (!settings) return;
@@ -26,6 +28,8 @@ export default function AdminSettingsPage() {
     setSubscriptionB6MonthPercent(String(settings.subscriptionB6MonthPercent));
     setSubscriptionB12MonthPercent(String(settings.subscriptionB12MonthPercent));
     setFulfillmentMode(settings.subscriptionBFulfillmentMode);
+    setShippingFeeLagosNgn(String(settings.shippingFeeLagosNgn));
+    setShippingFeeOutsideLagosNgn(String(settings.shippingFeeOutsideLagosNgn));
   }, [settings]);
 
   const handleSubmit = async (e: FormEvent) => {
@@ -50,6 +54,11 @@ export default function AdminSettingsPage() {
           value: Number(subscriptionB12MonthPercent),
         }).unwrap(),
         updateSetting({ key: "subscriptionBFulfillmentMode", value: fulfillmentMode }).unwrap(),
+        updateSetting({ key: "shippingFeeLagosNgn", value: Number(shippingFeeLagosNgn) }).unwrap(),
+        updateSetting({
+          key: "shippingFeeOutsideLagosNgn",
+          value: Number(shippingFeeOutsideLagosNgn),
+        }).unwrap(),
       ]);
       toast.success("Settings saved.");
     } catch (err) {
@@ -200,6 +209,47 @@ export default function AdminSettingsPage() {
               : "Recurring: only the first month ships now; the rest ship automatically, one month at a time, for the rest of the plan."}
             {" "}Only applies to new plans — already-active plans keep whatever mode was in effect
             when they were purchased.
+          </p>
+        </div>
+
+        <div className="pt-1 border-t border-[#16241a]/10">
+          <p className="text-xs font-semibold uppercase tracking-wide text-[#16241a]/60 mb-3">
+            Shipping Fee
+          </p>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-[10px] font-semibold uppercase tracking-wide text-[#16241a]/50 mb-1.5">
+                Within Lagos (₦)
+              </label>
+              <input
+                type="number"
+                step="1"
+                min="0"
+                required
+                value={shippingFeeLagosNgn}
+                onChange={(e) => setShippingFeeLagosNgn(e.target.value)}
+                className={inputClass}
+              />
+            </div>
+            <div>
+              <label className="block text-[10px] font-semibold uppercase tracking-wide text-[#16241a]/50 mb-1.5">
+                Outside Lagos (₦)
+              </label>
+              <input
+                type="number"
+                step="1"
+                min="0"
+                required
+                value={shippingFeeOutsideLagosNgn}
+                onChange={(e) => setShippingFeeOutsideLagosNgn(e.target.value)}
+                className={inputClass}
+              />
+            </div>
+          </div>
+          <p className="text-xs text-[#16241a]/45 mt-1.5">
+            Charged based on the state the customer enters at checkout — only exact matches to
+            &ldquo;Lagos&rdquo; get the Lagos rate, every other state and country gets the outside
+            rate. Waived above the free-shipping threshold either way.
           </p>
         </div>
 

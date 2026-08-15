@@ -21,8 +21,10 @@ export type InfluencerProfile = {
   id: string;
   name: string;
   email: string;
-  platform: string | null;
-  socialHandle: string | null;
+  codeName: string;
+  twitterHandle: string | null;
+  instagramHandle: string | null;
+  tiktokHandle: string | null;
   bio: string | null;
   createdAt: string;
 };
@@ -50,9 +52,18 @@ const rawBaseQuery = fetchBaseQuery({
 // interceptor below doesn't fire a bogus "session expired" toast and
 // redirect while someone's simply mistyping their code on /signin.
 const AUTH_ENDPOINTS = ["/auth/login-otp", "/auth/register"];
-function isAuthEndpoint(args: string | FetchArgs): boolean {
+// getMe is a passive background check — useUserAuth() calls it on every
+// single page (the Navbar renders everywhere and calls it whenever a token
+// exists), not just protected ones. A stale/expired token 401ing there just
+// means "there's a dead token lying around," not "an active session died
+// mid-action" — so it should still clear silently, without the toast+
+// redirect that's correct for a real protected action (e.g. an authed
+// mutation) failing with 401.
+const SILENT_REAUTH_ENDPOINTS = ["/auth/me"];
+
+function matchesEndpoint(args: string | FetchArgs, endpoints: string[]): boolean {
   const url = typeof args === "string" ? args : args.url;
-  return AUTH_ENDPOINTS.some((endpoint) => url.includes(endpoint));
+  return endpoints.some((endpoint) => url.includes(endpoint));
 }
 
 // 401 interceptor: clears the customer session, toasts, and sends the user
@@ -64,12 +75,14 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
   extraOptions,
 ) => {
   const result = await rawBaseQuery(args, api, extraOptions);
-  if (result.error?.status === 401 && !isAuthEndpoint(args)) {
+  if (result.error?.status === 401 && !matchesEndpoint(args, AUTH_ENDPOINTS)) {
     api.dispatch(clearUserAuth());
     if (typeof window !== "undefined") {
       localStorage.removeItem(USER_TOKEN_KEY);
-      toast.error("Session expired — please sign in again.");
-      window.location.href = "/signin";
+      if (!matchesEndpoint(args, SILENT_REAUTH_ENDPOINTS)) {
+        toast.error("Session expired — please sign in again.");
+        window.location.href = "/signin";
+      }
     }
   }
   return result;
@@ -87,7 +100,8 @@ export const userApi = createApi({
       { user: AuthUser; token: string },
       {
         email: string;
-        name: string;
+        firstName: string;
+        lastName: string;
         country?: string;
         referralCode?: string;
         otpCode: string;
@@ -111,7 +125,7 @@ export const userApi = createApi({
     }),
     updateProfile: builder.mutation<
       { user: AuthUser },
-      { name?: string; email?: string; country?: string }
+      { firstName?: string; lastName?: string; email?: string; country?: string }
     >({
       query: (body) => ({ url: "/auth/me", method: "PATCH", body }),
       invalidatesTags: ["Me"],
@@ -147,7 +161,13 @@ export const userApi = createApi({
     // Influencer profile to whichever account the caller is authed as.
     upgradeInfluencer: builder.mutation<
       { user: AuthUser; token: string },
-      { platform?: string; socialHandle?: string; bio?: string }
+      {
+        codeName: string;
+        twitterHandle?: string;
+        instagramHandle?: string;
+        tiktokHandle?: string;
+        bio?: string;
+      }
     >({
       query: (body) => ({ url: "/influencers/upgrade", method: "POST", body }),
       invalidatesTags: ["Me"],
@@ -296,6 +316,8 @@ export const userApi = createApi({
           subscriptionB6MonthPercent: number;
           subscriptionB12MonthPercent: number;
           subscriptionBFulfillmentMode: "immediate" | "recurring";
+          shippingFeeLagosNgn: number;
+          shippingFeeOutsideLagosNgn: number;
         };
       },
       void

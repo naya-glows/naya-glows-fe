@@ -66,7 +66,7 @@ export default function AdminOrdersPage() {
             <tbody>
               {orders.map((o) => {
                 const customerName =
-                  o.user?.name ||
+                  (o.user && `${o.user.firstName} ${o.user.lastName}`.trim()) ||
                   [o.shippingDetails?.firstName, o.shippingDetails?.lastName]
                     .filter(Boolean)
                     .join(" ") ||
@@ -126,7 +126,7 @@ export default function AdminOrdersPage() {
             <DetailRow
               label="Customer"
               value={
-                selected.user?.name ||
+                (selected.user && `${selected.user.firstName} ${selected.user.lastName}`.trim()) ||
                 [selected.shippingDetails?.firstName, selected.shippingDetails?.lastName]
                   .filter(Boolean)
                   .join(" ") ||

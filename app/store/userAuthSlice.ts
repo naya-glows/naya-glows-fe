@@ -3,7 +3,8 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 export type AuthUser = {
   id: string;
   email: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   role: "ADMIN" | "CUSTOMER" | "INFLUENCER";
   country: string | null;
   currency: string;

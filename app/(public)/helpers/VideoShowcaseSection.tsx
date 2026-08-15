@@ -52,6 +52,12 @@ export default function VideoShowcaseSection({
           muted={muted}
           loop
           playsInline
+          // Without this, browsers default to preload="metadata" — just
+          // enough to grab dimensions/poster, not the actual footage — so
+          // the video was still fetching by the time scroll brought it into
+          // view. "auto" tells the browser to start downloading the full
+          // file as soon as this element mounts, not when it's on screen.
+          preload="auto"
           onError={() => setVideoFailed(true)}
           onPlaying={() => setVideoPlaying(true)}
           onPause={() => setVideoPlaying(false)}

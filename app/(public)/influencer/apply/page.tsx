@@ -43,8 +43,10 @@ export default function InfluencerApplyPage() {
   const backendReady = isApiConfigured();
 
   const [form, setForm] = useState({
-    platform: "Instagram",
-    socialHandle: "",
+    codeName: "",
+    twitterHandle: "",
+    instagramHandle: "",
+    tiktokHandle: "",
     bio: "",
   });
 
@@ -65,17 +67,32 @@ export default function InfluencerApplyPage() {
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
       setForm((f) => ({ ...f, [field]: e.target.value }));
 
+  const hasAnySocial = Boolean(
+    form.twitterHandle.trim() || form.instagramHandle.trim() || form.tiktokHandle.trim(),
+  );
+  const canSubmit = form.codeName.trim().length >= 2 && hasAnySocial;
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!backendReady) {
       toast.error("Influencer registration isn't connected yet (NEXT_PUBLIC_API_URL isn't set).");
       return;
     }
+    if (!form.codeName.trim()) {
+      toast.error("Please enter an influencer code name.");
+      return;
+    }
+    if (!hasAnySocial) {
+      toast.error("Please add at least one social media handle or link.");
+      return;
+    }
     try {
       await upgradeInfluencer({
-        platform: form.platform,
-        socialHandle: form.socialHandle || undefined,
-        bio: form.bio || undefined,
+        codeName: form.codeName.trim(),
+        twitterHandle: form.twitterHandle.trim() || undefined,
+        instagramHandle: form.instagramHandle.trim() || undefined,
+        tiktokHandle: form.tiktokHandle.trim() || undefined,
+        bio: form.bio.trim() || undefined,
       });
       toast.success("Welcome to the program!");
       router.push("/influencer");
@@ -137,25 +154,53 @@ export default function InfluencerApplyPage() {
               Apply Now
             </h2>
             <p className="text-xs text-[#16241a]/45 mb-5">
-              Applying as {user.name} ({user.email})
+              Applying as {user.firstName} {user.lastName} ({user.email})
             </p>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <select value={form.platform} onChange={updateField("platform")} className={inputClass}>
-                  <option>Instagram</option>
-                  <option>TikTok</option>
-                  <option>YouTube</option>
-                  <option>Twitter / X</option>
-                  <option>Blog</option>
-                  <option>Other</option>
-                </select>
+              <div>
                 <input
-                  placeholder="@yourhandle"
-                  value={form.socialHandle}
-                  onChange={updateField("socialHandle")}
+                  required
+                  minLength={2}
+                  maxLength={20}
+                  placeholder="Influencer code name (e.g. STARGIRL)"
+                  value={form.codeName}
+                  onChange={updateField("codeName")}
                   className={inputClass}
                 />
+                <p className="text-xs text-[#16241a]/45 mt-1.5">
+                  Every referral code you generate starts with this — e.g. &ldquo;{form.codeName.trim()
+                    ? form.codeName.trim().toUpperCase().replace(/[^A-Z0-9]/g, "")
+                    : "STARGIRL"}
+                  4Z5OA3E2&rdquo;.
+                </p>
               </div>
+
+              <div>
+                <p className="text-xs text-[#16241a]/50 mb-2">
+                  Add at least one — handle or a full profile link both work.
+                </p>
+                <div className="flex flex-col gap-3">
+                  <input
+                    placeholder="Twitter / X — @yourhandle or link"
+                    value={form.twitterHandle}
+                    onChange={updateField("twitterHandle")}
+                    className={inputClass}
+                  />
+                  <input
+                    placeholder="Instagram — @yourhandle or link"
+                    value={form.instagramHandle}
+                    onChange={updateField("instagramHandle")}
+                    className={inputClass}
+                  />
+                  <input
+                    placeholder="TikTok — @yourhandle or link"
+                    value={form.tiktokHandle}
+                    onChange={updateField("tiktokHandle")}
+                    className={inputClass}
+                  />
+                </div>
+              </div>
+
               <textarea
                 placeholder="Tell us a bit about your audience (optional)"
                 value={form.bio}
@@ -165,7 +210,7 @@ export default function InfluencerApplyPage() {
 
               <button
                 type="submit"
-                disabled={submitting}
+                disabled={submitting || !canSubmit}
                 className="mt-2 bg-[#16241a] text-white text-sm font-semibold px-6 py-3.5 rounded-full hover:bg-[#233324] transition-colors disabled:opacity-60"
               >
                 {submitting ? "Applying…" : "Join the Program"}
