@@ -1,62 +1,132 @@
 "use client";
 
-import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useListContentQuery } from "../../../store/adminApi";
-import { contentRegistry } from "@/lib/content/registry";
+import { defaultCatalogHeroContent } from "@/lib/content/catalogHero";
+import { defaultContactInfoContent } from "@/lib/content/contactInfo";
+import { defaultBranchesContent } from "@/lib/content/businessBranches";
+import { HomepageGroup } from "./editor/HomepageGroup";
+import { SectionShell } from "./editor/SectionShell";
+import { useSectionDraft } from "./editor/useSectionDraft";
+import { CatalogHeroEditor } from "./editor/sections/CatalogHeroEditor";
+import { ContactInfoEditor } from "./editor/sections/ContactInfoEditor";
+import { BranchesEditor } from "./editor/sections/BranchesEditor";
 
-export default function AdminContentIndexPage() {
+function CatalogHeroSection({ overriddenKeys }: { overriddenKeys: Set<string> }) {
+  const { draft, update, dirty, save, saving, loading } = useSectionDraft(
+    "catalog.hero",
+    defaultCatalogHeroContent,
+  );
+  return (
+    <SectionShell
+      title="Catalog Hero"
+      customized={overriddenKeys.has("catalog.hero")}
+      dirty={dirty}
+      onSave={save}
+      saving={saving}
+    >
+      {loading || !draft ? (
+        <div className="flex justify-center py-8">
+          <Loader2 className="h-5 w-5 animate-spin text-[#4f7957]" />
+        </div>
+      ) : (
+        <CatalogHeroEditor data={draft} onChange={update} />
+      )}
+    </SectionShell>
+  );
+}
+
+function ContactInfoSection({ overriddenKeys }: { overriddenKeys: Set<string> }) {
+  const { draft, update, dirty, save, saving, loading } = useSectionDraft(
+    "contact.info",
+    defaultContactInfoContent,
+  );
+  return (
+    <SectionShell
+      title="Contact Info"
+      customized={overriddenKeys.has("contact.info")}
+      dirty={dirty}
+      onSave={save}
+      saving={saving}
+    >
+      {loading || !draft ? (
+        <div className="flex justify-center py-8">
+          <Loader2 className="h-5 w-5 animate-spin text-[#4f7957]" />
+        </div>
+      ) : (
+        <ContactInfoEditor data={draft} onChange={update} />
+      )}
+    </SectionShell>
+  );
+}
+
+function BranchesSection({ overriddenKeys }: { overriddenKeys: Set<string> }) {
+  const { draft, update, dirty, save, saving, loading } = useSectionDraft(
+    "business.branches",
+    defaultBranchesContent,
+  );
+  return (
+    <SectionShell
+      title="Branches"
+      customized={overriddenKeys.has("business.branches")}
+      dirty={dirty}
+      onSave={save}
+      saving={saving}
+    >
+      {loading || !draft ? (
+        <div className="flex justify-center py-8">
+          <Loader2 className="h-5 w-5 animate-spin text-[#4f7957]" />
+        </div>
+      ) : (
+        <BranchesEditor data={draft} onChange={update} />
+      )}
+    </SectionShell>
+  );
+}
+
+export default function AdminContentPage() {
   const { data: blocks } = useListContentQuery();
   const overriddenKeys = new Set(blocks?.map((b) => b.key));
-
-  const groups = contentRegistry.reduce<Record<string, typeof contentRegistry>>((acc, item) => {
-    (acc[item.group] ??= []).push(item);
-    return acc;
-  }, {});
 
   return (
     <div>
       <h1 className="text-2xl font-light mb-1">Content</h1>
-      <p className="text-sm text-[#16241a]/50 mb-10 max-w-2xl">
-        Editable sections of the site. Anything you save here replaces the
-        built-in default shown on the live page; anything you leave alone
-        keeps showing its default.
+      <p className="text-sm text-[#16241a]/50 mb-8 max-w-2xl">
+        This is how each section looks on the live site. Click any text to edit or
+        erase it, or use the image icon on a photo to swap it in. Homepage
+        sections share one Save button at the bottom; the other pages below
+        save independently.
       </p>
 
-      {Object.entries(groups).map(([group, items]) => (
-        <div key={group} className="mb-10">
+      <div className="flex flex-col gap-8">
+        <section>
           <h2 className="text-xs font-semibold uppercase tracking-wide text-[#16241a]/40 mb-4">
-            {group}
+            Homepage
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {items.map((item) => (
-              <Link
-                key={item.key}
-                href={`/admin/content/${item.key}`}
-                className="bg-white/60 backdrop-blur-xl border border-white/60 rounded-2xl p-5 flex items-center justify-between gap-4 hover:bg-white/80 transition-colors group"
-              >
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <p className="font-medium truncate">{item.label}</p>
-                    {overriddenKeys.has(item.key) && (
-                      <span className="text-[9px] font-semibold uppercase tracking-wide text-[#4f7957] bg-[#d4e8d0] px-2 py-0.5 rounded-full flex-shrink-0">
-                        Customized
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-xs text-[#16241a]/50 leading-relaxed">
-                    {item.description}
-                  </p>
-                </div>
-                <ChevronRight
-                  size={16}
-                  className="text-[#16241a]/30 group-hover:text-[#16241a]/60 transition-colors flex-shrink-0"
-                />
-              </Link>
-            ))}
-          </div>
-        </div>
-      ))}
+          <HomepageGroup />
+        </section>
+
+        <section>
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-[#16241a]/40 mb-4">
+            Catalog Page
+          </h2>
+          <CatalogHeroSection overriddenKeys={overriddenKeys} />
+        </section>
+
+        <section>
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-[#16241a]/40 mb-4">
+            Contact Page
+          </h2>
+          <ContactInfoSection overriddenKeys={overriddenKeys} />
+        </section>
+
+        <section>
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-[#16241a]/40 mb-4">
+            Business
+          </h2>
+          <BranchesSection overriddenKeys={overriddenKeys} />
+        </section>
+      </div>
     </div>
   );
 }

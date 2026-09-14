@@ -53,7 +53,8 @@ export default function AdminOrdersPage() {
             </p>
           </div>
         ) : (
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full min-w-[640px] text-sm">
             <thead>
               <tr className="text-left text-[#16241a]/45 border-b border-[#16241a]/10">
                 <th className="p-4 font-medium">Customer</th>
@@ -113,6 +114,7 @@ export default function AdminOrdersPage() {
               })}
             </tbody>
           </table>
+          </div>
         )}
       </div>
 

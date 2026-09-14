@@ -205,7 +205,8 @@ export default function AdminEmailCampaignsPage() {
         ) : !campaigns || campaigns.length === 0 ? (
           <p className="p-6 text-sm text-[#16241a]/50">No campaigns sent yet.</p>
         ) : (
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full min-w-[640px] text-sm">
             <thead>
               <tr className="text-left text-[#16241a]/45 border-b border-[#16241a]/10">
                 <th className="p-4 font-medium">Subject</th>
@@ -227,6 +228,7 @@ export default function AdminEmailCampaignsPage() {
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </div>
     </div>

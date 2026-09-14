@@ -174,7 +174,8 @@ export default function AdminProductsPage() {
             only the built-in defaults.
           </p>
         ) : (
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full min-w-[640px] text-sm">
             <thead>
               <tr className="text-left text-[#16241a]/45 border-b border-[#16241a]/10">
                 <th className="p-4 font-medium">Product</th>
@@ -237,6 +238,7 @@ export default function AdminProductsPage() {
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </div>
 
