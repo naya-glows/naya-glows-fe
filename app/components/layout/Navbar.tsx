@@ -9,7 +9,11 @@ import { CART_LANDED_EVENT } from "../../store/cartFlyBus";
 import { useCart } from "../../store/cartSlice";
 import { useUserAuth } from "../../store/useUserAuth";
 import { useCurrencyDisplay } from "../../store/useCurrencyDisplay";
-import { FREE_SHIPPING_THRESHOLD_NGN, getProducts, type Product } from "@/lib/products";
+import {
+  FREE_SHIPPING_THRESHOLD_NGN,
+  getProducts,
+  type Product,
+} from "@/lib/products";
 import {
   Search,
   User,
@@ -31,19 +35,22 @@ const products = [
       {
         name: "Radiance Boost Serum",
         description: "Brighten & hydrate with Niacinamide",
-        image: "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381851/naya-glows/legacy/eca30ff9-62ea-4126-8301-03d590c8250d.png",
+        image:
+          "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381851/naya-glows/legacy/eca30ff9-62ea-4126-8301-03d590c8250d.png",
         href: "/products/radiance-boost-serum",
       },
       {
         name: "Acne Correcting Serum",
         description: "Fade marks with Alpha Arbutin",
-        image: "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381853/naya-glows/legacy/img_6205.jpg",
+        image:
+          "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381853/naya-glows/legacy/img_6205.jpg",
         href: "/products/acne-correcting-serum",
       },
       {
         name: "Age Renewal Serum",
         description: "Renew with Azelaic Acid",
-        image: "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381833/naya-glows/legacy/08d216cc-1441-4068-996e-ed7d64a65701.png",
+        image:
+          "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381833/naya-glows/legacy/08d216cc-1441-4068-996e-ed7d64a65701.png",
         href: "/products/age-renewal-serum",
       },
     ],
@@ -55,19 +62,22 @@ const products = [
       {
         name: "Radiance Renewal Face Cream",
         description: "Deep hydration & renewal",
-        image: "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381847/naya-glows/legacy/b49340ae-6fe1-47f6-be61-8eac75c0ccbf.png",
+        image:
+          "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381847/naya-glows/legacy/b49340ae-6fe1-47f6-be61-8eac75c0ccbf.png",
         href: "/products/radiance-renewal-face-cream",
       },
       {
         name: "Pigment Corrector Cream",
         description: "Target hyperpigmentation",
-        image: "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381838/naya-glows/legacy/42cbfe95-d2a7-4d13-8a5e-72e62dcf1792.png",
+        image:
+          "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381838/naya-glows/legacy/42cbfe95-d2a7-4d13-8a5e-72e62dcf1792.png",
         href: "/products/pigment-corrector-face-cream",
       },
       {
         name: "Radiance Barrier Face Oil",
         description: "Squalane & Argan Oil blend",
-        image: "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381845/naya-glows/legacy/9cb3aae2-d6b9-4d9d-8a24-e679c00c2705.png",
+        image:
+          "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381845/naya-glows/legacy/9cb3aae2-d6b9-4d9d-8a24-e679c00c2705.png",
         href: "/products/radiance-barrier-face-oil",
       },
     ],
@@ -79,19 +89,22 @@ const products = [
       {
         name: "Clarifying Foam Cleanser",
         description: "Salicylic Acid pore cleanser",
-        image: "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381840/naya-glows/legacy/432e42ab-30fd-4531-815a-e4ece090058b.png",
+        image:
+          "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381840/naya-glows/legacy/432e42ab-30fd-4531-815a-e4ece090058b.png",
         href: "/products/clarifying-foam-cleanser",
       },
       {
         name: "Clarifying Black Soap",
         description: "African Black Soap deep cleanse",
-        image: "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381842/naya-glows/legacy/5d4e84fb-2a40-4b0c-ae19-62d695738a31.png",
+        image:
+          "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381842/naya-glows/legacy/5d4e84fb-2a40-4b0c-ae19-62d695738a31.png",
         href: "/products/clarifying-black-soap",
       },
       {
         name: "Radiance Balance Toner",
         description: "Balance & refine pores",
-        image: "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381832/naya-glows/legacy/056bf54d-5022-45a9-861d-fa2a3620f4a3.png",
+        image:
+          "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381832/naya-glows/legacy/056bf54d-5022-45a9-861d-fa2a3620f4a3.png",
         href: "/products/radiance-balance-toner",
       },
     ],
@@ -103,25 +116,29 @@ const products = [
       {
         name: "Exfoliating Body Scrub",
         description: "Kojic Acid & Lemon brightening",
-        image: "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381835/naya-glows/legacy/19ea7a51-adb2-4a49-bcb7-0bbc0116f4f2.png",
+        image:
+          "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381835/naya-glows/legacy/19ea7a51-adb2-4a49-bcb7-0bbc0116f4f2.png",
         href: "/products/exfoliating-body-scrub",
       },
       {
         name: "Purifying Body Wash",
         description: "Kaolin Clay daily cleanser",
-        image: "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381837/naya-glows/legacy/2999b980-d234-482d-9e97-982f1bf1579a.png",
+        image:
+          "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381837/naya-glows/legacy/2999b980-d234-482d-9e97-982f1bf1579a.png",
         href: "/products/purifying-body-wash",
       },
       {
         name: "Radiance Repair Body Lotion",
         description: "Tranexamic Acid & Vitamin C",
-        image: "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381841/naya-glows/legacy/5bbe98ac-b9a9-40aa-95a1-ad2f9d7a2ce6.png",
+        image:
+          "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381841/naya-glows/legacy/5bbe98ac-b9a9-40aa-95a1-ad2f9d7a2ce6.png",
         href: "/products/radiance-repair-body-lotion",
       },
       {
         name: "Luminous Glow Body Oil",
         description: "Argan & Sweet Almond Oil",
-        image: "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381830/naya-glows/legacy/0323d23a-ed8d-4ab5-8f52-b8a8eb31e04f.png",
+        image:
+          "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381830/naya-glows/legacy/0323d23a-ed8d-4ab5-8f52-b8a8eb31e04f.png",
         href: "/products/luminous-glow-body-oil",
       },
     ],
@@ -256,8 +273,9 @@ export default function Navbar() {
     <>
       {/* Announcement bar */}
       <div className="w-full bg-[#1a1a1a] text-white text-center text-xs max-[800px]:text-[9px] tracking-[0.18em] uppercase py-2 font-light">
-        Free shipping on orders over {formatPrice(FREE_SHIPPING_THRESHOLD_NGN)} &nbsp;·&nbsp; Use code{" "}
-        <span className="font-medium">GLOW15</span> for 15% off your first order
+        Free shipping on orders over {formatPrice(FREE_SHIPPING_THRESHOLD_NGN)}{" "}
+        &nbsp;·&nbsp; Use code <span className="font-medium">GLOW15</span> for
+        15% off your first order
       </div>
 
       {/* ── DESKTOP + MOBILE TOP NAVBAR ────────────────────────────────────── */}
@@ -274,9 +292,9 @@ export default function Navbar() {
                 <Image
                   src="https://res.cloudinary.com/bhozkz7o/image/upload/v1784381892/naya-glows/legacy/naya-logo.png"
                   alt="Naya Glows"
-                  width={34}
-                  height={34}
-                  className="object-contain"
+                  width={50}
+                  height={50}
+                  className="object-cover min-w-[50px] min-h-[50px]"
                   priority
                 />
               </Link>
@@ -309,10 +327,11 @@ export default function Navbar() {
                     key={link.label}
                     href={link.href}
                     onClick={closeAllMenus}
-                    className={`text-sm tracking-wide transition-colors duration-150 px-3 py-1 rounded-full hover:bg-white/15 ${pathname === link.href
-                      ? "text-black font-semibold"
-                      : "text-black/80 hover:text-black"
-                      }`}
+                    className={`text-sm tracking-wide transition-colors duration-150 px-3 py-1 rounded-full hover:bg-white/15 ${
+                      pathname === link.href
+                        ? "text-black font-semibold"
+                        : "text-black/80 hover:text-black"
+                    }`}
                   >
                     {link.label}
                   </Link>
@@ -503,7 +522,9 @@ export default function Navbar() {
                               <p className="text-sm font-medium text-black group-hover:text-[#c9a87c] transition-colors truncate">
                                 {product.name}
                               </p>
-                              <p className="text-xs text-black/40 truncate">{product.category}</p>
+                              <p className="text-xs text-black/40 truncate">
+                                {product.category}
+                              </p>
                             </div>
                             <span className="text-sm font-semibold text-black flex-shrink-0">
                               {formatPrice(product.price)}
@@ -562,9 +583,9 @@ export default function Navbar() {
                     <Image
                       src="https://res.cloudinary.com/bhozkz7o/image/upload/v1784381892/naya-glows/legacy/naya-logo.png"
                       alt="Naya Glows"
-                      width={30}
-                      height={30}
-                      className="object-contain"
+                      width={40}
+                      height={40}
+                      className="object-cover min-w-[40px] min-h-[40px]"
                     />
                   </div>
                   <span className="text-white font-semibold tracking-wide text-sm">
@@ -602,15 +623,17 @@ export default function Navbar() {
                         <Link
                           href={link.href}
                           onClick={() => setMobileMenuOpen(false)}
-                          className={`flex items-center justify-between py-4 border-b border-white/[0.07] group ${isActive ? "text-[#c9a87c]" : "text-white/75"
-                            }`}
+                          className={`flex items-center justify-between py-4 border-b border-white/[0.07] group ${
+                            isActive ? "text-[#c9a87c]" : "text-white/75"
+                          }`}
                         >
                           <div className="flex items-center gap-4">
                             <div
-                              className={`w-9 h-9 rounded-xl flex items-center justify-center transition-colors flex-shrink-0 ${isActive
-                                ? "bg-[#c9a87c]/20"
-                                : "bg-white/[0.07] group-active:bg-white/15"
-                                }`}
+                              className={`w-9 h-9 rounded-xl flex items-center justify-center transition-colors flex-shrink-0 ${
+                                isActive
+                                  ? "bg-[#c9a87c]/20"
+                                  : "bg-white/[0.07] group-active:bg-white/15"
+                              }`}
                             >
                               <Icon
                                 size={15}
@@ -624,10 +647,11 @@ export default function Navbar() {
                             </span>
                           </div>
                           <span
-                            className={`text-lg transition-colors ${isActive
-                              ? "text-[#c9a87c]"
-                              : "text-white/15 group-active:text-white/40"
-                              }`}
+                            className={`text-lg transition-colors ${
+                              isActive
+                                ? "text-[#c9a87c]"
+                                : "text-white/15 group-active:text-white/40"
+                            }`}
                           >
                             →
                           </span>
