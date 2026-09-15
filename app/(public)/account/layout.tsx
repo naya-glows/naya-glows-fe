@@ -49,7 +49,7 @@ export default function AccountLayout({ children }: { children: ReactNode }) {
         <div className="max-w-[900px] mx-auto flex flex-col gap-6 pb-20 lg:pb-0">
           {/* Persistent identity strip — stays the same across every
               account view; editing/sign-out live under the Account tab. */}
-          <GlassCard className="px-5 py-5 sm:p-6 flex flex-col sm:flex-row sm:items-center gap-5">
+          <GlassCard className="px-5 py-5 sm:p-6 flex items-center gap-5">
             <div className="flex items-center gap-4 min-w-0 flex-1">
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#8ab88e] to-[#16241a] flex items-center justify-center flex-shrink-0 text-white text-lg font-semibold shadow-[inset_0_1px_0_rgba(255,255,255,0.4)]">
                 {user.firstName.charAt(0).toUpperCase()}
@@ -67,8 +67,19 @@ export default function AccountLayout({ children }: { children: ReactNode }) {
                 )}
               </div>
             </div>
-            <AccountTabBar />
+            {/* Desktop pill nav only — kept inline here since the pill row
+                itself has no backdrop-filter/transform of its own. */}
+            <div className="hidden lg:block">
+              <AccountTabBar variant="desktop" />
+            </div>
           </GlassCard>
+
+          {/* Mobile fixed tab bar rendered OUTSIDE the GlassCard on purpose:
+              GlassCard uses backdrop-blur-xl, and backdrop-filter (like
+              transform/filter) creates a new containing block for
+              position:fixed descendants — nested inside it, the bar pins
+              itself to the card instead of the viewport. */}
+          <AccountTabBar variant="mobile" />
 
           {children}
         </div>
