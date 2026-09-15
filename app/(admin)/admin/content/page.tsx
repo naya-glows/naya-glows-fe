@@ -100,31 +100,42 @@ export default function AdminContentPage() {
 
       <div className="flex flex-col gap-8">
         <section>
-          <h2 className="text-xs font-semibold uppercase tracking-wide text-[#16241a]/40 mb-4">
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-[#16241a]/40 mb-4 px-4 sm:px-0">
             Homepage
           </h2>
-          <HomepageGroup />
+          {/* Cancels the admin shell's mobile gutter (app/(admin)/admin/layout.tsx's
+              p-4) so section cards bleed edge-to-edge on phones, matching their
+              squared-off corners there; back to normal at sm+. */}
+          <div className="-mx-4 sm:mx-0">
+            <HomepageGroup />
+          </div>
         </section>
 
         <section>
-          <h2 className="text-xs font-semibold uppercase tracking-wide text-[#16241a]/40 mb-4">
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-[#16241a]/40 mb-4 px-4 sm:px-0">
             Catalog Page
           </h2>
-          <CatalogHeroSection overriddenKeys={overriddenKeys} />
+          <div className="-mx-4 sm:mx-0">
+            <CatalogHeroSection overriddenKeys={overriddenKeys} />
+          </div>
         </section>
 
         <section>
-          <h2 className="text-xs font-semibold uppercase tracking-wide text-[#16241a]/40 mb-4">
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-[#16241a]/40 mb-4 px-4 sm:px-0">
             Contact Page
           </h2>
-          <ContactInfoSection overriddenKeys={overriddenKeys} />
+          <div className="-mx-4 sm:mx-0">
+            <ContactInfoSection overriddenKeys={overriddenKeys} />
+          </div>
         </section>
 
         <section>
-          <h2 className="text-xs font-semibold uppercase tracking-wide text-[#16241a]/40 mb-4">
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-[#16241a]/40 mb-4 px-4 sm:px-0">
             Business
           </h2>
-          <BranchesSection overriddenKeys={overriddenKeys} />
+          <div className="-mx-4 sm:mx-0">
+            <BranchesSection overriddenKeys={overriddenKeys} />
+          </div>
         </section>
       </div>
     </div>

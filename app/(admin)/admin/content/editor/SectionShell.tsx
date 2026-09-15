@@ -23,7 +23,7 @@ export function SectionShell({
   saving?: boolean;
 }) {
   return (
-    <div className="flex flex-col gap-3 rounded-[16px] border border-white/60 bg-white/60 backdrop-blur-xl p-4 sm:p-5">
+    <div className="flex flex-col gap-3 rounded-none sm:rounded-2xl border border-white/60 bg-white/60 backdrop-blur-xl p-4 sm:p-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <p className="text-[11px] font-semibold uppercase tracking-wide text-[#16241a]/50">
