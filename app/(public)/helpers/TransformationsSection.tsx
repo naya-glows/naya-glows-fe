@@ -38,6 +38,35 @@ export default function TransformationsSection() {
   const isDragging = useRef(false);
   const sliderContainerRef = useRef<HTMLDivElement>(null);
 
+  // While the divider is actively moving, only the label in the direction of
+  // travel shows; both reappear once it stops or pauses (no movement for
+  // MOTION_PAUSE_MS), whether that's from releasing or just holding still
+  // mid-drag.
+  const MOTION_PAUSE_MS = 180;
+  const [dragDirection, setDragDirection] = useState<"left" | "right" | null>(null);
+  const [isMoving, setIsMoving] = useState(false);
+  const motionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const moveSliderTo = useCallback((next: number) => {
+    setSliderX((prev) => {
+      if (next > prev) setDragDirection("right");
+      else if (next < prev) setDragDirection("left");
+      return next;
+    });
+    setIsMoving(true);
+    if (motionTimeoutRef.current) clearTimeout(motionTimeoutRef.current);
+    motionTimeoutRef.current = setTimeout(() => setIsMoving(false), MOTION_PAUSE_MS);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (motionTimeoutRef.current) clearTimeout(motionTimeoutRef.current);
+    };
+  }, []);
+
+  const showBeforeLabel = !isMoving || dragDirection === "right";
+  const showAfterLabel = !isMoving || dragDirection === "left";
+
   useLayoutEffect(() => {
     // Set initial slider position to 50%
     setSliderX(50);
@@ -84,14 +113,14 @@ export default function TransformationsSection() {
 
   const onMouseDown = (e: React.MouseEvent) => {
     isDragging.current = true;
-    setSliderX(getPercent(e.clientX));
+    moveSliderTo(getPercent(e.clientX));
   };
   const onMouseMove = useCallback(
     (e: MouseEvent) => {
       if (!isDragging.current) return;
-      setSliderX(getPercent(e.clientX));
+      moveSliderTo(getPercent(e.clientX));
     },
-    [getPercent],
+    [getPercent, moveSliderTo],
   );
   const onMouseUp = useCallback(() => {
     isDragging.current = false;
@@ -99,14 +128,14 @@ export default function TransformationsSection() {
 
   const onTouchStart = (e: React.TouchEvent) => {
     isDragging.current = true;
-    setSliderX(getPercent(e.touches[0].clientX));
+    moveSliderTo(getPercent(e.touches[0].clientX));
   };
   const onTouchMove = useCallback(
     (e: TouchEvent) => {
       if (!isDragging.current) return;
-      setSliderX(getPercent(e.touches[0].clientX));
+      moveSliderTo(getPercent(e.touches[0].clientX));
     },
-    [getPercent],
+    [getPercent, moveSliderTo],
   );
 
   useEffect(() => {
@@ -258,9 +287,14 @@ export default function TransformationsSection() {
                     className="object-contain"
                     draggable={false}
                   />
-                  {/* Before label (inverted) */}
-                  <span className="absolute bottom-5 right-4 text-xs font-semibold text-white bg-black/30 backdrop-blur-sm px-3 py-1 rounded-full select-none">
-                    Before
+                  {/* After label — right side, visible unless the divider is
+                      actively moving rightward */}
+                  <span
+                    className={`absolute bottom-5 right-4 text-xs font-semibold text-white bg-black/30 backdrop-blur-sm px-3 py-1 rounded-full select-none transition-opacity duration-150 ${
+                      showAfterLabel ? "opacity-100" : "opacity-0"
+                    }`}
+                  >
+                    After
                   </span>
                 </div>
 
@@ -279,9 +313,14 @@ export default function TransformationsSection() {
                     }}
                     draggable={false}
                   />
-                  {/* After label (inverted) */}
-                  <span className="absolute bottom-5 left-4 text-xs font-semibold text-white bg-black/30 backdrop-blur-sm px-3 py-1 rounded-full select-none">
-                    After
+                  {/* Before label — left side, visible unless the divider is
+                      actively moving leftward */}
+                  <span
+                    className={`absolute bottom-5 left-4 text-xs font-semibold text-white bg-black/30 backdrop-blur-sm px-3 py-1 rounded-full select-none transition-opacity duration-150 ${
+                      showBeforeLabel ? "opacity-100" : "opacity-0"
+                    }`}
+                  >
+                    Before
                   </span>
                 </div>
 

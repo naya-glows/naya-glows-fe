@@ -224,7 +224,13 @@ export function HomepageGroup() {
       </SectionShell>
 
       {dirtyKeys.length > 0 && (
-        <div className="sticky bottom-4 z-30 flex justify-end">
+        // Fixed (not sticky) so it's visible from anywhere on the page while
+        // editing, not just once you've scrolled down to where it sits in
+        // the flow — `sticky` only starts pinning once its own natural
+        // position reaches the viewport edge, which for the last element
+        // after 8 long sections meant it stayed hidden until you were
+        // already near the bottom.
+        <div className="fixed bottom-6 right-6 z-30 lg:right-10">
           <button
             type="button"
             onClick={handleSave}
@@ -233,9 +239,14 @@ export function HomepageGroup() {
           >
             {saving && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
             Save Changes
+            <span className="ml-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-white/20 px-1 text-[10px] font-semibold">
+              {dirtyKeys.length}
+            </span>
           </button>
         </div>
       )}
+      {/* Clearance so the fixed button never overlaps the last section's content. */}
+      {dirtyKeys.length > 0 && <div className="h-16" aria-hidden />}
     </div>
   );
 }
