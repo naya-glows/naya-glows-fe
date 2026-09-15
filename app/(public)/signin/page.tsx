@@ -82,7 +82,7 @@ function AuthSubmitForm({
   setOtpCode: (v: string) => void;
   error: string | null;
   setError: (v: string | null) => void;
-  redirectAfterAuth: (role: string) => void;
+  redirectAfterAuth: () => void;
 }) {
   const router = useRouter();
   const {
@@ -136,8 +136,8 @@ function AuthSubmitForm({
           setCooldown(RESEND_COOLDOWN_SECONDS);
           return;
         }
-        const user = await loginWithOtp(email, otpCode);
-        redirectAfterAuth(user.role);
+        await loginWithOtp(email, otpCode);
+        redirectAfterAuth();
         return;
       }
 
@@ -148,7 +148,7 @@ function AuthSubmitForm({
         return;
       }
 
-      const user = await register({
+      await register({
         email,
         firstName,
         lastName,
@@ -159,7 +159,7 @@ function AuthSubmitForm({
       if (signupAsInfluencer) {
         router.push("/influencer/apply");
       } else {
-        redirectAfterAuth(user.role);
+        redirectAfterAuth();
       }
     } catch (err) {
       setError(getApiErrorMessage(err));
@@ -316,7 +316,10 @@ function SignInForm() {
     if (redirect && redirect.startsWith("/")) {
       router.replace(redirect);
     } else {
-      router.replace(user.role === "INFLUENCER" ? "/influencer" : "/account");
+      // Always land on the regular account dashboard, even for influencers —
+      // they click through to /influencer themselves from the quick links
+      // there, rather than being bounced past their regular dashboard.
+      router.replace("/account");
     }
   }, [authLoading, user, router, searchParams]);
 
@@ -339,7 +342,7 @@ function SignInForm() {
     setError(null);
   };
 
-  const redirectAfterAuth = (role: string) => {
+  const redirectAfterAuth = () => {
     // A same-origin path the caller was bounced from (e.g. checkout,
     // influencer/apply) takes priority over the default role-based landing
     // page — only ever a relative path, never an external URL.
@@ -347,7 +350,9 @@ function SignInForm() {
     if (redirect && redirect.startsWith("/")) {
       router.push(redirect);
     } else {
-      router.push(role === "INFLUENCER" ? "/influencer" : "/account");
+      // Same reasoning as the already-signed-in redirect above — regular
+      // dashboard first, influencer dashboard is a click away from there.
+      router.push("/account");
     }
   };
 

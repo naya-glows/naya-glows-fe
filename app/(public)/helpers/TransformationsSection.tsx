@@ -234,9 +234,9 @@ export default function TransformationsSection() {
                 </p>
                 {/* Arc progress */}
                 <div className="flex items-center gap-2">
-                  <ArcProgress percent={sliderX} />
+                  <ArcProgress percent={100 - sliderX} />
                   <span className="text-lg font-semibold text-[#1a1a2e]">
-                    {Number(sliderX).toFixed(0)}%
+                    {Number(100 - sliderX).toFixed(0)}%
                   </span>
                 </div>
               </div>
@@ -258,9 +258,9 @@ export default function TransformationsSection() {
                     className="object-contain"
                     draggable={false}
                   />
-                  {/* After label */}
+                  {/* Before label (inverted) */}
                   <span className="absolute bottom-5 right-4 text-xs font-semibold text-white bg-black/30 backdrop-blur-sm px-3 py-1 rounded-full select-none">
-                    After
+                    Before
                   </span>
                 </div>
 
@@ -279,9 +279,9 @@ export default function TransformationsSection() {
                     }}
                     draggable={false}
                   />
-                  {/* Before label */}
+                  {/* After label (inverted) */}
                   <span className="absolute bottom-5 left-4 text-xs font-semibold text-white bg-black/30 backdrop-blur-sm px-3 py-1 rounded-full select-none">
-                    Before
+                    After
                   </span>
                 </div>
 

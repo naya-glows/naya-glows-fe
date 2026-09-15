@@ -294,7 +294,7 @@ export default function Navbar() {
                   alt="Naya Glows"
                   width={50}
                   height={50}
-                  className="object-cover min-w-[50px] min-h-[50px]"
+                  style={{ minHeight: "50px", minWidth: "50px", objectFit: "cover" }}
                   priority
                 />
               </Link>

@@ -122,7 +122,7 @@ function ProductCard({
           src={product.image}
           alt={product.fullName}
           fill
-          className="object-cover scale-[1.18] group-hover:scale-100 transition-transform duration-700 ease-out"
+          className="object-contain sm:object-cover scale-100 sm:scale-[1.18] sm:group-hover:scale-100 transition-transform duration-700 ease-out"
         />
       </div>
 
