@@ -8,7 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
 import { Mail, Phone, MapPin, ArrowUpRight, Check } from "lucide-react";
-import { FaInstagram, FaYoutube, FaFacebookF, FaTiktok, FaPinterestP } from "react-icons/fa";
+import { FaInstagram, FaYoutube, FaFacebookF, FaTiktok, FaPinterestP, FaWhatsapp } from "react-icons/fa";
 import { useSectionContent, useSectionLoading } from "../../store/useSectionContent";
 import { defaultContactInfoContent } from "@/lib/content/contactInfo";
 import ContactInfoSkeleton from "../helpers/skeletons/ContactInfoSkeleton";
@@ -485,10 +485,11 @@ export default function ContactPage() {
                 </motion.p>
                 <div className="flex flex-wrap justify-center gap-3">
                     {[
-                        { label: "Instagram", icon: <FaInstagram className="w-3.5 h-3.5" />, href: "https://instagram.com" },
+                        { label: "Instagram", icon: <FaInstagram className="w-3.5 h-3.5" />, href: "https://www.instagram.com/naya_glows?stkn=MWlyM2hkY2l6enE3eA==" },
                         { label: "YouTube", icon: <FaYoutube className="w-3.5 h-3.5" />, href: "https://youtube.com" },
-                        { label: "Facebook", icon: <FaFacebookF className="w-3.5 h-3.5" />, href: "https://facebook.com" },
-                        { label: "TikTok", icon: <FaTiktok className="w-3.5 h-3.5" />, href: "https://tiktok.com" },
+                        { label: "Facebook", icon: <FaFacebookF className="w-3.5 h-3.5" />, href: "https://www.facebook.com/share/1HyVJ16yh8/?mibextid=wwXIfr" },
+                        { label: "TikTok", icon: <FaTiktok className="w-3.5 h-3.5" />, href: "https://www.tiktok.com/@nayaglows?_r=1&_t=ZS-99mgJVVKDuX" },
+                        { label: "WhatsApp", icon: <FaWhatsapp className="w-3.5 h-3.5" />, href: "https://wa.me/message/EAUMKMUXZKODN1" },
                         { label: "Pinterest", icon: <FaPinterestP className="w-3.5 h-3.5" />, href: "https://pinterest.com" },
                     ].map(({ label, icon, href }, i) => (
                         <motion.a

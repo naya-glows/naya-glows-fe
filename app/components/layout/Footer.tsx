@@ -16,7 +16,7 @@ import {
     Shield,
     Check,
 } from "lucide-react";
-import { FaInstagram, FaTwitter, FaFacebookF, FaYoutube } from "react-icons/fa";
+import { FaInstagram, FaTwitter, FaFacebookF, FaYoutube, FaTiktok, FaWhatsapp } from "react-icons/fa";
 import { useSubscribeNewsletterMutation } from "../../store/userApi";
 import { getApiErrorMessage } from "../../store/apiError";
 import { isApiConfigured } from "@/lib/api";
@@ -52,9 +52,11 @@ const footerLinks = {
 };
 
 const socialLinks = [
-    { name: "Instagram", icon: FaInstagram, href: "https://instagram.com" },
+    { name: "Instagram", icon: FaInstagram, href: "https://www.instagram.com/naya_glows?stkn=MWlyM2hkY2l6enE3eA==" },
+    { name: "TikTok", icon: FaTiktok, href: "https://www.tiktok.com/@nayaglows?_r=1&_t=ZS-99mgJVVKDuX" },
+    { name: "Facebook", icon: FaFacebookF, href: "https://www.facebook.com/share/1HyVJ16yh8/?mibextid=wwXIfr" },
+    { name: "WhatsApp", icon: FaWhatsapp, href: "https://wa.me/message/EAUMKMUXZKODN1" },
     { name: "Twitter", icon: FaTwitter, href: "https://twitter.com" },
-    { name: "Facebook", icon: FaFacebookF, href: "https://facebook.com" },
     { name: "Youtube", icon: FaYoutube, href: "https://youtube.com" },
 ];
 

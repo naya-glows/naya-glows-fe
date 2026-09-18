@@ -90,7 +90,7 @@ const products = [
         name: "Clarifying Foam Cleanser",
         description: "Salicylic Acid pore cleanser",
         image:
-          "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381840/naya-glows/legacy/432e42ab-30fd-4531-815a-e4ece090058b.png",
+          "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381832/naya-glows/legacy/056bf54d-5022-45a9-861d-fa2a3620f4a3.png",
         href: "/products/clarifying-foam-cleanser",
       },
       {
@@ -104,7 +104,7 @@ const products = [
         name: "Radiance Balance Toner",
         description: "Balance & refine pores",
         image:
-          "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381832/naya-glows/legacy/056bf54d-5022-45a9-861d-fa2a3620f4a3.png",
+          "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381840/naya-glows/legacy/432e42ab-30fd-4531-815a-e4ece090058b.png",
         href: "/products/radiance-balance-toner",
       },
     ],

@@ -78,7 +78,7 @@ export const defaultTestimonialsContent: TestimonialsContent = {
         "Finally found a cleanser that doesn't strip my skin. My complexion looks balanced and healthy every day.",
       tags: ["Balance", "3 weeks"],
       product: "Clarifying Foam Cleanser",
-      productImage: "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381840/naya-glows/legacy/432e42ab-30fd-4531-815a-e4ece090058b.png",
+      productImage: "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381832/naya-glows/legacy/056bf54d-5022-45a9-861d-fa2a3620f4a3.png",
     },
     {
       name: "Aisha H.",
