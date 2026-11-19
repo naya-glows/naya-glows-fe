@@ -431,12 +431,13 @@ export default function Navbar() {
                               className="flex items-center gap-3 group"
                               onClick={() => setDropdownOpen(false)}
                             >
-                              <div className="w-12 h-12 rounded-xl bg-[#f5f0ea] flex-shrink-0 overflow-hidden">
-                                <img
+                              <div className="relative w-12 h-12 rounded-xl bg-[#f5f0ea] flex-shrink-0 overflow-hidden">
+                                <Image
                                   src={item.image}
                                   alt={item.name}
-                                  fetchPriority="high"
-                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                  fill
+                                  sizes="48px"
+                                  className="object-cover group-hover:scale-105 transition-transform duration-300"
                                 />
                               </div>
                               <div>
@@ -511,11 +512,13 @@ export default function Navbar() {
                             onClick={() => setSearchOpen(false)}
                             className="flex items-center gap-3 py-2.5 group"
                           >
-                            <div className="w-11 h-11 rounded-lg bg-[#f5f0ea] flex-shrink-0 overflow-hidden">
-                              <img
+                            <div className="relative w-11 h-11 rounded-lg bg-[#f5f0ea] flex-shrink-0 overflow-hidden">
+                              <Image
                                 src={product.image}
                                 alt={product.name}
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                fill
+                                sizes="44px"
+                                className="object-cover group-hover:scale-105 transition-transform duration-300"
                               />
                             </div>
                             <div className="min-w-0 flex-1">
