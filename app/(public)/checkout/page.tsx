@@ -122,6 +122,7 @@ export default function CheckoutPage() {
   const [createOrder, { isLoading: creatingOrder }] = useCreateOrderMutation();
   const [initializePayment, { isLoading: initializingPayment }] = useInitializePaymentMutation();
   const submitting = creatingOrder || initializingPayment || openingPopup;
+  const [discountCode, setDiscountCode] = useState("");
 
   const updateField =
     (field: keyof ShippingForm) =>
@@ -162,6 +163,7 @@ export default function CheckoutPage() {
           variantName: i.variantName,
         })),
         shippingDetails: form,
+        discountCode: discountCode.trim() || undefined,
       }).unwrap();
 
       const { reference, email, amount, currency } = await initializePayment({
@@ -382,6 +384,21 @@ export default function CheckoutPage() {
                 </div>
 
                 <div className="w-full h-px bg-[#16241a]/10 mb-4" />
+
+                <div className="flex items-center gap-2 mb-4">
+                  <input
+                    value={discountCode}
+                    onChange={(e) => setDiscountCode(e.target.value)}
+                    placeholder="Discount code"
+                    className="flex-1 bg-white/70 border border-white/60 rounded-xl px-3.5 py-2.5 text-xs outline-none placeholder:text-[#16241a]/35 focus:border-[#8ab88e] transition-colors"
+                  />
+                </div>
+                {discountCode.trim() && (
+                  <p className="text-[11px] text-[#16241a]/45 -mt-3 mb-4">
+                    Applied when you pay — if it's not valid for this order, you'll see why before anything is charged.
+                  </p>
+                )}
+
                 <div className="flex items-center justify-between text-sm mb-2">
                   <span className="text-[#16241a]/60">Subtotal</span>
                   <span className="font-semibold">{formatPrice(subtotal)}</span>

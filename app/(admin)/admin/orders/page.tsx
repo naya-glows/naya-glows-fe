@@ -6,6 +6,7 @@ import { ShoppingCart } from "lucide-react";
 import {
   useListOrdersQuery,
   useSetOrderTrackingStageMutation,
+  useRefundOrderMutation,
   TRACKING_STAGES,
   type AdminOrderRow,
 } from "../../../store/adminApi";
@@ -17,18 +18,39 @@ const statusStyles: Record<string, string> = {
   PENDING: "bg-[#f4e8c9] text-[#8a6f1f]",
   FAILED: "bg-[#f5d9d5] text-[#c0574c]",
   CANCELLED: "bg-[#e5e5e5] text-[#666]",
+  REFUNDED: "bg-[#f0e5f9] text-[#8a5fb8]",
 };
 
 export default function AdminOrdersPage() {
   const { data: orders, isLoading } = useListOrdersQuery();
   const [selected, setSelected] = useState<AdminOrderRow | null>(null);
   const [setTrackingStage, { isLoading: settingStage }] = useSetOrderTrackingStageMutation();
+  const [refundOrder, { isLoading: refunding }] = useRefundOrderMutation();
+  const [refundAmountInput, setRefundAmountInput] = useState("");
+  const [confirmingRefund, setConfirmingRefund] = useState(false);
 
   const handleStageChange = async (id: string, stage: string) => {
     try {
       await setTrackingStage({ id, stage: stage || null }).unwrap();
     } catch (err) {
       toast.error(getApiErrorMessage(err, "Couldn't update the tracking stage."));
+    }
+  };
+
+  const handleRefund = async (order: AdminOrderRow) => {
+    const amount = refundAmountInput.trim() ? Number(refundAmountInput) : undefined;
+    if (amount !== undefined && (!Number.isFinite(amount) || amount <= 0)) {
+      toast.error("Enter a valid refund amount, or leave it blank for a full refund.");
+      return;
+    }
+    try {
+      const result = await refundOrder({ id: order.id, amount }).unwrap();
+      toast.success(`Refunded ${order.currency} ${result.refundAmount.toLocaleString()}`);
+      setConfirmingRefund(false);
+      setRefundAmountInput("");
+      setSelected(null);
+    } catch (err) {
+      toast.error(getApiErrorMessage(err, "Couldn't process the refund."));
     }
   };
 
@@ -79,7 +101,11 @@ export default function AdminOrdersPage() {
                 return (
                   <tr
                     key={o.id}
-                    onClick={() => setSelected(o)}
+                    onClick={() => {
+                      setSelected(o);
+                      setConfirmingRefund(false);
+                      setRefundAmountInput("");
+                    }}
                     className="border-b border-[#16241a]/5 last:border-0 cursor-pointer hover:bg-white/50 transition-colors"
                   >
                     <td className="p-4">
@@ -122,7 +148,11 @@ export default function AdminOrdersPage() {
         <AdminDetailModal
           title={`Order ${selected.id.slice(0, 8)}`}
           subtitle={new Date(selected.createdAt).toLocaleString()}
-          onClose={() => setSelected(null)}
+          onClose={() => {
+            setSelected(null);
+            setConfirmingRefund(false);
+            setRefundAmountInput("");
+          }}
         >
           <div className="flex flex-col">
             <DetailRow
@@ -166,6 +196,12 @@ export default function AdminOrdersPage() {
               }
             />
             <DetailRow label="Total" value={`${selected.currency} ${selected.total.toLocaleString()}`} />
+            {selected.discountCode && (
+              <DetailRow
+                label="Discount"
+                value={`${selected.discountCode} (-${selected.currency} ${selected.discountAmount.toLocaleString()})`}
+              />
+            )}
             <DetailRow
               label="Status"
               value={
@@ -179,6 +215,65 @@ export default function AdminOrdersPage() {
               }
             />
           </div>
+
+          {(() => {
+            const payment = selected.payments.find((p) => p.status === "SUCCESS" || p.status === "REFUNDED");
+            const remaining = payment ? Math.round((payment.amount - payment.refundedAmount) * 100) / 100 : 0;
+            if (selected.status !== "PAID" || !payment || remaining <= 0) return null;
+            return (
+              <div className="mt-6 pt-5 border-t border-[#16241a]/8">
+                <label className="block text-xs font-semibold uppercase tracking-wide text-[#16241a]/50 mb-2">
+                  Refund
+                </label>
+                {!confirmingRefund ? (
+                  <button
+                    type="button"
+                    onClick={() => setConfirmingRefund(true)}
+                    className="text-sm font-semibold text-[#c0574c] hover:text-[#a84740] transition-colors"
+                  >
+                    Refund this order
+                  </button>
+                ) : (
+                  <div className="flex flex-col gap-3">
+                    <p className="text-xs text-[#16241a]/50">
+                      Up to {selected.currency} {remaining.toLocaleString()} can still be refunded. Leave
+                      the amount blank for a full refund.
+                    </p>
+                    <input
+                      type="number"
+                      min={0}
+                      max={remaining}
+                      step="0.01"
+                      value={refundAmountInput}
+                      onChange={(e) => setRefundAmountInput(e.target.value)}
+                      placeholder={`Full refund (${remaining.toLocaleString()})`}
+                      className="w-full bg-white/70 border border-white/60 rounded-xl px-3.5 py-2.5 text-sm outline-none focus:border-[#8ab88e] transition-colors"
+                    />
+                    <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        disabled={refunding}
+                        onClick={() => handleRefund(selected)}
+                        className="text-sm font-semibold bg-[#c0574c] text-white px-5 py-2.5 rounded-full hover:bg-[#a84740] transition-colors disabled:opacity-60"
+                      >
+                        {refunding ? "Processing…" : "Confirm Refund"}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setConfirmingRefund(false);
+                          setRefundAmountInput("");
+                        }}
+                        className="text-sm font-medium text-[#16241a]/50 hover:text-[#16241a] transition-colors"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })()}
 
           <div className="mt-6 pt-5 border-t border-[#16241a]/8">
             <label className="block text-xs font-semibold uppercase tracking-wide text-[#16241a]/50 mb-2">

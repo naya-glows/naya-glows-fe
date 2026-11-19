@@ -275,7 +275,7 @@ export default function Navbar() {
       <div className="w-full bg-[#1a1a1a] text-white text-center text-xs max-[800px]:text-[9px] tracking-[0.18em] uppercase py-2 font-light">
         Free shipping on orders over {formatPrice(FREE_SHIPPING_THRESHOLD_NGN)}{" "}
         &nbsp;·&nbsp; Use code <span className="font-medium">GLOW15</span> for
-        15% off your first order
+        15% off your first 10 orders
       </div>
 
       {/* ── DESKTOP + MOBILE TOP NAVBAR ────────────────────────────────────── */}

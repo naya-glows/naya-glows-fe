@@ -20,6 +20,7 @@ import { isApiConfigured } from "@/lib/api";
 import { SHIPPING_STORAGE_KEY } from "../../store/userAuthSlice";
 import PageHeader from "../helpers/PageHeader";
 import GlassCard from "../helpers/glass/GlassCard";
+import MyActivePlans from "./MyActivePlans";
 
 declare global {
   interface Window {
@@ -225,6 +226,8 @@ export default function SubscribeSaveClient({ products }: { products: Product[] 
           subtitle="Commit to a 3, 6, or 12-month supply upfront and unlock a bigger discount than a one-off order — the longer you commit, the more you save."
         />
       </section>
+
+      <MyActivePlans />
 
       <section className="px-5 sm:px-8 lg:px-12 pb-24">
         <form onSubmit={handleSubmit} className="max-w-[1100px] mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">

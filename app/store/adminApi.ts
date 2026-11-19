@@ -62,12 +62,18 @@ export type AdminOrderRow = {
   id: string;
   status: string;
   currency: string;
+  subtotal: number;
+  shipping: number;
   total: number;
+  discountCode: string | null;
+  discountAmount: number;
+  refundedAt: string | null;
   createdAt: string;
   manualStage: string | null;
   user: { firstName: string; lastName: string; email: string } | null;
   shippingDetails: Record<string, string> | null;
   items: { qty: number; isSubscription: boolean; product: { name: string } }[];
+  payments: { status: string; amount: number; refundedAmount: number; providerReference: string | null }[];
 };
 
 // Mirrors backend/src/modules/orders/tracking.ts's STAGE_DEFS — UI-only
@@ -277,6 +283,17 @@ export const adminApi = createApi({
       query: ({ id, stage }) => ({ url: `/admin/orders/${id}/tracking`, method: "PUT", body: { stage } }),
       invalidatesTags: [{ type: "Order", id: "LIST" }],
     }),
+    refundOrder: builder.mutation<
+      { order: { id: string; status: string }; refundAmount: number },
+      { id: string; amount?: number }
+    >({
+      query: ({ id, amount }) => ({
+        url: `/admin/orders/${id}/refund`,
+        method: "POST",
+        body: amount !== undefined ? { amount } : {},
+      }),
+      invalidatesTags: [{ type: "Order", id: "LIST" }],
+    }),
 
     listConsultations: builder.query<ConsultationRow[], void>({
       query: () => "/admin/consultations",
@@ -382,6 +399,7 @@ export const {
   useListUsersQuery,
   useListOrdersQuery,
   useSetOrderTrackingStageMutation,
+  useRefundOrderMutation,
   useListConsultationsQuery,
   useListWholesaleInquiriesQuery,
   useGetSettingsQuery,

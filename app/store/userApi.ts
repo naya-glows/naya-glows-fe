@@ -38,6 +38,19 @@ export type MyOrderRow = {
   items: { qty: number; isSubscription: boolean; product: { name: string; image: string } }[];
 };
 
+export type MyPlanRow = {
+  id: string;
+  term: "THREE_MONTH" | "SIX_MONTH" | "TWELVE_MONTH";
+  fulfillmentMode: "immediate" | "recurring";
+  items: { slug: string; name: string; qtyPerMonth: number }[];
+  discountPercent: number;
+  totalPaid: number;
+  status: "ACTIVE" | "CANCELLED" | "COMPLETED";
+  remainingShipments: number;
+  nextShipmentDate: string | null;
+  createdAt: string;
+};
+
 const rawBaseQuery = fetchBaseQuery({
   baseUrl: process.env.NEXT_PUBLIC_API_URL,
   prepareHeaders: (headers, { getState }) => {
@@ -91,7 +104,7 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
 export const userApi = createApi({
   reducerPath: "userApi",
   baseQuery: baseQueryWithReauth,
-  tagTypes: ["SavedProducts", "MyOrders", "ReferralCodes", "Me"],
+  tagTypes: ["SavedProducts", "MyOrders", "ReferralCodes", "Me", "MyPlans"],
   endpoints: (builder) => ({
     requestSignupOtp: builder.mutation<{ sent: boolean }, { email: string }>({
       query: (body) => ({ url: "/auth/otp/request", method: "POST", body }),
@@ -146,6 +159,7 @@ export const userApi = createApi({
           variantName?: string;
         }[];
         shippingDetails: Record<string, string>;
+        discountCode?: string;
       }
     >({
       query: (body) => ({ url: "/orders", method: "POST", body }),
@@ -272,6 +286,18 @@ export const userApi = createApi({
     >({
       query: (body) => ({ url: "/subscriptions/plans", method: "POST", body }),
     }),
+    listMyPlans: builder.query<MyPlanRow[], void>({
+      query: () => "/subscriptions/plans/mine",
+      transformResponse: (res: { plans: MyPlanRow[] }) => res.plans,
+      providesTags: [{ type: "MyPlans", id: "LIST" }],
+    }),
+    cancelSubscriptionPlan: builder.mutation<
+      { plan: { id: string; status: string }; refundAmount: number },
+      string
+    >({
+      query: (id) => ({ url: `/subscriptions/plans/${id}/cancel`, method: "POST" }),
+      invalidatesTags: [{ type: "MyPlans", id: "LIST" }],
+    }),
     // Public single-key content lookup. The backend returns 404 when no
     // override exists for this key — that's expected, not an error, so
     // callers (useSectionContent) treat a failed/empty result as "use the
@@ -387,4 +413,6 @@ export const {
   useListMyProductSubscriptionsQuery,
   useQuoteSubscriptionPlanMutation,
   useCreateSubscriptionPlanMutation,
+  useListMyPlansQuery,
+  useCancelSubscriptionPlanMutation,
 } = userApi;
