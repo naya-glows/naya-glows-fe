@@ -94,7 +94,7 @@ export default function AdminOrdersPage() {
                     .filter(Boolean)
                     .join(" ") ||
                   "Guest";
-                const customerEmail = o.user?.email || o.shippingDetails?.email || "—";
+                const customerEmail = o.user?.email || o.shippingDetails?.email || "N/A";
                 const itemCount = o.items.reduce((sum, i) => sum + i.qty, 0);
                 const hasSubscription = o.items.some((i) => i.isSubscription);
 
@@ -167,7 +167,7 @@ export default function AdminOrdersPage() {
             />
             <DetailRow
               label="Email"
-              value={selected.user?.email || selected.shippingDetails?.email || "—"}
+              value={selected.user?.email || selected.shippingDetails?.email || "N/A"}
             />
             {selected.shippingDetails && (
               <DetailRow

@@ -43,7 +43,7 @@ export default function AdminWholesalePage() {
                     {i.contactName} · {i.email}
                     {i.phone ? ` · ${i.phone}` : ""}
                   </td>
-                  <td className="p-4 text-[#16241a]/60 max-w-xs truncate">{i.message || "—"}</td>
+                  <td className="p-4 text-[#16241a]/60 max-w-xs truncate">{i.message || "N/A"}</td>
                   <td className="p-4 text-[#16241a]/60">
                     {new Date(i.createdAt).toLocaleDateString()}
                   </td>
@@ -64,9 +64,9 @@ export default function AdminWholesalePage() {
           <div className="flex flex-col">
             <DetailRow label="Contact Name" value={selected.contactName} />
             <DetailRow label="Email" value={selected.email} />
-            <DetailRow label="Phone" value={selected.phone || "—"} />
+            <DetailRow label="Phone" value={selected.phone || "N/A"} />
             <DetailRow label="Status" value={selected.status} />
-            <DetailRow label="Message" value={selected.message || "—"} />
+            <DetailRow label="Message" value={selected.message || "N/A"} />
           </div>
         </AdminDetailModal>
       )}

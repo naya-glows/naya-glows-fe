@@ -170,7 +170,7 @@ export default function SubscribeSaveClient({ products }: { products: Product[] 
     }
     const publicKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY?.trim();
     if (!publicKey || !paystackReady || !window.PaystackPop) {
-      toast.error("Payments are still loading — please wait a moment and try again.");
+      toast.error("Payments are still loading. Please wait a moment and try again.");
       return;
     }
 
@@ -196,7 +196,7 @@ export default function SubscribeSaveClient({ products }: { products: Product[] 
         ref: reference,
         onClose: () => {
           setOpeningPopup(false);
-          toast("Payment cancelled — nothing was charged.");
+          toast("Payment cancelled. Nothing was charged.");
         },
         callback: (response) => {
           setOpeningPopup(false);
@@ -223,7 +223,7 @@ export default function SubscribeSaveClient({ products }: { products: Product[] 
         <PageHeader
           eyebrow="Pay Once, Save More"
           heading="Subscribe & Save Big"
-          subtitle="Commit to a 3, 6, or 12-month supply upfront and unlock a bigger discount than a one-off order — the longer you commit, the more you save."
+          subtitle="Commit to a 3, 6, or 12-month supply upfront and unlock a bigger discount than a one-off order. The longer you commit, the more you save."
         />
       </section>
 
@@ -259,7 +259,7 @@ export default function SubscribeSaveClient({ products }: { products: Product[] 
                       Pay once today for {t.months} months of product, at the biggest discount of
                       any Naya Glows option.{" "}
                       {subscriptionBFulfillmentMode === "recurring"
-                        ? `Ships one month at a time, automatically, for all ${t.months} months — nothing more to do after today.`
+                        ? `Ships one month at a time, automatically, for all ${t.months} months, with nothing more to do after today.`
                         : "Your full order ships all at once, right away."}
                     </p>
                   </button>

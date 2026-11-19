@@ -46,7 +46,7 @@ export default function AdminConsultationsPage() {
                   </td>
                   <td className="p-4 text-[#16241a]/60">{r.skinConcern}</td>
                   <td className="p-4 text-[#16241a]/60">
-                    {r.preferredDate ? new Date(r.preferredDate).toLocaleDateString() : "—"}
+                    {r.preferredDate ? new Date(r.preferredDate).toLocaleDateString() : "N/A"}
                   </td>
                   <td className="p-4 text-[#16241a]/60">
                     {new Date(r.createdAt).toLocaleDateString()}
@@ -67,16 +67,16 @@ export default function AdminConsultationsPage() {
         >
           <div className="flex flex-col">
             <DetailRow label="Email" value={selected.email} />
-            <DetailRow label="Phone" value={selected.phone || "—"} />
+            <DetailRow label="Phone" value={selected.phone || "N/A"} />
             <DetailRow label="Skin Concern" value={selected.skinConcern} />
             <DetailRow
               label="Preferred Date"
               value={
-                selected.preferredDate ? new Date(selected.preferredDate).toLocaleDateString() : "—"
+                selected.preferredDate ? new Date(selected.preferredDate).toLocaleDateString() : "N/A"
               }
             />
             <DetailRow label="Status" value={selected.status} />
-            <DetailRow label="Message" value={selected.message || "—"} />
+            <DetailRow label="Message" value={selected.message || "N/A"} />
           </div>
         </AdminDetailModal>
       )}

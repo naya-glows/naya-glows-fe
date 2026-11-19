@@ -71,11 +71,11 @@ export default function AdminEmailCampaignsPage() {
         toast.success(`Campaign sent to ${sentCount} ${audienceLabel}.`);
       } else if (sentCount === 0) {
         toast.error(
-          `Campaign failed to send to all ${failedCount} ${audienceLabel} — check the email provider configuration.`,
+          `Campaign failed to send to all ${failedCount} ${audienceLabel}. Check the email provider configuration.`,
         );
       } else {
         toast.error(
-          `Sent to ${sentCount} ${audienceLabel}, but failed for ${failedCount} — check server logs.`,
+          `Sent to ${sentCount} ${audienceLabel}, but failed for ${failedCount}. Check server logs.`,
         );
       }
       setSubject("");
@@ -135,7 +135,7 @@ export default function AdminEmailCampaignsPage() {
               rows={6}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder="Write your update — it'll be wrapped in our email template automatically."
+              placeholder="Write your update, and it'll be wrapped in our email template automatically."
               className={`${inputClass} resize-none`}
             />
           </div>

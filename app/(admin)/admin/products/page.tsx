@@ -318,10 +318,10 @@ export default function AdminProductsPage() {
                 </div>
               </div>
               <p className="text-xs text-[#16241a]/40 -mt-1">
-                Prices are in Naira — this is what Paystack actually charges. USD is shown to
+                Prices are in Naira: this is what Paystack actually charges. USD is shown to
                 non-Nigeria visitors only, converted at the rate set in Settings, purely for
                 display. Original Price is the pre-discount &quot;was&quot; price shown struck
-                through on the storefront — set it equal to Price if there&apos;s no discount.
+                through on the storefront, so set it equal to Price if there&apos;s no discount.
               </p>
 
               <label className="flex items-center gap-2 text-sm font-medium cursor-pointer">
@@ -349,7 +349,7 @@ export default function AdminProductsPage() {
                 </div>
                 {(form.variants ?? []).length === 0 ? (
                   <p className="text-xs text-[#16241a]/40">
-                    No sizes — this product sells at the single Price above.
+                    No sizes: this product sells at the single Price above.
                   </p>
                 ) : (
                   <div className="flex flex-col gap-2">

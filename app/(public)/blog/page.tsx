@@ -7,7 +7,7 @@ import PageHeader from "../helpers/PageHeader";
 export const metadata: Metadata = {
   title: "Skincare Journal | Naya Glows",
   description:
-    "Layering actives, reading your skin, and building a routine that actually works — skincare guides from Naya Glows.",
+    "Layering actives, reading your skin, and building a routine that actually works: skincare guides from Naya Glows.",
   alternates: { canonical: "/blog" },
   openGraph: { title: "Skincare Journal | Naya Glows", url: "/blog" },
 };
@@ -16,13 +16,13 @@ const articles = [
   {
     title: "Layering Actives Without Irritating Your Skin",
     excerpt:
-      "Vitamin C, Niacinamide, acids — a simple order to follow so your routine works with your skin, not against it.",
+      "Vitamin C, Niacinamide, acids: a simple order to follow so your routine works with your skin, not against it.",
     tag: "Routine",
   },
   {
     title: "What Your Skin Is Trying to Tell You",
     excerpt:
-      "Breakouts, tightness, dullness — small daily signs and what they usually mean for your routine.",
+      "Breakouts, tightness, dullness: small daily signs and what they usually mean for your routine.",
     tag: "Skin Health",
   },
   {
@@ -46,7 +46,7 @@ export default function BlogPage() {
         <PageHeader
           eyebrow="The Glow Journal"
           heading="Skincare notes, straight from Naya Glows"
-          subtitle="Short, practical reads on routines, ingredients, and skin health — new pieces publishing soon."
+          subtitle="Short, practical reads on routines, ingredients, and skin health. New pieces publishing soon."
         />
       </section>
 

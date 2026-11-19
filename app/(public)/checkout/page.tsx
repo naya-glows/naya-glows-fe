@@ -148,7 +148,7 @@ export default function CheckoutPage() {
 
     const publicKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY?.trim();
     if (!publicKey || !paystackReady || !window.PaystackPop) {
-      toast.error("Payments are still loading — please wait a moment and try again.");
+      toast.error("Payments are still loading. Please wait a moment and try again.");
       return;
     }
 
@@ -179,7 +179,7 @@ export default function CheckoutPage() {
         ref: reference,
         onClose: () => {
           setOpeningPopup(false);
-          toast("Payment cancelled — your order is saved, you can try again anytime.");
+          toast("Payment cancelled. Your order is saved, you can try again anytime.");
         },
         callback: (response) => {
           setOpeningPopup(false);
@@ -335,8 +335,8 @@ export default function CheckoutPage() {
                 Payment
               </h2>
               <p className="text-xs text-[#16241a]/45 leading-relaxed">
-                A secure Paystack payment window opens right here on the page
-                — you never leave the site. Amounts are charged in Nigerian
+                A secure Paystack payment window opens right here on the page,
+                so you never leave the site. Amounts are charged in Nigerian
                 Naira (₦).
               </p>
             </GlassCard>
@@ -362,7 +362,7 @@ export default function CheckoutPage() {
                       <p className="text-xs flex-1 line-clamp-2">
                         {item.name}
                         {item.variantName && (
-                          <span className="text-[#16241a]/45"> — {item.variantName}</span>
+                          <span className="text-[#16241a]/45"> · {item.variantName}</span>
                         )}
                         {discountBySlug.has(item.slug) ? (
                           <span className="ml-1.5 text-[9px] font-semibold uppercase tracking-wide text-[#4f7957]">
@@ -395,7 +395,7 @@ export default function CheckoutPage() {
                 </div>
                 {discountCode.trim() && (
                   <p className="text-[11px] text-[#16241a]/45 -mt-3 mb-4">
-                    Applied when you pay — if it's not valid for this order, you'll see why before anything is charged.
+                    Applied when you pay. If it's not valid for this order, you'll see why before anything is charged.
                   </p>
                 )}
 

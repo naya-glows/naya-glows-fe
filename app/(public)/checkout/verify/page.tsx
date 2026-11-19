@@ -71,7 +71,7 @@ function VerifyContent() {
         <PaymentSuccessAnimation />
         <h1 className="text-2xl font-light mb-3">Order confirmed</h1>
         <p className="text-sm text-[#16241a]/60 leading-relaxed mb-2">
-          Thank you for shopping with Naya Glows — your payment went through
+          Thank you for shopping with Naya Glows. Your payment went through
           and your order is on its way. We&apos;ve emailed you a confirmation.
         </p>
         {data?.order.id && (

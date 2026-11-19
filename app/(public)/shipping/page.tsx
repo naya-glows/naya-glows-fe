@@ -14,9 +14,9 @@ function buildSections(shippingFree: string, shippingLagos: string, shippingOuts
       icon: Truck,
       title: "Shipping",
       body: [
-        `Orders ship within 1–2 business days of being placed. Shipping is free on orders over ${shippingFree} — orders below that ship for ${shippingLagos} within Lagos, or ${shippingOutsideLagos} outside Lagos.`,
+        `Orders ship within 1–2 business days of being placed. Shipping is free on orders over ${shippingFree}; orders below that ship for ${shippingLagos} within Lagos, or ${shippingOutsideLagos} outside Lagos.`,
         "Domestic (Nigeria) orders typically arrive in 2–5 business days. International orders usually take 7–14 business days, depending on destination and customs processing.",
-        "You'll receive a confirmation email with a tracking link as soon as your order ships — you can also check status anytime on our Track Order page.",
+        "You'll receive a confirmation email with a tracking link as soon as your order ships. You can also check status anytime on our Track Order page.",
       ],
     },
     {
@@ -24,15 +24,15 @@ function buildSections(shippingFree: string, shippingLagos: string, shippingOuts
       title: "Returns",
       body: [
         "Unopened, unused products in their original packaging can be returned within 14 days of delivery for a full refund.",
-        "Opened or used products aren't eligible for return, in line with standard cosmetics and skincare hygiene practices — but if your order arrived damaged, incorrect, or faulty, contact us within 7 days and we'll replace it or refund you at no extra cost.",
-        "To start a return, email hello@nayaglows.com with your order ID and reason for return — a member of our team will get back to you with next steps.",
+        "Opened or used products aren't eligible for return, in line with standard cosmetics and skincare hygiene practices. But if your order arrived damaged, incorrect, or faulty, contact us within 7 days and we'll replace it or refund you at no extra cost.",
+        "To start a return, email hello@nayaglows.com with your order ID and reason for return. A member of our team will get back to you with next steps.",
       ],
     },
     {
       icon: PackageCheck,
       title: "Exchanges",
       body: [
-        "We currently don't offer direct exchanges — if you'd like a different product or size, return your eligible item for a refund and place a new order.",
+        "We currently don't offer direct exchanges. If you'd like a different product or size, return your eligible item for a refund and place a new order.",
         "Subscribe & Save orders can be changed or cancelled anytime from your account before the next order is placed, so you're never locked into a size or product that isn't working for you.",
       ],
     },

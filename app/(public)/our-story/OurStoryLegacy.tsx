@@ -244,7 +244,7 @@ export default function OurStoryPage() {
                         custom={3}
                         className="text-[1.05rem] leading-relaxed text-[#3d2f25]/80 "
                     >
-                        At Naya Glows, skincare is more than routine — it is identity,
+                        At Naya Glows, skincare is more than routine: it is identity,
                         confidence, and quiet luxury.
                     </motion.p>
                 </RevealSection>
@@ -288,7 +288,7 @@ export default function OurStoryPage() {
                         className="text-[#d4c5b4]/75 text-[0.95rem] leading-relaxed  mb-6"
                     >
                         The brand was born from a deeply personal journey by its founder,
-                        Susan Eze — a woman who understood firsthand the frustration of
+                        Susan Eze, a woman who understood firsthand the frustration of
                         navigating skincare that overpromises and underdelivers, especially
                         within the African climate and skin realities.
                     </motion.p>
@@ -390,7 +390,7 @@ export default function OurStoryPage() {
                             skincare that fits into your life and enhances your glow over time.
                         </motion.p>
                         <motion.p variants={fadeUp} custom={4} className="text-[#c9a97a] text-lg italic font-light">
-                            Because glowing skin isn't just about appearance — it's about how
+                            Because glowing skin isn't just about appearance. It's about how
                             you show up in the world.
                         </motion.p>
                     </RevealSection>
@@ -461,11 +461,11 @@ export default function OurStoryPage() {
                         className="text-[clamp(2rem,3vw,2.8rem)] font-light leading-snug mb-6"
 
                     >
-                        More Than a Skincare Line — A Movement
+                        More Than a Skincare Line: A Movement
                     </motion.h3>
                     <motion.div variants={fadeUp} custom={2} className="w-10 h-px bg-[#c9a97a] mb-8" />
                     <motion.p variants={fadeUp} custom={3} className="text-[0.95rem] text-[#3d2f25]/80  leading-relaxed mb-8">
-                        We are building a movement of intentional beauty — empowering
+                        We are building a movement of intentional beauty, empowering
                         individuals especially across Africa to feel confident in their skin.
                     </motion.p>
                     <motion.p variants={fadeUp} custom={4} className="text-sm text-[#3d2f25]/60  mb-4 uppercase tracking-widest">
@@ -500,7 +500,7 @@ export default function OurStoryPage() {
 
                             >
                                 Naya Glows is for every person who has ever felt confused,
-                                frustrated, or unseen by skincare. This brand is my answer —
+                                frustrated, or unseen by skincare. This brand is my answer:
                                 simple, honest, and designed to truly work.
                             </blockquote>
                         </motion.div>

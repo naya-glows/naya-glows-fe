@@ -74,7 +74,7 @@ export default function AdminSettingsPage() {
     <div>
       <h1 className="text-2xl font-light mb-1">Settings</h1>
       <p className="text-sm text-[#16241a]/50 mb-8 max-w-xl">
-        Operational config — changes here affect what customers are charged on their next order.
+        Operational config. Changes here affect what customers are charged on their next order.
       </p>
 
       <form
@@ -95,7 +95,7 @@ export default function AdminSettingsPage() {
             className={inputClass}
           />
           <p className="text-xs text-[#16241a]/45 mt-1.5">
-            Every price is stored and charged in Naira — this rate is only used to show a USD
+            Every price is stored and charged in Naira. This rate is only used to show a USD
             estimate to non-Nigeria visitors. Synced automatically from a live exchange-rate feed
             once a day; editing it here holds until the next automatic sync.
           </p>
@@ -103,7 +103,7 @@ export default function AdminSettingsPage() {
 
         <div className="pt-1 border-t border-[#16241a]/10">
           <p className="text-xs font-semibold uppercase tracking-wide text-[#16241a]/60 mb-3">
-            Subscription A — Repeat Purchase Discount
+            Subscription A: Repeat Purchase Discount
           </p>
           <label className="block text-xs font-semibold uppercase tracking-wide text-[#16241a]/50 mb-2">
             Discount (%)
@@ -120,13 +120,13 @@ export default function AdminSettingsPage() {
           />
           <p className="text-xs text-[#16241a]/45 mt-1.5">
             Applied automatically to every reorder of a product once a customer has already bought
-            it once at full price — never on that first, qualifying purchase.
+            it once at full price, never on that first, qualifying purchase.
           </p>
         </div>
 
         <div className="pt-1 border-t border-[#16241a]/10">
           <p className="text-xs font-semibold uppercase tracking-wide text-[#16241a]/60 mb-3">
-            Subscription B — Prepaid Plan Discounts
+            Subscription B: Prepaid Plan Discounts
           </p>
           <div className="grid grid-cols-3 gap-3 mb-3">
             <div>
@@ -176,7 +176,7 @@ export default function AdminSettingsPage() {
             </div>
           </div>
           <p className="text-xs text-[#16241a]/45 mb-4">
-            Bigger discount for a longer upfront commitment — charged as one payment when the
+            Bigger discount for a longer upfront commitment, charged as one payment when the
             customer sets up their plan.
           </p>
 
@@ -207,7 +207,7 @@ export default function AdminSettingsPage() {
             {fulfillmentMode === "immediate"
               ? "Immediate: the customer's full plan quantity ships in one order right away."
               : "Recurring: only the first month ships now; the rest ship automatically, one month at a time, for the rest of the plan."}
-            {" "}Only applies to new plans — already-active plans keep whatever mode was in effect
+            {" "}Only applies to new plans. Already-active plans keep whatever mode was in effect
             when they were purchased.
           </p>
         </div>
@@ -247,7 +247,7 @@ export default function AdminSettingsPage() {
             </div>
           </div>
           <p className="text-xs text-[#16241a]/45 mt-1.5">
-            Charged based on the state the customer enters at checkout — only exact matches to
+            Charged based on the state the customer enters at checkout. Only exact matches to
             &ldquo;Lagos&rdquo; get the Lagos rate, every other state and country gets the outside
             rate. Waived above the free-shipping threshold either way.
           </p>

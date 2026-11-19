@@ -27,7 +27,7 @@ export default function AdminSubscriptionsPage() {
       </p>
 
       <h2 className="text-sm font-semibold uppercase tracking-wide text-[#16241a]/50 mb-4">
-        Subscription A — Reorder Discounts
+        Subscription A: Reorder Discounts
       </h2>
       <div className="bg-white/60 backdrop-blur-xl border border-white/60 rounded-2xl overflow-hidden mb-10">
         {isLoading ? (
@@ -66,7 +66,7 @@ export default function AdminSubscriptionsPage() {
       </div>
 
       <h2 className="text-sm font-semibold uppercase tracking-wide text-[#16241a]/50 mb-4">
-        Subscription B — Prepaid Plans
+        Subscription B: Prepaid Plans
       </h2>
       <div className="bg-white/60 backdrop-blur-xl border border-white/60 rounded-2xl overflow-hidden">
         {isLoading ? (
@@ -108,7 +108,7 @@ export default function AdminSubscriptionsPage() {
                     </span>
                   </td>
                   <td className="p-4 text-[#16241a]/60">
-                    {p.nextShipmentDate ? new Date(p.nextShipmentDate).toLocaleDateString() : "—"}
+                    {p.nextShipmentDate ? new Date(p.nextShipmentDate).toLocaleDateString() : "N/A"}
                   </td>
                 </tr>
               ))}

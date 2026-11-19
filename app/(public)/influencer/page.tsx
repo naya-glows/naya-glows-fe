@@ -142,7 +142,7 @@ export default function InfluencerDashboardPage() {
               <p className="text-sm text-[#16241a]/50">Loading…</p>
             ) : codes.length === 0 ? (
               <p className="text-sm text-[#16241a]/50">
-                You don&apos;t have any referral codes yet — generate your first one above.
+                You don&apos;t have any referral codes yet. Generate your first one above.
               </p>
             ) : (
               <div className="flex flex-col gap-3">

@@ -40,7 +40,7 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
     api.dispatch(clearAdminAuth());
     if (typeof window !== "undefined") {
       localStorage.removeItem(ADMIN_TOKEN_KEY);
-      toast.error("Session expired — please sign in again.");
+      toast.error("Session expired. Please sign in again.");
       window.location.href = "/admin/login";
     }
   }

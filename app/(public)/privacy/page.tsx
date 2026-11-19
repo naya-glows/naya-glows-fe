@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 const sections = [
   {
     title: "Information We Collect",
-    body: "When you create an account, place an order, or contact us, we collect information you provide directly — name, email address, shipping address, and phone number. We don't store your card details; payments are processed securely by Paystack, and we never see or hold your full card number.",
+    body: "When you create an account, place an order, or contact us, we collect information you provide directly: name, email address, shipping address, and phone number. We don't store your card details; payments are processed securely by Paystack, and we never see or hold your full card number.",
   },
   {
     title: "How We Use Your Information",
@@ -32,7 +32,7 @@ const sections = [
   },
   {
     title: "Data Security",
-    body: "We use industry-standard practices to protect your information, including encrypted connections (HTTPS) and hashed passwords — we never store your password in plain text.",
+    body: "We use industry-standard practices to protect your information, including encrypted connections (HTTPS) and hashed passwords. We never store your password in plain text.",
   },
   {
     title: "Changes to This Policy",

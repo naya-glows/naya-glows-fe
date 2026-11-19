@@ -11,7 +11,7 @@ const skinTypes = [
     tips: [
       "Cleanse twice daily with a gentle foaming formula",
       "Look for Salicylic Acid & Niacinamide",
-      "Never skip moisturizer — dehydration triggers more oil",
+      "Never skip moisturizer: dehydration triggers more oil",
     ],
   },
   {
@@ -27,7 +27,7 @@ const skinTypes = [
     tips: [
       "Consistency matters more than potency",
       "Look for Kojic Acid, Alpha Arbutin & Vitamin C",
-      "SPF daily — pigmentation worsens without it",
+      "SPF daily: pigmentation worsens without it",
     ],
   },
 ];

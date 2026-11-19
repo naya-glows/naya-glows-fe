@@ -69,7 +69,7 @@ export default function CartPage() {
                         <p className="text-sm font-semibold leading-snug mb-1 line-clamp-1 hover:text-[#6a9a72] transition-colors">
                           {item.name}
                           {item.variantName && (
-                            <span className="text-[#16241a]/45 font-normal"> — {item.variantName}</span>
+                            <span className="text-[#16241a]/45 font-normal"> · {item.variantName}</span>
                           )}
                         </p>
                       </Link>

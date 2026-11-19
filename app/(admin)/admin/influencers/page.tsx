@@ -52,7 +52,7 @@ export default function AdminInfluencersPage() {
                       inf.tiktokHandle && `TikTok: ${inf.tiktokHandle}`,
                     ]
                       .filter(Boolean)
-                      .join(" · ") || "—"}
+                      .join(" · ") || "N/A"}
                   </td>
                   <td className="p-4 text-[#16241a]/60">{inf.codes.length}</td>
                   <td className="p-4">
@@ -80,10 +80,10 @@ export default function AdminInfluencersPage() {
           <div className="flex flex-col">
             <DetailRow label="Email" value={selected.email} />
             <DetailRow label="Code Name" value={selected.codeName} />
-            <DetailRow label="X (Twitter)" value={selected.twitterHandle || "—"} />
-            <DetailRow label="Instagram" value={selected.instagramHandle || "—"} />
-            <DetailRow label="TikTok" value={selected.tiktokHandle || "—"} />
-            <DetailRow label="Bio" value={selected.bio || "—"} />
+            <DetailRow label="X (Twitter)" value={selected.twitterHandle || "N/A"} />
+            <DetailRow label="Instagram" value={selected.instagramHandle || "N/A"} />
+            <DetailRow label="TikTok" value={selected.tiktokHandle || "N/A"} />
+            <DetailRow label="Bio" value={selected.bio || "N/A"} />
             <DetailRow label="Total Signups" value={selected.totalSignups} />
             <DetailRow
               label="Referral Codes"
@@ -94,7 +94,7 @@ export default function AdminInfluencersPage() {
                   <div className="flex flex-col gap-1 text-right">
                     {selected.codes.map((c) => (
                       <span key={c.code} className="font-mono">
-                        {c.code} — {c.signupCount} signup(s)
+                        {c.code} · {c.signupCount} signup(s)
                       </span>
                     ))}
                   </div>

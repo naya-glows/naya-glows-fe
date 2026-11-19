@@ -212,7 +212,7 @@ export default function AdminBudgetPage() {
                     </span>
                   </td>
                   <td className="p-4 text-[#16241a]/60">{formatNaira(entry.amount)}</td>
-                  <td className="p-4 text-[#16241a]/60 max-w-xs truncate">{entry.note || "—"}</td>
+                  <td className="p-4 text-[#16241a]/60 max-w-xs truncate">{entry.note || "N/A"}</td>
                   <td className="p-4 text-[#16241a]/60">
                     {new Date(entry.createdAt).toLocaleDateString()}
                   </td>

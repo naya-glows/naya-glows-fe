@@ -36,7 +36,7 @@ export default function MyActivePlans() {
       const result = await cancelPlan(id).unwrap();
       toast.success(
         result.refundAmount > 0
-          ? `Plan cancelled — ₦${result.refundAmount.toLocaleString()} refunded for the months you hadn't received yet.`
+          ? `Plan cancelled. ₦${result.refundAmount.toLocaleString()} refunded for the months you hadn't received yet.`
           : "Plan cancelled.",
       );
     } catch (err) {

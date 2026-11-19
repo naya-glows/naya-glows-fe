@@ -18,7 +18,7 @@ const benefits = [
   {
     icon: Share2,
     title: "Your Own Referral Codes",
-    description: "Generate unique codes to share with your audience — no limits, no waiting on approval.",
+    description: "Generate unique codes to share with your audience. No limits, no waiting on approval.",
   },
   {
     icon: TrendingUp,
@@ -168,7 +168,7 @@ export default function InfluencerApplyPage() {
                   className={inputClass}
                 />
                 <p className="text-xs text-[#16241a]/45 mt-1.5">
-                  Every referral code you generate starts with this — e.g. &ldquo;{form.codeName.trim()
+                  Every referral code you generate starts with this, e.g. &ldquo;{form.codeName.trim()
                     ? form.codeName.trim().toUpperCase().replace(/[^A-Z0-9]/g, "")
                     : "STARGIRL"}
                   4Z5OA3E2&rdquo;.
@@ -177,23 +177,23 @@ export default function InfluencerApplyPage() {
 
               <div>
                 <p className="text-xs text-[#16241a]/50 mb-2">
-                  Add at least one — handle or a full profile link both work.
+                  Add at least one. A handle or a full profile link both work.
                 </p>
                 <div className="flex flex-col gap-3">
                   <input
-                    placeholder="Twitter / X — @yourhandle or link"
+                    placeholder="Twitter / X: @yourhandle or link"
                     value={form.twitterHandle}
                     onChange={updateField("twitterHandle")}
                     className={inputClass}
                   />
                   <input
-                    placeholder="Instagram — @yourhandle or link"
+                    placeholder="Instagram: @yourhandle or link"
                     value={form.instagramHandle}
                     onChange={updateField("instagramHandle")}
                     className={inputClass}
                   />
                   <input
-                    placeholder="TikTok — @yourhandle or link"
+                    placeholder="TikTok: @yourhandle or link"
                     value={form.tiktokHandle}
                     onChange={updateField("tiktokHandle")}
                     className={inputClass}

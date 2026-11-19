@@ -20,12 +20,12 @@ const faqs = [
   {
     question: "Are your products dermatologist tested?",
     answer:
-      "Yes — every Naya Glows formula is dermatologist tested and formulated without harsh sulfates or parabens, so they're gentle enough for daily use across most skin types.",
+      "Yes, every Naya Glows formula is dermatologist tested and formulated without harsh sulfates or parabens, so they're gentle enough for daily use across most skin types.",
   },
   {
     question: "Can I cancel or change my Subscribe & Save order?",
     answer:
-      "Absolutely. Subscriptions have no lock-in — you can pause, change, or cancel anytime from your account before your next order is placed.",
+      "Absolutely. Subscriptions have no lock-in, so you can pause, change, or cancel anytime from your account before your next order is placed.",
   },
   {
     question: "Do you ship internationally?",
@@ -40,7 +40,7 @@ const faqs = [
   {
     question: "Is there a wholesale program for stores or spas?",
     answer:
-      "Yes — visit our Wholesale Inquiries page to tell us about your business, and our team will follow up with pricing and terms.",
+      "Yes, visit our Wholesale Inquiries page to tell us about your business, and our team will follow up with pricing and terms.",
   },
 ];
 

@@ -31,7 +31,7 @@ const transformations = [
   {
     name: "Ngozi, 31",
     result: "Clearer complexion in 6 weeks",
-    quote: "Consistent use made all the difference — I see it every day.",
+    quote: "Consistent use made all the difference. I see it every day.",
   },
   {
     name: "Halima, 26",
@@ -52,7 +52,7 @@ export default function TransformationsPage() {
         <PageHeader
           eyebrow="Real Skin, Real Results"
           heading="Inspiring transformations from real people like you"
-          subtitle="Drag each slider to see the difference. Photos below are placeholders — real client transformations are coming soon."
+          subtitle="Drag each slider to see the difference. Photos below are placeholders, and real client transformations are coming soon."
           images={[{ src: YOUTHFUL_IMAGE, alt: "Radiant skin", afterWord: 1 }]}
         />
       </section>

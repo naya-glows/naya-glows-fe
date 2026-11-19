@@ -52,7 +52,7 @@ export default function WholesalePage() {
           </div>
           <h1 className="text-2xl font-light mb-3">Inquiry sent</h1>
           <p className="text-sm text-[#16241a]/60 leading-relaxed mb-8">
-            Thanks for your interest in stocking Naya Glows — our team will
+            Thanks for your interest in stocking Naya Glows. Our team will
             be in touch about wholesale pricing and terms shortly.
           </p>
           <Link

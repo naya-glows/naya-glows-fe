@@ -93,7 +93,7 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
     if (typeof window !== "undefined") {
       localStorage.removeItem(USER_TOKEN_KEY);
       if (!matchesEndpoint(args, SILENT_REAUTH_ENDPOINTS)) {
-        toast.error("Session expired — please sign in again.");
+        toast.error("Session expired. Please sign in again.");
         window.location.href = "/signin";
       }
     }

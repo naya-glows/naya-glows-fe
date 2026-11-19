@@ -7,7 +7,7 @@ import PageHeader from "../helpers/PageHeader";
 export const metadata: Metadata = {
   title: "Key Ingredients | Naya Glows",
   description:
-    "What's actually in your skincare, and what it does — Kojic Acid, Niacinamide, Hyaluronic Acid, and more, explained plainly.",
+    "What's actually in your skincare, and what it does: Kojic Acid, Niacinamide, Hyaluronic Acid, and more, explained plainly.",
   alternates: { canonical: "/ingredients" },
   openGraph: { title: "Key Ingredients | Naya Glows", url: "/ingredients" },
 };
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 const groups = [
   {
     name: "Boost & Correct",
-    subtitle: "Serums — brightening, evening, renewing",
+    subtitle: "Serums: brightening, evening, renewing",
     icon: Sparkles,
     ingredients: [
       { name: "Vitamin C", meaning: "Brightens and helps even out overall skin tone." },
@@ -28,7 +28,7 @@ const groups = [
   },
   {
     name: "Renew & Correct",
-    subtitle: "Creams & oils — hydration, barrier repair",
+    subtitle: "Creams & oils: hydration, barrier repair",
     icon: Droplet,
     ingredients: [
       { name: "Squalane", meaning: "A lightweight oil that strengthens the skin barrier." },
@@ -39,7 +39,7 @@ const groups = [
   },
   {
     name: "Purify & Balance",
-    subtitle: "Cleansers & toners — clarity, pore care",
+    subtitle: "Cleansers & toners: clarity, pore care",
     icon: Leaf,
     ingredients: [
       { name: "Salicylic Acid", meaning: "Clears pores from within to help prevent breakouts." },
@@ -49,7 +49,7 @@ const groups = [
   },
   {
     name: "Glow & Nourish",
-    subtitle: "Body care — radiance, repair",
+    subtitle: "Body care: radiance, repair",
     icon: Sun,
     ingredients: [
       { name: "Tranexamic Acid", meaning: "Helps even out skin tone from neck to toe." },
@@ -66,7 +66,7 @@ export default function IngredientsPage() {
         <PageHeader
           eyebrow="What's Inside"
           heading="The ingredients behind every formula"
-          subtitle="Every Naya Glows product is built around clean, purposeful actives — here's what they do and where you'll find them."
+          subtitle="Every Naya Glows product is built around clean, purposeful actives. Here's what they do and where you'll find them."
         />
       </section>
 

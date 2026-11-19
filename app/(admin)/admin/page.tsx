@@ -47,7 +47,7 @@ export default function AdminOverviewPage() {
               <div className="w-9 h-9 rounded-full bg-white/70 flex items-center justify-center mb-4">
                 <Icon size={16} className="text-[#6a9a72]" />
               </div>
-              <p className="text-2xl font-semibold">{s.value ?? "—"}</p>
+              <p className="text-2xl font-semibold">{s.value ?? "N/A"}</p>
               <p className="text-sm text-[#16241a]/50">{s.label}</p>
             </div>
           );

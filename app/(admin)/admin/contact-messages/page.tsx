@@ -41,7 +41,7 @@ export default function AdminContactMessagesPage() {
                 >
                   <td className="p-4 font-medium">{m.name}</td>
                   <td className="p-4 text-[#16241a]/60">{m.email}</td>
-                  <td className="p-4 text-[#16241a]/60 max-w-[160px] truncate">{m.subject || "—"}</td>
+                  <td className="p-4 text-[#16241a]/60 max-w-[160px] truncate">{m.subject || "N/A"}</td>
                   <td className="p-4 text-[#16241a]/60 max-w-xs truncate">{m.message}</td>
                   <td className="p-4 text-[#16241a]/60">
                     {new Date(m.createdAt).toLocaleDateString()}
@@ -62,7 +62,7 @@ export default function AdminContactMessagesPage() {
         >
           <div className="flex flex-col">
             <DetailRow label="Email" value={selected.email} />
-            <DetailRow label="Subject" value={selected.subject || "—"} />
+            <DetailRow label="Subject" value={selected.subject || "N/A"} />
             <DetailRow label="Message" value={selected.message} />
           </div>
         </AdminDetailModal>

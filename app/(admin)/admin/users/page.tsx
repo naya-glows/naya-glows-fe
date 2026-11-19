@@ -35,7 +35,7 @@ export default function AdminUsersPage() {
                 <tr key={u.id} className="border-b border-[#16241a]/5 last:border-0">
                   <td className="p-4 font-medium">{u.firstName} {u.lastName}</td>
                   <td className="p-4 text-[#16241a]/60">{u.email}</td>
-                  <td className="p-4 text-[#16241a]/60">{u.country ?? "—"}</td>
+                  <td className="p-4 text-[#16241a]/60">{u.country ?? "N/A"}</td>
                   <td className="p-4 text-[#16241a]/60">{u.currency}</td>
                   <td className="p-4">
                     <span

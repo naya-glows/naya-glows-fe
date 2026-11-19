@@ -185,7 +185,7 @@ export default function TransformationsSection() {
                 <p className="text-sm text-gray-950 leading-relaxed">
                   "I'd struggled with dark spots and uneven tone for years.
                   After using the Naya Radiance Boost Serum consistently, I
-                  finally started seeing a real difference — my skin looks
+                  finally started seeing a real difference. My skin looks
                   clearer and more radiant than ever."
                 </p>
               </div>
@@ -282,7 +282,7 @@ export default function TransformationsSection() {
                 <div className="absolute inset-0">
                   <Image
                     src="https://res.cloudinary.com/bhozkz7o/image/upload/v1784381952/naya-glows/legacy/youthful.png"
-                    alt="After — youthful skin"
+                    alt="After: youthful skin"
                     fill
                     className="object-contain"
                     draggable={false}
@@ -305,7 +305,7 @@ export default function TransformationsSection() {
                 >
                   <Image
                     src="https://res.cloudinary.com/bhozkz7o/image/upload/v1784381846/naya-glows/legacy/aging.png"
-                    alt="Before — aging skin"
+                    alt="Before: aging skin"
                     fill
                     className="object-contain"
                     style={{

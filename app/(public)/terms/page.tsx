@@ -28,15 +28,15 @@ const sections = [
   },
   {
     title: "Subscriptions",
-    body: "Subscribe & Save orders can be changed or cancelled anytime from your account before the next scheduled order — there's no long-term commitment.",
+    body: "Subscribe & Save orders can be changed or cancelled anytime from your account before the next scheduled order. There's no long-term commitment.",
   },
   {
     title: "Product Information",
-    body: "We describe our products as accurately as possible, but results can vary based on individual skin type and consistent use. Nothing on this site constitutes medical advice — consult a dermatologist for specific skin concerns.",
+    body: "We describe our products as accurately as possible, but results can vary based on individual skin type and consistent use. Nothing on this site constitutes medical advice, so consult a dermatologist for specific skin concerns.",
   },
   {
     title: "Intellectual Property",
-    body: "All content on Naya Glows — including text, images, and branding — is owned by Naya Glows or its licensors and may not be reproduced without permission.",
+    body: "All content on Naya Glows, including text, images, and branding, is owned by Naya Glows or its licensors and may not be reproduced without permission.",
   },
   {
     title: "Limitation of Liability",

@@ -16,25 +16,25 @@ const results: Record<
     title: "Face Serums",
     tagline: "Boost & Correct",
     blurb:
-      "Your skin is asking for targeted actives — Vitamin C, Niacinamide, and Azelaic Acid to brighten, even tone, and correct.",
+      "Your skin is asking for targeted actives: Vitamin C, Niacinamide, and Azelaic Acid to brighten, even tone, and correct.",
   },
   creams: {
     title: "Face Creams",
     tagline: "Renew & Correct",
     blurb:
-      "Your priority is hydration and barrier repair — rich creams and oils with Squalane and Argan Oil to lock in moisture.",
+      "Your priority is hydration and barrier repair: rich creams and oils with Squalane and Argan Oil to lock in moisture.",
   },
   cleansers: {
     title: "Cleanse & Tone",
     tagline: "Purify & Balance",
     blurb:
-      "Clearer pores and a balanced complexion start here — Salicylic Acid and Kaolin Clay to purify without stripping.",
+      "Clearer pores and a balanced complexion start here: Salicylic Acid and Kaolin Clay to purify without stripping.",
   },
   body: {
     title: "Body Care",
     tagline: "Glow & Nourish",
     blurb:
-      "It's time to take the glow past your face — nourishing oils and butters for radiance from neck to toe.",
+      "It's time to take the glow past your face: nourishing oils and butters for radiance from neck to toe.",
   },
 };
 

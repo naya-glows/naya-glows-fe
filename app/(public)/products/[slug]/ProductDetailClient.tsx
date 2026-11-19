@@ -145,7 +145,7 @@ export default function ProductDetailClient({
                       You've unlocked {Math.round(mySubscription.discountPercent)}% off this product
                     </p>
                     <p className="text-xs text-[#16241a]/50 mt-1">
-                      Applied automatically to every reorder — your code is{" "}
+                      Applied automatically to every reorder. Your code is{" "}
                       <span className="font-mono font-semibold">{mySubscription.code}</span>.
                     </p>
                   </div>
@@ -164,7 +164,7 @@ export default function ProductDetailClient({
                       Subscribe to this product
                     </p>
                     <p className="text-xs text-[#16241a]/50 mt-1">
-                      This order stays full price — but it unlocks{" "}
+                      This order stays full price, but it unlocks{" "}
                       {Math.round(subscriptionDiscountPercent)}% off every time you reorder this
                       product after today.
                     </p>

@@ -86,7 +86,7 @@ export function HeroEditor({
           </div>
         </div>
       </div>
-      <DimensionHint text="full-bleed, ~16:9 or taller — crops to fill on every screen" />
+      <DimensionHint text="full-bleed, ~16:9 or taller, crops to fill on every screen" />
 
       <div className="flex flex-col gap-2">
         <p className="text-[10.5px] font-semibold uppercase tracking-wide text-[#16241a]/50">

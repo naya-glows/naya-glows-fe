@@ -384,7 +384,7 @@ function SignInForm() {
                   Naya Glows
                 </p>
                 <p className="text-white text-lg font-light leading-snug">
-                  Clean, potent skincare — made for your glow.
+                  Clean, potent skincare, made for your glow.
                 </p>
               </div>
             </div>

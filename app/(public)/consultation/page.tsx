@@ -66,7 +66,7 @@ export default function ConsultationPage() {
           </div>
           <h1 className="text-2xl font-light mb-3">Request received</h1>
           <p className="text-sm text-[#16241a]/60 leading-relaxed mb-8">
-            Thank you — we&apos;ve emailed you a confirmation. Our team will
+            Thank you. We&apos;ve emailed you a confirmation. Our team will
             reach out shortly to schedule your consultation.
           </p>
           <Link
@@ -87,7 +87,7 @@ export default function ConsultationPage() {
           <PageHeader
             eyebrow="Personalized Support"
             heading="Book an Online Consultation"
-            subtitle="Tell us about your skin and goals — one of our specialists will help you build a routine that actually works."
+            subtitle="Tell us about your skin and goals, and one of our specialists will help you build a routine that actually works."
             images={[
               {
                 src: "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381880/naya-glows/legacy/nature-girl1.jpg",

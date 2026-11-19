@@ -5,7 +5,7 @@ import CatalogClient from "./CatalogClient";
 export const metadata: Metadata = {
   title: "Shop All Products | Naya Glows",
   description:
-    "Serums, creams, cleansers, and body care — clean, potent skincare formulated to brighten, hydrate, and renew.",
+    "Serums, creams, cleansers, and body care: clean, potent skincare formulated to brighten, hydrate, and renew.",
   alternates: { canonical: "/catalog" },
   openGraph: { title: "Shop All Products | Naya Glows", url: "/catalog" },
 };
