@@ -10,6 +10,7 @@ import {
   useListUsersQuery,
   useSendEmailCampaignMutation,
   useUploadImageMutation,
+  type EmailCampaignRow,
 } from "../../../store/adminApi";
 import { getApiErrorMessage } from "../../../store/apiError";
 
@@ -33,6 +34,7 @@ export default function AdminEmailCampaignsPage() {
   const [message, setMessage] = useState("");
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [audience, setAudience] = useState<Audience>("subscribers");
+  const [viewingCampaign, setViewingCampaign] = useState<EmailCampaignRow | null>(null);
 
   const recipientCounts: Record<Audience, number> = {
     subscribers: subscribers?.length ?? 0,
@@ -213,6 +215,7 @@ export default function AdminEmailCampaignsPage() {
                 <th className="p-4 font-medium">Sent To</th>
                 <th className="p-4 font-medium">Recipients</th>
                 <th className="p-4 font-medium">Sent</th>
+                <th className="p-4 font-medium" />
               </tr>
             </thead>
             <tbody>
@@ -224,6 +227,15 @@ export default function AdminEmailCampaignsPage() {
                   <td className="p-4 text-[#16241a]/60">
                     {new Date(c.createdAt).toLocaleString()}
                   </td>
+                  <td className="p-4 text-right">
+                    <button
+                      type="button"
+                      onClick={() => setViewingCampaign(c)}
+                      className="text-xs font-semibold text-[#16241a]/60 hover:text-[#16241a] transition-colors"
+                    >
+                      View
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -231,6 +243,43 @@ export default function AdminEmailCampaignsPage() {
           </div>
         )}
       </div>
+
+      {viewingCampaign && (
+        <div
+          className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4"
+          onClick={() => setViewingCampaign(null)}
+        >
+          <div
+            className="bg-white rounded-2xl w-full max-w-2xl max-h-[85vh] flex flex-col overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between gap-4 p-5 border-b border-[#16241a]/10">
+              <div>
+                <p className="text-sm font-semibold">{viewingCampaign.subject}</p>
+                <p className="text-xs text-[#16241a]/50 mt-0.5">
+                  Sent to {viewingCampaign.recipientCount}{" "}
+                  {(audienceLabels[viewingCampaign.audience] ?? viewingCampaign.audience).toLowerCase()} ·{" "}
+                  {new Date(viewingCampaign.createdAt).toLocaleString()}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setViewingCampaign(null)}
+                aria-label="Close"
+                className="w-7 h-7 rounded-full bg-[#16241a]/5 hover:bg-[#16241a]/10 flex items-center justify-center flex-shrink-0"
+              >
+                <X size={14} />
+              </button>
+            </div>
+            <iframe
+              title="Campaign preview"
+              srcDoc={viewingCampaign.html}
+              sandbox=""
+              className="flex-1 w-full"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
