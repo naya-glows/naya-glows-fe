@@ -171,7 +171,7 @@ export default function Footer() {
                                 </button>
                             </form>
                             <p className="text-white/30 text-xs">
-                                10% off your first order • No spam, just radiance
+                                Skincare tips and new drops, straight to your inbox • No spam, just radiance
                             </p>
                         </div>
                     </div>
