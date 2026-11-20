@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, AlertTriangle } from "lucide-react";
 import {
   useListOrdersQuery,
   useSetOrderTrackingStageMutation,
@@ -20,6 +20,16 @@ const statusStyles: Record<string, string> = {
   CANCELLED: "bg-[#e5e5e5] text-[#666]",
   REFUNDED: "bg-[#f0e5f9] text-[#8a5fb8]",
 };
+
+// Matches the backend's own stale-pending threshold (see
+// reconcileStalePendingOrders in payments.service.ts) — this is a faster
+// manual backstop for ops to notice and look into an order themselves,
+// since the daily cron only re-checks these against Paystack once a day.
+const STUCK_PENDING_THRESHOLD_MS = 20 * 60 * 1000;
+
+function isStuckPending(order: { status: string; createdAt: string }): boolean {
+  return order.status === "PENDING" && Date.now() - new Date(order.createdAt).getTime() > STUCK_PENDING_THRESHOLD_MS;
+}
 
 export default function AdminOrdersPage() {
   const { data: orders, isLoading } = useListOrdersQuery();
@@ -131,6 +141,14 @@ export default function AdminOrdersPage() {
                       >
                         {o.status}
                       </span>
+                      {isStuckPending(o) && (
+                        <span
+                          title="Pending longer than expected — payment may have succeeded without the order being confirmed. Checked automatically, but worth a look."
+                          className="ml-2 inline-flex items-center gap-1 text-[9px] font-semibold uppercase tracking-wide text-[#c0574c]"
+                        >
+                          <AlertTriangle size={10} /> Stuck
+                        </span>
+                      )}
                     </td>
                     <td className="p-4 text-[#16241a]/60">
                       {new Date(o.createdAt).toLocaleDateString()}
@@ -205,12 +223,22 @@ export default function AdminOrdersPage() {
             <DetailRow
               label="Status"
               value={
-                <span
-                  className={`text-[10px] font-semibold uppercase px-2 py-1 rounded-full ${
-                    statusStyles[selected.status] ?? "bg-white/60 text-[#16241a]/60"
-                  }`}
-                >
-                  {selected.status}
+                <span className="inline-flex items-center gap-2">
+                  <span
+                    className={`text-[10px] font-semibold uppercase px-2 py-1 rounded-full ${
+                      statusStyles[selected.status] ?? "bg-white/60 text-[#16241a]/60"
+                    }`}
+                  >
+                    {selected.status}
+                  </span>
+                  {isStuckPending(selected) && (
+                    <span
+                      title="Pending longer than expected — payment may have succeeded without the order being confirmed. Checked automatically, but worth a look."
+                      className="inline-flex items-center gap-1 text-[9px] font-semibold uppercase tracking-wide text-[#c0574c]"
+                    >
+                      <AlertTriangle size={10} /> Stuck
+                    </span>
+                  )}
                 </span>
               }
             />
