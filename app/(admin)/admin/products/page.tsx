@@ -315,6 +315,10 @@ export default function AdminProductsPage() {
                     }
                     className={inputClass}
                   />
+                  <p className="text-[11px] text-[#16241a]/45 mt-1.5">
+                    Set higher than Price to show a strikethrough discount on the storefront.
+                    Equal values show no discount.
+                  </p>
                 </div>
               </div>
               <p className="text-xs text-[#16241a]/40 -mt-1">

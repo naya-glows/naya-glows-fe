@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
-import Script from "next/script";
 import { Toaster } from "sonner";
 import "./globals.css";
 import StoreProvider from "./store/StoreProvider";
@@ -115,12 +114,6 @@ export default function RootLayout({
           <Toaster richColors position="top-center" />
           <CartFlyOverlay />
         </StoreProvider>
-        <Script
-          src="https://www.usesetch.xyz/widget.js"
-          data-setch-site="site_1b587e16b183"
-          data-setch-api="https://www.usesetch.xyz"
-          strategy="afterInteractive"
-        />
       </body>
     </html>
   );
