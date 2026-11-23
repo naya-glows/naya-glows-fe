@@ -3,7 +3,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import Script from "next/script";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useCart, itemUnitPrice } from "../../store/cartSlice";
@@ -18,24 +17,6 @@ import { isApiConfigured } from "@/lib/api";
 import { FREE_SHIPPING_THRESHOLD_NGN } from "@/lib/products";
 import { countries } from "@/lib/countries";
 import { NIGERIA_STATES } from "@/lib/nigeriaStates";
-
-// Paystack's Inline JS SDK — opens its own modal/iframe on top of the page
-// instead of redirecting away, so the customer never leaves the site.
-declare global {
-  interface Window {
-    PaystackPop?: {
-      setup(config: {
-        key: string;
-        email: string;
-        amount: number;
-        currency: string;
-        ref: string;
-        onClose: () => void;
-        callback: (response: { reference: string }) => void;
-      }): { openIframe: () => void };
-    };
-  }
-}
 
 const inputClass =
   "w-full bg-white/70 border border-white/60 rounded-xl px-4 py-3 text-sm outline-none placeholder:text-[#16241a]/35 focus:border-[#8ab88e] transition-colors";
@@ -79,17 +60,7 @@ export default function CheckoutPage() {
   const locationShippingFee = isLagos ? shippingFeeLagosNgn : shippingFeeOutsideLagosNgn;
   const shipping = subtotal >= FREE_SHIPPING_THRESHOLD_NGN || subtotal === 0 ? 0 : locationShippingFee;
   const backendReady = isApiConfigured();
-  const [paystackReady, setPaystackReady] = useState(false);
-  const [openingPopup, setOpeningPopup] = useState(false);
-
-  // Next's <Script afterInteractive> only fires onLoad once per page load —
-  // if this page was already visited earlier in the session (script tag
-  // already present from that visit), a fresh mount never re-fires it, so
-  // without this check "Pay" could stay disabled indefinitely on a second
-  // visit even though Paystack's SDK is already sitting on window.
-  useEffect(() => {
-    if (window.PaystackPop) setPaystackReady(true);
-  }, []);
+  const [redirecting, setRedirecting] = useState(false);
 
   // Payment now always requires a signed-in account (no guest checkout) —
   // enforced server-side too (POST /orders is requireAuth), this just gives
@@ -121,7 +92,7 @@ export default function CheckoutPage() {
 
   const [createOrder, { isLoading: creatingOrder }] = useCreateOrderMutation();
   const [initializePayment, { isLoading: initializingPayment }] = useInitializePaymentMutation();
-  const submitting = creatingOrder || initializingPayment || openingPopup;
+  const submitting = creatingOrder || initializingPayment || redirecting;
   const [discountCode, setDiscountCode] = useState("");
 
   const updateField =
@@ -146,12 +117,6 @@ export default function CheckoutPage() {
       return;
     }
 
-    const publicKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY?.trim();
-    if (!publicKey || !paystackReady || !window.PaystackPop) {
-      toast.error("Payments are still loading. Please wait a moment and try again.");
-      return;
-    }
-
     localStorage.setItem(SHIPPING_STORAGE_KEY, JSON.stringify(form));
 
     try {
@@ -166,28 +131,20 @@ export default function CheckoutPage() {
         discountCode: discountCode.trim() || undefined,
       }).unwrap();
 
-      const { reference, email, amount, currency } = await initializePayment({
-        orderId: order.id,
-      }).unwrap();
+      const { authorizationUrl } = await initializePayment({ orderId: order.id }).unwrap();
 
-      setOpeningPopup(true);
-      window.PaystackPop.setup({
-        key: publicKey,
-        email,
-        amount: Math.round(amount * 100),
-        currency,
-        ref: reference,
-        onClose: () => {
-          setOpeningPopup(false);
-          toast("Payment cancelled. Your order is saved, you can try again anytime.");
-        },
-        callback: (response) => {
-          setOpeningPopup(false);
-          router.push(`/checkout/verify?reference=${encodeURIComponent(response.reference)}`);
-        },
-      }).openIframe();
+      // A full redirect to Paystack's own hosted checkout page, not the
+      // Inline JS popup this used to be — Inline's iframe is a documented
+      // failure mode where it can hang indefinitely mid-3-D-Secure/OTP with
+      // neither its success nor cancel callback ever firing, leaving the
+      // customer stuck on a frozen "placing order" screen with no way to
+      // tell whether they were charged. Paystack's own page redirects back
+      // to /checkout/verify (set server-side, see payments.routes.ts)
+      // regardless of what happens, so there's no equivalent stuck state.
+      setRedirecting(true);
+      window.location.href = authorizationUrl;
     } catch (err) {
-      setOpeningPopup(false);
+      setRedirecting(false);
       toast.error(
         getApiErrorMessage(err, "Something went wrong starting your payment. Please try again."),
       );
@@ -418,25 +375,17 @@ export default function CheckoutPage() {
                   disabled={submitting}
                   className="w-full text-center bg-[#16241a] text-white text-sm font-semibold px-6 py-3.5 rounded-full hover:bg-[#233324] transition-colors disabled:opacity-60"
                 >
-                  {submitting ? "Preparing payment…" : "Pay with Paystack"}
+                  {redirecting
+                    ? "Redirecting to Paystack…"
+                    : submitting
+                      ? "Preparing payment…"
+                      : "Pay with Paystack"}
                 </button>
               </GlassCard>
             </div>
           </form>
         </div>
       </section>
-
-      <Script
-        src="https://js.paystack.co/v1/inline.js"
-        strategy="afterInteractive"
-        // Paystack's own script does some internal setup after the file
-        // itself finishes executing — calling .setup()/.openIframe() in
-        // that narrow window is the likeliest explanation for an
-        // intermittent "invalid key" that clears up moments later with no
-        // code or env change (this file never varies the key by request).
-        // A short buffer after onLoad is cheap insurance against that race.
-        onLoad={() => setTimeout(() => setPaystackReady(true), 300)}
-      />
     </main>
   );
 }

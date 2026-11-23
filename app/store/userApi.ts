@@ -219,10 +219,7 @@ export const userApi = createApi({
     >({
       query: ({ id, email }) => `/orders/track/${id}?email=${encodeURIComponent(email)}`,
     }),
-    initializePayment: builder.mutation<
-      { reference: string; email: string; amount: number; currency: string },
-      { orderId: string }
-    >({
+    initializePayment: builder.mutation<{ authorizationUrl: string }, { orderId: string }>({
       query: (body) => ({ url: "/payments/paystack/initialize", method: "POST", body }),
     }),
     verifyPayment: builder.query<

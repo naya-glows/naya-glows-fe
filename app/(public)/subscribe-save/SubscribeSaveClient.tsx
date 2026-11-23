@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import Script from "next/script";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Check, Minus, Plus } from "lucide-react";
@@ -21,22 +20,6 @@ import { SHIPPING_STORAGE_KEY } from "../../store/userAuthSlice";
 import PageHeader from "../helpers/PageHeader";
 import GlassCard from "../helpers/glass/GlassCard";
 import MyActivePlans from "./MyActivePlans";
-
-declare global {
-  interface Window {
-    PaystackPop?: {
-      setup(config: {
-        key: string;
-        email: string;
-        amount: number;
-        currency: string;
-        ref: string;
-        onClose: () => void;
-        callback: (response: { reference: string }) => void;
-      }): { openIframe: () => void };
-    };
-  }
-}
 
 type Term = "THREE_MONTH" | "SIX_MONTH" | "TWELVE_MONTH";
 
@@ -92,17 +75,12 @@ export default function SubscribeSaveClient({ products }: { products: Product[] 
   // slug -> quantity per month
   const [selected, setSelected] = useState<Record<string, number>>({});
   const [form, setForm] = useState<ShippingForm>(emptyForm);
-  const [paystackReady, setPaystackReady] = useState(false);
-  const [openingPopup, setOpeningPopup] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
   const backendReady = isApiConfigured();
 
   const [createPlan, { isLoading: creatingPlan }] = useCreateSubscriptionPlanMutation();
   const [initializePayment, { isLoading: initializingPayment }] = useInitializePaymentMutation();
-  const submitting = creatingPlan || initializingPayment || openingPopup;
-
-  useEffect(() => {
-    if (window.PaystackPop) setPaystackReady(true);
-  }, []);
+  const submitting = creatingPlan || initializingPayment || redirecting;
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -168,12 +146,6 @@ export default function SubscribeSaveClient({ products }: { products: Product[] 
       toast.error("Payments aren't connected yet (NEXT_PUBLIC_API_URL isn't set).");
       return;
     }
-    const publicKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY?.trim();
-    if (!publicKey || !paystackReady || !window.PaystackPop) {
-      toast.error("Payments are still loading. Please wait a moment and try again.");
-      return;
-    }
-
     localStorage.setItem(SHIPPING_STORAGE_KEY, JSON.stringify(form));
 
     try {
@@ -183,28 +155,16 @@ export default function SubscribeSaveClient({ products }: { products: Product[] 
         shippingDetails: form,
       }).unwrap();
 
-      const { reference, email, amount, currency } = await initializePayment({
-        orderId: order.id,
-      }).unwrap();
+      const { authorizationUrl } = await initializePayment({ orderId: order.id }).unwrap();
 
-      setOpeningPopup(true);
-      window.PaystackPop.setup({
-        key: publicKey,
-        email,
-        amount: Math.round(amount * 100),
-        currency,
-        ref: reference,
-        onClose: () => {
-          setOpeningPopup(false);
-          toast("Payment cancelled. Nothing was charged.");
-        },
-        callback: (response) => {
-          setOpeningPopup(false);
-          router.push(`/checkout/verify?reference=${encodeURIComponent(response.reference)}`);
-        },
-      }).openIframe();
+      // Redirects to Paystack's own hosted checkout page instead of the old
+      // Inline JS popup — see checkout/page.tsx for why (same change, same
+      // reason, applied here too since this flow shares the same payment
+      // initialization endpoint).
+      setRedirecting(true);
+      window.location.href = authorizationUrl;
     } catch (err) {
-      setOpeningPopup(false);
+      setRedirecting(false);
       toast.error(
         getApiErrorMessage(err, "Something went wrong setting up your plan. Please try again."),
       );
@@ -396,7 +356,11 @@ export default function SubscribeSaveClient({ products }: { products: Product[] 
                 disabled={submitting || selectedItems.length === 0}
                 className="w-full text-center bg-[#16241a] text-white text-sm font-semibold px-6 py-3.5 rounded-full hover:bg-[#233324] transition-colors disabled:opacity-60"
               >
-                {submitting ? "Preparing payment…" : "Pay with Paystack"}
+                {redirecting
+                  ? "Redirecting to Paystack…"
+                  : submitting
+                    ? "Preparing payment…"
+                    : "Pay with Paystack"}
               </button>
               <p className="text-xs text-[#16241a]/40 mt-3 text-center">
                 One secure payment today covers your entire {months}-month plan.
@@ -412,12 +376,6 @@ export default function SubscribeSaveClient({ products }: { products: Product[] 
           </Link>
         </div>
       </section>
-
-      <Script
-        src="https://js.paystack.co/v1/inline.js"
-        strategy="afterInteractive"
-        onLoad={() => setTimeout(() => setPaystackReady(true), 300)}
-      />
     </main>
   );
 }
