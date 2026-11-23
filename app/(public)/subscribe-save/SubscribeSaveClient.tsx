@@ -17,6 +17,7 @@ import {
 import { getApiErrorMessage } from "../../store/apiError";
 import { isApiConfigured } from "@/lib/api";
 import { SHIPPING_STORAGE_KEY } from "../../store/userAuthSlice";
+import { usePaystackReturnReset } from "../../store/usePaystackReturnReset";
 import PageHeader from "../helpers/PageHeader";
 import GlassCard from "../helpers/glass/GlassCard";
 import MyActivePlans from "./MyActivePlans";
@@ -81,6 +82,11 @@ export default function SubscribeSaveClient({ products }: { products: Product[] 
   const [createPlan, { isLoading: creatingPlan }] = useCreateSubscriptionPlanMutation();
   const [initializePayment, { isLoading: initializingPayment }] = useInitializePaymentMutation();
   const submitting = creatingPlan || initializingPayment || redirecting;
+
+  // The redirect to Paystack never unmounts this page — clear the stuck
+  // "Redirecting…" state if the shopper comes back via the browser's own
+  // back button instead of landing on /checkout/verify.
+  usePaystackReturnReset(() => setRedirecting(false));
 
   useEffect(() => {
     if (!authLoading && !user) {

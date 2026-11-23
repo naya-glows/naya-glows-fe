@@ -13,6 +13,7 @@ import { SHIPPING_STORAGE_KEY } from "../../store/userAuthSlice";
 import GlassCard from "../helpers/glass/GlassCard";
 import { useCreateOrderMutation, useInitializePaymentMutation } from "../../store/userApi";
 import { getApiErrorMessage } from "../../store/apiError";
+import { usePaystackReturnReset } from "../../store/usePaystackReturnReset";
 import { isApiConfigured } from "@/lib/api";
 import { FREE_SHIPPING_THRESHOLD_NGN } from "@/lib/products";
 import { countries } from "@/lib/countries";
@@ -61,6 +62,12 @@ export default function CheckoutPage() {
   const shipping = subtotal >= FREE_SHIPPING_THRESHOLD_NGN || subtotal === 0 ? 0 : locationShippingFee;
   const backendReady = isApiConfigured();
   const [redirecting, setRedirecting] = useState(false);
+
+  // The redirect to Paystack never unmounts this page — clear the stuck
+  // "Redirecting…" state if the shopper comes back via the browser's own
+  // back button (cancelled, or just changed their mind) instead of landing
+  // on /checkout/verify.
+  usePaystackReturnReset(() => setRedirecting(false));
 
   // Payment now always requires a signed-in account (no guest checkout) —
   // enforced server-side too (POST /orders is requireAuth), this just gives
