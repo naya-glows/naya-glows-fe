@@ -58,13 +58,17 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381892/naya-glows/legacy/naya-logo.png",
+        // Cloudinary on-the-fly transforms (q_auto:good,f_jpg) — the
+        // untransformed originals were 744KB/PNG, which some link-preview
+        // crawlers (WhatsApp in particular) will time out on or skip
+        // entirely. Same images, ~15x lighter, universally-supported JPEG.
+        url: "https://res.cloudinary.com/bhozkz7o/image/upload/q_auto:good,f_jpg/v1784381892/naya-glows/legacy/naya-logo.png",
         width: 500,
         height: 500,
         alt: "Naya Glows Logo",
       },
       {
-        url: "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381893/naya-glows/legacy/naya-radiance-body-scrub-in-focu.png",
+        url: "https://res.cloudinary.com/bhozkz7o/image/upload/w_1200,h_630,c_fill,q_auto:good,f_jpg/v1784381893/naya-glows/legacy/naya-radiance-body-scrub-in-focu.png",
         width: 1200,
         height: 630,
         alt: "Naya Radiance Exfoliating Body Scrub",
@@ -75,19 +79,17 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Naya Glows | Radiance-Boosting Skincare",
     description: "Clean, potent skincare for brighter, healthier skin. Free shipping on orders ₦120,000+",
-    images: ["https://res.cloudinary.com/bhozkz7o/image/upload/v1784381893/naya-glows/legacy/naya-radiance-body-scrub-in-focu.png"],
+    images: ["https://res.cloudinary.com/bhozkz7o/image/upload/w_1200,h_630,c_fill,q_auto:good,f_jpg/v1784381893/naya-glows/legacy/naya-radiance-body-scrub-in-focu.png"],
     creator: "@nayaglows",
     site: "@nayaglows",
   },
-  icons: {
-    icon: [
-      { url: "/favicon.ico", sizes: "any" },
-      { url: "/icon.png", type: "image/png", sizes: "32x32" },
-    ],
-    apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
-    shortcut: ["/shortcut-icon.png"],
-  },
-  manifest: "/site.webmanifest",
+  // No manual `icons`/`manifest` entries here — app/favicon.ico,
+  // app/icon.png, app/apple-icon.png, and app/manifest.ts are all Next.js's
+  // own file-based conventions, auto-detected and auto-linked. The previous
+  // manual config here pointed at /icon.png, /apple-icon.png,
+  // /shortcut-icon.png, and /site.webmanifest, none of which actually
+  // existed anywhere in the project — every one 404'd in production,
+  // which is almost certainly why Google never picked up a favicon.
   verification: {
     // Add your verification tokens when you have them
     // google: "your-google-verification-code",

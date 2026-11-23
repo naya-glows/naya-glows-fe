@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getProducts, getRelatedProducts } from "@/lib/products";
+import { toOgImageUrl } from "@/lib/cloudinaryImage";
 import ProductDetailClient from "./ProductDetailClient";
 
 export async function generateMetadata({
@@ -24,13 +25,13 @@ export async function generateMetadata({
       title,
       description,
       url: `/products/${product.slug}`,
-      images: [{ url: product.image, width: 1200, height: 1200, alt: product.name }],
+      images: [{ url: toOgImageUrl(product.image, 1200, 1200), width: 1200, height: 1200, alt: product.name }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [product.image],
+      images: [toOgImageUrl(product.image, 1200, 1200)],
     },
   };
 }
