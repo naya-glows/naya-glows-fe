@@ -22,6 +22,7 @@ import {
   Menu,
   X,
   Tag,
+  Gift,
 } from "lucide-react";
 import { useAdminAuth } from "../../store/useAdminAuth";
 
@@ -29,6 +30,7 @@ const navItems = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
   { href: "/admin/products", label: "Products", icon: Package },
   { href: "/admin/sales", label: "Sales & Combos", icon: Tag },
+  { href: "/admin/reservations", label: "BF Reservations", icon: Gift },
   { href: "/admin/content", label: "Content", icon: FileText },
   { href: "/admin/orders", label: "Orders", icon: ShoppingCart },
   { href: "/admin/subscriptions", label: "Subscriptions", icon: Repeat },

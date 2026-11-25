@@ -10,6 +10,33 @@ import type { RootState } from "./store";
 import { clearAuth as clearAdminAuth, ADMIN_TOKEN_KEY, type AuthUser } from "./adminAuthSlice";
 import type { Product } from "@/lib/products";
 
+export type ReservationKitRow = {
+  id: string;
+  slug: string;
+  name: string;
+  totalPrice: number;
+  depositAmount: number;
+  publicPrice: number | null;
+  isActive: boolean;
+  sortOrder: number;
+};
+
+export type KitReservationRow = {
+  id: string;
+  kitId: string;
+  kit: ReservationKitRow;
+  fullName: string;
+  email: string;
+  phone: string;
+  depositAmount: number;
+  depositPaid: boolean;
+  balanceAmount: number;
+  balanceDueDate: string;
+  balancePaid: boolean;
+  status: "RESERVED" | "BALANCE_PAID" | "CANCELLED";
+  createdAt: string;
+};
+
 export type ComboRow = {
   id: string;
   slug: string;
@@ -246,6 +273,8 @@ export const adminApi = createApi({
     "Influencer",
     "Combo",
     "SeasonalSale",
+    "ReservationKit",
+    "KitReservation",
   ],
   endpoints: (builder) => ({
     login: builder.mutation<
@@ -310,6 +339,29 @@ export const adminApi = createApi({
         { type: "Combo", id: "LIST" },
         { type: "Product", id: "LIST" },
       ],
+    }),
+
+    listReservationKits: builder.query<ReservationKitRow[], void>({
+      query: () => "/admin/reservations/kits",
+      transformResponse: (res: { kits: ReservationKitRow[] }) => res.kits,
+      providesTags: [{ type: "ReservationKit", id: "LIST" }],
+    }),
+    createReservationKit: builder.mutation<ReservationKitRow, Partial<ReservationKitRow>>({
+      query: (body) => ({ url: "/admin/reservations/kits", method: "POST", body }),
+      invalidatesTags: [{ type: "ReservationKit", id: "LIST" }],
+    }),
+    updateReservationKit: builder.mutation<ReservationKitRow, Partial<ReservationKitRow> & { slug: string }>({
+      query: ({ slug, ...body }) => ({ url: `/admin/reservations/kits/${slug}`, method: "PUT", body }),
+      invalidatesTags: [{ type: "ReservationKit", id: "LIST" }],
+    }),
+    deleteReservationKit: builder.mutation<void, string>({
+      query: (slug) => ({ url: `/admin/reservations/kits/${slug}`, method: "DELETE" }),
+      invalidatesTags: [{ type: "ReservationKit", id: "LIST" }],
+    }),
+    listKitReservations: builder.query<KitReservationRow[], void>({
+      query: () => "/admin/reservations",
+      transformResponse: (res: { reservations: KitReservationRow[] }) => res.reservations,
+      providesTags: [{ type: "KitReservation", id: "LIST" }],
     }),
 
     listSales: builder.query<SeasonalSaleRow[], void>({
@@ -473,6 +525,11 @@ export const {
   useCreateComboMutation,
   useUpdateComboMutation,
   useDeleteComboMutation,
+  useListReservationKitsQuery,
+  useCreateReservationKitMutation,
+  useUpdateReservationKitMutation,
+  useDeleteReservationKitMutation,
+  useListKitReservationsQuery,
   useListSalesQuery,
   useCreateSaleMutation,
   useUpdateSaleMutation,

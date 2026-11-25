@@ -302,6 +302,74 @@ export const userApi = createApi({
     getContent: builder.query<{ block: { key: string; data: unknown } }, string>({
       query: (key) => `/content/${key}`,
     }),
+    listReservationKits: builder.query<
+      {
+        kits: {
+          id: string;
+          slug: string;
+          name: string;
+          totalPrice: number;
+          depositAmount: number;
+          publicPrice: number | null;
+        }[];
+      },
+      void
+    >({
+      query: () => "/reservations/kits",
+    }),
+    createReservation: builder.mutation<
+      {
+        reservation: {
+          id: string;
+          depositAmount: number;
+          balanceAmount: number;
+          balanceDueDate: string;
+          kit: { name: string; totalPrice: number };
+        };
+      },
+      { kitSlug: string; fullName: string; email: string; phone: string }
+    >({
+      query: (body) => ({ url: "/reservations", method: "POST", body }),
+    }),
+    getReservation: builder.query<
+      {
+        reservation: {
+          id: string;
+          fullName: string;
+          depositAmount: number;
+          depositPaid: boolean;
+          balanceAmount: number;
+          balanceDueDate: string;
+          balancePaid: boolean;
+          status: string;
+          kit: { name: string; totalPrice: number };
+        };
+      },
+      string
+    >({
+      query: (id) => `/reservations/${id}`,
+    }),
+    payReservation: builder.mutation<{ authorizationUrl: string; stage: string }, string>({
+      query: (id) => ({ url: `/reservations/${id}/pay`, method: "POST" }),
+    }),
+    verifyReservationPayment: builder.query<
+      {
+        reservation: {
+          id: string;
+          fullName: string;
+          depositAmount: number;
+          depositPaid: boolean;
+          balanceAmount: number;
+          balanceDueDate: string;
+          balancePaid: boolean;
+          status: string;
+          kit: { name: string; totalPrice: number };
+        };
+      },
+      { id: string; reference: string }
+    >({
+      query: ({ id, reference }) => `/reservations/${id}/verify?reference=${encodeURIComponent(reference)}`,
+    }),
     getActiveSale: builder.query<
       {
         sale: {
@@ -419,6 +487,11 @@ export const {
   useVerifyPaymentQuery,
   useGetContentQuery,
   useGetActiveSaleQuery,
+  useListReservationKitsQuery,
+  useCreateReservationMutation,
+  useGetReservationQuery,
+  usePayReservationMutation,
+  useVerifyReservationPaymentQuery,
   useTrackOrderQuery,
   useSubmitConsultationMutation,
   useSubmitWholesaleInquiryMutation,
