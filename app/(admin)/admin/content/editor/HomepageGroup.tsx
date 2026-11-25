@@ -116,6 +116,16 @@ export function HomepageGroup() {
     setDraft((prev) => (prev ? { ...prev, [key]: { ...prev[key], ...patch } } : prev));
   };
 
+  // "_visible" isn't part of any individual section's own content type (it's
+  // a generic admin-only flag, checked by the matching SectionGate on the
+  // live homepage) — stored and saved exactly like any other field in the
+  // same draft object, just not something each XContent type declares.
+  const isVisible = (key: DraftKey) => (draft?.[key] as { _visible?: boolean })?._visible !== false;
+  const toggleVisible = (key: DraftKey) => {
+    const next = !isVisible(key);
+    updateSection(key, { _visible: next } as Partial<Draft[typeof key]>);
+  };
+
   const dirtyKeys: DraftKey[] =
     draft && saved
       ? (Object.keys(draft) as DraftKey[]).filter(
@@ -149,13 +159,20 @@ export function HomepageGroup() {
 
   return (
     <div className="flex flex-col gap-4 pb-4">
-      <SectionShell title={SECTION_TITLES["home.hero"]} customized={overriddenKeys.has("home.hero")}>
+      <SectionShell
+        title={SECTION_TITLES["home.hero"]}
+        customized={overriddenKeys.has("home.hero")}
+        visible={isVisible("home.hero")}
+        onToggleVisible={() => toggleVisible("home.hero")}
+      >
         <HeroEditor data={draft["home.hero"]} onChange={(p) => updateSection("home.hero", p)} />
       </SectionShell>
 
       <SectionShell
         title={SECTION_TITLES["home.ingredients"]}
         customized={overriddenKeys.has("home.ingredients")}
+        visible={isVisible("home.ingredients")}
+        onToggleVisible={() => toggleVisible("home.ingredients")}
       >
         <IngredientsEditor
           data={draft["home.ingredients"]}
@@ -166,6 +183,8 @@ export function HomepageGroup() {
       <SectionShell
         title={SECTION_TITLES["home.featuredProducts"]}
         customized={overriddenKeys.has("home.featuredProducts")}
+        visible={isVisible("home.featuredProducts")}
+        onToggleVisible={() => toggleVisible("home.featuredProducts")}
       >
         <FeaturedProductsEditor
           data={draft["home.featuredProducts"]}
@@ -176,6 +195,8 @@ export function HomepageGroup() {
       <SectionShell
         title={SECTION_TITLES["home.howItWorks"]}
         customized={overriddenKeys.has("home.howItWorks")}
+        visible={isVisible("home.howItWorks")}
+        onToggleVisible={() => toggleVisible("home.howItWorks")}
       >
         <HowItWorksEditor
           data={draft["home.howItWorks"]}
@@ -186,6 +207,8 @@ export function HomepageGroup() {
       <SectionShell
         title={SECTION_TITLES["home.bestSellers"]}
         customized={overriddenKeys.has("home.bestSellers")}
+        visible={isVisible("home.bestSellers")}
+        onToggleVisible={() => toggleVisible("home.bestSellers")}
       >
         <BestSellersEditor
           data={draft["home.bestSellers"]}
@@ -196,6 +219,8 @@ export function HomepageGroup() {
       <SectionShell
         title={SECTION_TITLES["home.testimonials"]}
         customized={overriddenKeys.has("home.testimonials")}
+        visible={isVisible("home.testimonials")}
+        onToggleVisible={() => toggleVisible("home.testimonials")}
       >
         <TestimonialsEditor
           data={draft["home.testimonials"]}
@@ -206,6 +231,8 @@ export function HomepageGroup() {
       <SectionShell
         title={SECTION_TITLES["home.categories"]}
         customized={overriddenKeys.has("home.categories")}
+        visible={isVisible("home.categories")}
+        onToggleVisible={() => toggleVisible("home.categories")}
       >
         <CategoriesEditor
           data={draft["home.categories"]}
@@ -216,6 +243,8 @@ export function HomepageGroup() {
       <SectionShell
         title={SECTION_TITLES["home.whyChoose"]}
         customized={overriddenKeys.has("home.whyChoose")}
+        visible={isVisible("home.whyChoose")}
+        onToggleVisible={() => toggleVisible("home.whyChoose")}
       >
         <WhyChooseEditor
           data={draft["home.whyChoose"]}

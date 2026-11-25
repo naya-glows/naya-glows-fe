@@ -15,15 +15,22 @@ import InfluencerSection from "./helpers/InfluencerSection";
 import VideoShowcaseSection from "./helpers/VideoShowcaseSection";
 import SignatureShowcaseSection from "./helpers/SignatureShowcaseSection";
 import ImageShowcaseSection from "./helpers/ImageShowcaseSection";
+import SectionGate from "./helpers/SectionGate";
 
 type Props = {};
 
 const Main = (props: Props) => {
   return (
     <>
-      <HeroBanner />
-      <HeroIngredients />
-      <FeaturedSection />
+      <SectionGate sectionKey="home.hero">
+        <HeroBanner />
+      </SectionGate>
+      <SectionGate sectionKey="home.ingredients">
+        <HeroIngredients />
+      </SectionGate>
+      <SectionGate sectionKey="home.featuredProducts">
+        <FeaturedSection />
+      </SectionGate>
       <VideoShowcaseSection
         src="https://res.cloudinary.com/bhozkz7o/video/upload/v1784381904/naya-glows/legacy/new/41341302-c730-4f62-8bc1-1d03bc983a7d.mov"
         poster="https://res.cloudinary.com/bhozkz7o/image/upload/v1784381916/naya-glows/legacy/new/img_7419.jpg"
@@ -33,17 +40,23 @@ const Main = (props: Props) => {
       />
       <TransformationsSection />
       <CatalogSection />
-      <HowItWorksSection />
+      <SectionGate sectionKey="home.howItWorks">
+        <HowItWorksSection />
+      </SectionGate>
       <ProductSpotlightSection />
       <SignatureShowcaseSection />
-      <BestSellersSection />
+      <SectionGate sectionKey="home.bestSellers">
+        <BestSellersSection />
+      </SectionGate>
       <ImageShowcaseSection
         image="https://res.cloudinary.com/bhozkz7o/image/upload/v1785160476/naya-glows/recent/customer-ugc-testimonial-scrub.jpg"
         eyebrow="Naya Glows"
         heading="This is what consistency looks like."
         subtext="One more glimpse from the people already living the Naya routine."
       />
-      <TestimonialsSection />
+      <SectionGate sectionKey="home.testimonials">
+        <TestimonialsSection />
+      </SectionGate>
       <VideoShowcaseSection
         src="https://res.cloudinary.com/bhozkz7o/video/upload/v1785160487/naya-glows/recent/customer-testimonial-video.mov"
         poster="https://res.cloudinary.com/bhozkz7o/image/upload/v1785160476/naya-glows/recent/customer-ugc-testimonial-scrub.jpg"
@@ -52,8 +65,12 @@ const Main = (props: Props) => {
         subtext="No script, no filter: just what happens when Naya becomes part of your routine."
       />
       <InfluencerSection />
-      <CategoriesSection />
-      <WhyChooseSection />
+      <SectionGate sectionKey="home.categories">
+        <CategoriesSection />
+      </SectionGate>
+      <SectionGate sectionKey="home.whyChoose">
+        <WhyChooseSection />
+      </SectionGate>
       {/* <BannerSection /> */}
     </>
   );
