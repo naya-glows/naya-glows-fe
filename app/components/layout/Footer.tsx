@@ -29,6 +29,7 @@ const footerLinks = {
         { name: "Cleanse & Tone", href: "/catalog?category=cleansers" },
         { name: "Body Care", href: "/catalog?category=body" },
         { name: "Subscribe & Save Big", href: "/subscribe-save" },
+        { name: "Treatment Kits", href: "/kits" },
     ],
     Learn: [
         { name: "Our Story", href: "/our-story" },

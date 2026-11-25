@@ -32,6 +32,10 @@ export type Product = {
   // bundle apart from a retail product when it matters.
   isCombo?: boolean;
   comboProductSlugs?: string[];
+  // Set only on the synthetic Product row a TreatmentKit upserts for itself
+  // (see TreatmentKit in backend/prisma/schema.prisma) — lets the /kits page
+  // pick kit rows out of the regular product list.
+  isKit?: boolean;
 };
 
 // `price`/`originalPrice` below are stored in Naira — the admin's real

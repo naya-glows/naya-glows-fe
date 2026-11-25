@@ -50,6 +50,32 @@ export type ComboRow = {
   updatedAt: string;
 };
 
+export type TreatmentKitRow = {
+  id: string;
+  slug: string;
+  name: string;
+  durationMonths: number;
+  price: number;
+  benefits: string[];
+  isActive: boolean;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type KitEnrollmentRow = {
+  id: string;
+  userId: string;
+  user: { email: string; firstName: string; lastName: string };
+  kitId: string;
+  kit: TreatmentKitRow;
+  orderId: string;
+  startDate: string;
+  endDate: string;
+  status: "ACTIVE" | "EXPIRED";
+  createdAt: string;
+};
+
 export type SeasonalSaleRow = {
   id: string;
   slug: string;
@@ -304,6 +330,8 @@ export const adminApi = createApi({
     "SeasonalSale",
     "ReservationKit",
     "KitReservation",
+    "TreatmentKit",
+    "KitEnrollment",
     "Consultation",
     "ConsultationType",
     "ConsultationBlock",
@@ -371,6 +399,38 @@ export const adminApi = createApi({
         { type: "Combo", id: "LIST" },
         { type: "Product", id: "LIST" },
       ],
+    }),
+
+    listTreatmentKits: builder.query<TreatmentKitRow[], void>({
+      query: () => "/admin/kits",
+      transformResponse: (res: { kits: TreatmentKitRow[] }) => res.kits,
+      providesTags: [{ type: "TreatmentKit", id: "LIST" }],
+    }),
+    createTreatmentKit: builder.mutation<TreatmentKitRow, Partial<TreatmentKitRow>>({
+      query: (body) => ({ url: "/admin/kits", method: "POST", body }),
+      invalidatesTags: [
+        { type: "TreatmentKit", id: "LIST" },
+        { type: "Product", id: "LIST" },
+      ],
+    }),
+    updateTreatmentKit: builder.mutation<TreatmentKitRow, Partial<TreatmentKitRow> & { slug: string }>({
+      query: ({ slug, ...body }) => ({ url: `/admin/kits/${slug}`, method: "PUT", body }),
+      invalidatesTags: [
+        { type: "TreatmentKit", id: "LIST" },
+        { type: "Product", id: "LIST" },
+      ],
+    }),
+    deleteTreatmentKit: builder.mutation<void, string>({
+      query: (slug) => ({ url: `/admin/kits/${slug}`, method: "DELETE" }),
+      invalidatesTags: [
+        { type: "TreatmentKit", id: "LIST" },
+        { type: "Product", id: "LIST" },
+      ],
+    }),
+    listKitEnrollments: builder.query<KitEnrollmentRow[], void>({
+      query: () => "/admin/kits/enrollments",
+      transformResponse: (res: { enrollments: KitEnrollmentRow[] }) => res.enrollments,
+      providesTags: [{ type: "KitEnrollment", id: "LIST" }],
     }),
 
     listReservationKits: builder.query<ReservationKitRow[], void>({
@@ -595,6 +655,11 @@ export const {
   useCreateComboMutation,
   useUpdateComboMutation,
   useDeleteComboMutation,
+  useListTreatmentKitsQuery,
+  useCreateTreatmentKitMutation,
+  useUpdateTreatmentKitMutation,
+  useDeleteTreatmentKitMutation,
+  useListKitEnrollmentsQuery,
   useListReservationKitsQuery,
   useCreateReservationKitMutation,
   useUpdateReservationKitMutation,
