@@ -1,12 +1,16 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import Link from "next/link";
 import { toast } from "sonner";
-import { CheckCircle2 } from "lucide-react";
+import { Check, MessageCircle } from "lucide-react";
 import GlassCard from "../helpers/glass/GlassCard";
 import PageHeader from "../helpers/PageHeader";
-import { useSubmitConsultationMutation } from "../../store/userApi";
+import {
+  useListConsultationTypesQuery,
+  useGetConsultationAvailabilityQuery,
+  useCreateConsultationBookingMutation,
+  usePayConsultationMutation,
+} from "../../store/userApi";
 import { getApiErrorMessage } from "../../store/apiError";
 import { isApiConfigured } from "@/lib/api";
 
@@ -22,63 +26,56 @@ const skinConcerns = [
   "General glow-up",
 ];
 
-export default function ConsultationPage() {
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    skinConcern: skinConcerns[0],
-    preferredDate: "",
-    message: "",
-  });
-  const [submitted, setSubmitted] = useState(false);
-  const [submitConsultation, { isLoading }] = useSubmitConsultationMutation();
-  const backendReady = isApiConfigured();
+function nextNDates(n: number): string[] {
+  const out: string[] = [];
+  const d = new Date();
+  while (out.length < n) {
+    if (d.getDay() !== 0) out.push(d.toISOString().slice(0, 10)); // skip Sundays
+    d.setDate(d.getDate() + 1);
+  }
+  return out;
+}
 
-  const updateField =
-    (field: keyof typeof form) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
-      setForm((f) => ({ ...f, [field]: e.target.value }));
+export default function ConsultationPage() {
+  const backendReady = isApiConfigured();
+  const { data: typesData } = useListConsultationTypesQuery(undefined, { skip: !backendReady });
+  const types = typesData?.types ?? [];
+
+  const [typeSlug, setTypeSlug] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [form, setForm] = useState({ name: "", email: "", phone: "", skinConcern: skinConcerns[0], message: "" });
+
+  const { data: availabilityData, isFetching: loadingSlots } = useGetConsultationAvailabilityQuery(
+    { date: selectedDate ?? "", typeSlug: typeSlug ?? "" },
+    { skip: !selectedDate || !typeSlug },
+  );
+
+  const [createBooking, { isLoading: booking }] = useCreateConsultationBookingMutation();
+  const [payConsultation, { isLoading: paying }] = usePayConsultationMutation();
+  const submitting = booking || paying;
+
+  const selectedType = types.find((t) => t.slug === typeSlug);
+  const dates = nextNDates(14);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!backendReady) {
-      toast.error("Consultations aren't connected yet (NEXT_PUBLIC_API_URL isn't set).");
+    if (!selectedType || !selectedDate || !selectedTime) {
+      toast.error("Choose a consultation type, date and time.");
       return;
     }
     try {
-      await submitConsultation({
+      const { request } = await createBooking({
+        consultationTypeSlug: selectedType.slug,
+        scheduledDate: `${selectedDate}T${selectedTime}:00.000Z`,
         ...form,
-        preferredDate: form.preferredDate || undefined,
       }).unwrap();
-      setSubmitted(true);
+      const { authorizationUrl } = await payConsultation(request.id).unwrap();
+      window.location.href = authorizationUrl;
     } catch (err) {
-      toast.error(getApiErrorMessage(err));
+      toast.error(getApiErrorMessage(err, "Couldn't book your consultation. Please try again."));
     }
   };
-
-  if (submitted) {
-    return (
-      <main className="bg-gradient-to-b from-[#eafbf0] to-[#f4faf3] text-[#16241a] min-h-screen flex items-center justify-center px-5">
-        <GlassCard className="max-w-md w-full text-center py-16 px-6 sm:px-8">
-          <div className="w-16 h-16 rounded-full bg-white/70 flex items-center justify-center mx-auto mb-6">
-            <CheckCircle2 size={28} className="text-[#6a9a72]" />
-          </div>
-          <h1 className="text-2xl font-light mb-3">Request received</h1>
-          <p className="text-sm text-[#16241a]/60 leading-relaxed mb-8">
-            Thank you. We&apos;ve emailed you a confirmation. Our team will
-            reach out shortly to schedule your consultation.
-          </p>
-          <Link
-            href="/catalog"
-            className="inline-block text-sm font-semibold bg-[#16241a] text-white px-6 py-2.5 rounded-full"
-          >
-            Continue Shopping
-          </Link>
-        </GlassCard>
-      </main>
-    );
-  }
 
   return (
     <main className="bg-gradient-to-b from-[#eafbf0] to-[#f4faf3] text-[#16241a] min-h-screen">
@@ -95,72 +92,169 @@ export default function ConsultationPage() {
                 afterWord: 3,
               },
             ]}
-            className="mb-10"
+            className="mb-6"
           />
 
-          <GlassCard className="px-4 py-6 sm:p-8">
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <input
-                  required
-                  placeholder="Full name"
-                  value={form.name}
-                  onChange={updateField("name")}
-                  className={inputClass}
-                />
-                <input
-                  required
-                  type="email"
-                  placeholder="Email address"
-                  value={form.email}
-                  onChange={updateField("email")}
-                  className={inputClass}
-                />
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <input
-                  type="tel"
-                  placeholder="Phone number (optional)"
-                  value={form.phone}
-                  onChange={updateField("phone")}
-                  className={inputClass}
-                />
-                <input
-                  type="date"
-                  placeholder="Preferred date"
-                  value={form.preferredDate}
-                  onChange={updateField("preferredDate")}
-                  className={inputClass}
-                />
-              </div>
-              <select
-                required
-                value={form.skinConcern}
-                onChange={updateField("skinConcern")}
-                className={inputClass}
-              >
-                {skinConcerns.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                ))}
-              </select>
-              <textarea
-                placeholder="Anything else you'd like us to know? (optional)"
-                value={form.message}
-                onChange={updateField("message")}
-                className={`${inputClass} min-h-[100px]`}
-              />
+          <a
+            href="https://wa.me/2347015239681"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[#4f7957] bg-[#d4e8d0] px-4 py-2.5 rounded-full mb-10 hover:bg-[#c3ddbd] transition-colors"
+          >
+            <MessageCircle size={15} />
+            Have a quick question first? Chat with us on WhatsApp
+          </a>
 
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="mt-2 bg-[#16241a] text-white text-sm font-semibold px-6 py-3.5 rounded-full hover:bg-[#233324] transition-colors disabled:opacity-60"
-              >
-                {isLoading ? "Sending…" : "Request Consultation"}
-              </button>
-            </form>
-          </GlassCard>
+          <div className="flex flex-col gap-3 mb-6">
+            <h2 className="text-xs font-semibold uppercase tracking-wide text-[#16241a]/50">
+              1. Choose a consultation type
+            </h2>
+            <div className="grid sm:grid-cols-2 gap-3">
+              {types.map((t) => (
+                <button
+                  key={t.slug}
+                  type="button"
+                  onClick={() => {
+                    setTypeSlug(t.slug);
+                    setSelectedTime(null);
+                  }}
+                  className={`text-left rounded-xl border-2 p-4 bg-white/70 transition-colors ${
+                    typeSlug === t.slug ? "border-[#6a9a72]" : "border-transparent hover:border-[#6a9a72]/40"
+                  }`}
+                >
+                  <p className="text-sm font-semibold mb-1">{t.name}</p>
+                  <p className="text-xs text-[#16241a]/55">₦{t.feeNgn.toLocaleString()} · {t.durationMinutes} min</p>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {typeSlug && (
+            <div className="flex flex-col gap-3 mb-6">
+              <h2 className="text-xs font-semibold uppercase tracking-wide text-[#16241a]/50">2. Choose a date</h2>
+              <div className="flex gap-2 overflow-x-auto pb-1">
+                {dates.map((d) => {
+                  const label = new Date(`${d}T00:00:00Z`).toLocaleDateString("en-NG", {
+                    weekday: "short",
+                    day: "numeric",
+                    month: "short",
+                    timeZone: "UTC",
+                  });
+                  return (
+                    <button
+                      key={d}
+                      type="button"
+                      onClick={() => {
+                        setSelectedDate(d);
+                        setSelectedTime(null);
+                      }}
+                      className={`flex-shrink-0 text-xs font-medium px-3.5 py-2 rounded-full border transition-colors ${
+                        selectedDate === d
+                          ? "bg-[#16241a] text-white border-[#16241a]"
+                          : "bg-white/70 border-white/60 hover:border-[#6a9a72]/50"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {selectedDate && typeSlug && (
+            <div className="flex flex-col gap-3 mb-8">
+              <h2 className="text-xs font-semibold uppercase tracking-wide text-[#16241a]/50">3. Choose a time</h2>
+              {loadingSlots ? (
+                <p className="text-sm text-[#16241a]/50">Loading available times…</p>
+              ) : !availabilityData?.slots.length ? (
+                <p className="text-sm text-[#16241a]/50">No times available this day — try another date.</p>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {availabilityData.slots.map((t) => (
+                    <button
+                      key={t}
+                      type="button"
+                      onClick={() => setSelectedTime(t)}
+                      className={`text-xs font-medium px-3.5 py-2 rounded-full border transition-colors ${
+                        selectedTime === t
+                          ? "bg-[#16241a] text-white border-[#16241a]"
+                          : "bg-white/70 border-white/60 hover:border-[#6a9a72]/50"
+                      }`}
+                    >
+                      {t}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {selectedTime && (
+            <GlassCard className="px-4 py-6 sm:p-8">
+              <h2 className="text-xs font-semibold uppercase tracking-wide text-[#16241a]/50 mb-4">
+                4. Your details
+              </h2>
+              <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <input
+                    required
+                    placeholder="Full name"
+                    value={form.name}
+                    onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                    className={inputClass}
+                  />
+                  <input
+                    required
+                    type="email"
+                    placeholder="Email address"
+                    value={form.email}
+                    onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+                    className={inputClass}
+                  />
+                </div>
+                <input
+                  required
+                  type="tel"
+                  placeholder="Phone number"
+                  value={form.phone}
+                  onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
+                  className={inputClass}
+                />
+                <select
+                  required
+                  value={form.skinConcern}
+                  onChange={(e) => setForm((f) => ({ ...f, skinConcern: e.target.value }))}
+                  className={inputClass}
+                >
+                  {skinConcerns.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </select>
+                <textarea
+                  placeholder="Anything else you'd like us to know? (optional)"
+                  value={form.message}
+                  onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
+                  className={`${inputClass} min-h-[100px]`}
+                />
+
+                <div className="flex items-center gap-2 text-xs text-[#16241a]/50 bg-white/50 rounded-xl p-3">
+                  <Check size={14} className="text-[#4f7957] flex-shrink-0" />
+                  {selectedType?.name} · {new Date(`${selectedDate}T00:00:00Z`).toLocaleDateString("en-NG", { dateStyle: "medium", timeZone: "UTC" })} at {selectedTime} · ₦{selectedType?.feeNgn.toLocaleString()}
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="mt-2 bg-[#16241a] text-white text-sm font-semibold px-6 py-3.5 rounded-full hover:bg-[#233324] transition-colors disabled:opacity-60"
+                >
+                  {submitting ? "Redirecting to Paystack…" : `Pay ₦${selectedType?.feeNgn.toLocaleString()} & Confirm Booking`}
+                </button>
+              </form>
+            </GlassCard>
+          )}
         </div>
       </section>
     </main>

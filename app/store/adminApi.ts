@@ -244,6 +244,29 @@ export type ConsultationRow = {
   message: string | null;
   status: string;
   createdAt: string;
+  feeNgn: number;
+  paid: boolean;
+  bookingReference: string | null;
+  scheduledDate: string | null;
+  durationMinutes: number | null;
+  consultationType: { id: string; name: string; slug: string } | null;
+};
+
+export type ConsultationTypeRow = {
+  id: string;
+  slug: string;
+  name: string;
+  feeNgn: number;
+  durationMinutes: number;
+  isActive: boolean;
+};
+
+export type ConsultationBlockRow = {
+  id: string;
+  date: string;
+  startTime: string | null;
+  endTime: string | null;
+  reason: string | null;
 };
 
 export type WholesaleInquiryRow = {
@@ -275,6 +298,9 @@ export const adminApi = createApi({
     "SeasonalSale",
     "ReservationKit",
     "KitReservation",
+    "Consultation",
+    "ConsultationType",
+    "ConsultationBlock",
   ],
   endpoints: (builder) => ({
     login: builder.mutation<
@@ -426,6 +452,44 @@ export const adminApi = createApi({
     listConsultations: builder.query<ConsultationRow[], void>({
       query: () => "/admin/consultations",
       transformResponse: (res: { requests: ConsultationRow[] }) => res.requests,
+      providesTags: [{ type: "Consultation", id: "LIST" }],
+    }),
+    rescheduleConsultation: builder.mutation<ConsultationRow, { id: string; scheduledDate: string }>({
+      query: ({ id, scheduledDate }) => ({
+        url: `/admin/consultations/${id}/reschedule`,
+        method: "PUT",
+        body: { scheduledDate },
+      }),
+      invalidatesTags: [{ type: "Consultation", id: "LIST" }],
+    }),
+    cancelConsultation: builder.mutation<ConsultationRow, string>({
+      query: (id) => ({ url: `/admin/consultations/${id}/cancel`, method: "POST" }),
+      invalidatesTags: [{ type: "Consultation", id: "LIST" }],
+    }),
+    listConsultationTypesAdmin: builder.query<ConsultationTypeRow[], void>({
+      query: () => "/admin/consultations/types",
+      transformResponse: (res: { types: ConsultationTypeRow[] }) => res.types,
+      providesTags: [{ type: "ConsultationType", id: "LIST" }],
+    }),
+    updateConsultationType: builder.mutation<ConsultationTypeRow, Partial<ConsultationTypeRow> & { slug: string }>({
+      query: ({ slug, ...body }) => ({ url: `/admin/consultations/types/${slug}`, method: "PUT", body }),
+      invalidatesTags: [{ type: "ConsultationType", id: "LIST" }],
+    }),
+    listConsultationBlocks: builder.query<ConsultationBlockRow[], void>({
+      query: () => "/admin/consultations/blocks",
+      transformResponse: (res: { blocks: ConsultationBlockRow[] }) => res.blocks,
+      providesTags: [{ type: "ConsultationBlock", id: "LIST" }],
+    }),
+    createConsultationBlock: builder.mutation<
+      ConsultationBlockRow,
+      { date: string; startTime?: string | null; endTime?: string | null; reason?: string }
+    >({
+      query: (body) => ({ url: "/admin/consultations/blocks", method: "POST", body }),
+      invalidatesTags: [{ type: "ConsultationBlock", id: "LIST" }],
+    }),
+    deleteConsultationBlock: builder.mutation<void, string>({
+      query: (id) => ({ url: `/admin/consultations/blocks/${id}`, method: "DELETE" }),
+      invalidatesTags: [{ type: "ConsultationBlock", id: "LIST" }],
     }),
 
     listWholesaleInquiries: builder.query<WholesaleInquiryRow[], void>({
@@ -542,6 +606,13 @@ export const {
   useSetOrderTrackingStageMutation,
   useRefundOrderMutation,
   useListConsultationsQuery,
+  useRescheduleConsultationMutation,
+  useCancelConsultationMutation,
+  useListConsultationTypesAdminQuery,
+  useUpdateConsultationTypeMutation,
+  useListConsultationBlocksQuery,
+  useCreateConsultationBlockMutation,
+  useDeleteConsultationBlockMutation,
   useListWholesaleInquiriesQuery,
   useGetSettingsQuery,
   useUpdateSettingMutation,

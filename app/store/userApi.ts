@@ -402,6 +402,73 @@ export const userApi = createApi({
     >({
       query: (body) => ({ url: "/consultations", method: "POST", body }),
     }),
+    listConsultationTypes: builder.query<
+      { types: { id: string; slug: string; name: string; feeNgn: number; durationMinutes: number }[] },
+      void
+    >({
+      query: () => "/consultations/types",
+    }),
+    getConsultationAvailability: builder.query<{ slots: string[] }, { date: string; typeSlug: string }>({
+      query: ({ date, typeSlug }) => `/consultations/availability?date=${date}&typeSlug=${typeSlug}`,
+    }),
+    createConsultationBooking: builder.mutation<
+      {
+        request: {
+          id: string;
+          bookingReference: string | null;
+          scheduledDate: string | null;
+          durationMinutes: number | null;
+          feeNgn: number;
+          consultationType: { name: string } | null;
+        };
+      },
+      {
+        consultationTypeSlug: string;
+        scheduledDate: string;
+        name: string;
+        email: string;
+        phone?: string;
+        skinConcern: string;
+        message?: string;
+      }
+    >({
+      query: (body) => ({ url: "/consultations", method: "POST", body }),
+    }),
+    getConsultationBooking: builder.query<
+      {
+        request: {
+          id: string;
+          bookingReference: string | null;
+          scheduledDate: string | null;
+          durationMinutes: number | null;
+          feeNgn: number;
+          paid: boolean;
+          consultationType: { name: string } | null;
+        };
+      },
+      string
+    >({
+      query: (id) => `/consultations/${id}`,
+    }),
+    payConsultation: builder.mutation<{ authorizationUrl: string }, string>({
+      query: (id) => ({ url: `/consultations/${id}/pay`, method: "POST" }),
+    }),
+    verifyConsultationPayment: builder.query<
+      {
+        request: {
+          id: string;
+          bookingReference: string | null;
+          scheduledDate: string | null;
+          durationMinutes: number | null;
+          feeNgn: number;
+          paid: boolean;
+          consultationType: { name: string } | null;
+        };
+      },
+      { id: string; reference: string }
+    >({
+      query: ({ id, reference }) => `/consultations/${id}/verify?reference=${encodeURIComponent(reference)}`,
+    }),
     submitWholesaleInquiry: builder.mutation<
       { inquiry: { id: string } },
       { businessName: string; contactName: string; email: string; phone?: string; message?: string }
@@ -492,6 +559,12 @@ export const {
   useGetReservationQuery,
   usePayReservationMutation,
   useVerifyReservationPaymentQuery,
+  useListConsultationTypesQuery,
+  useGetConsultationAvailabilityQuery,
+  useCreateConsultationBookingMutation,
+  useGetConsultationBookingQuery,
+  usePayConsultationMutation,
+  useVerifyConsultationPaymentQuery,
   useTrackOrderQuery,
   useSubmitConsultationMutation,
   useSubmitWholesaleInquiryMutation,
