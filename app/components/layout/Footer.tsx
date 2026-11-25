@@ -30,6 +30,8 @@ const footerLinks = {
         { name: "Body Care", href: "/catalog?category=body" },
         { name: "Subscribe & Save Big", href: "/subscribe-save" },
         { name: "Treatment Kits", href: "/kits" },
+        { name: "Book a Consultation", href: "/consultation" },
+        { name: "Black Friday Reservation", href: "/black-friday" },
     ],
     Learn: [
         { name: "Our Story", href: "/our-story" },
