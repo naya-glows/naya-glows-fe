@@ -76,6 +76,45 @@ export type KitEnrollmentRow = {
   createdAt: string;
 };
 
+export type CampaignRow = {
+  id: string;
+  name: string;
+  isActive: boolean;
+  startDate: string;
+  endDate: string;
+  popupHeadline: string;
+  popupCopy: string;
+  popupImage: string | null;
+  ctaText: string;
+  landingPath: string;
+  rewardValueNgn: number;
+  codeValidDays: number;
+  redemptionRules: string | null;
+  termsText: string | null;
+  socialLinks: { platform: string; url: string }[];
+  popupFrequencyDays: number;
+  consentText: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type LeadRow = {
+  id: string;
+  campaignId: string;
+  campaign: { name: string };
+  fullName: string;
+  phone: string;
+  address: string;
+  email: string | null;
+  socialHandle: string | null;
+  rewardValueNgn: number;
+  rewardCode: string;
+  rewardExpiresAt: string;
+  rewardRedeemed: boolean;
+  consentGiven: boolean;
+  createdAt: string;
+};
+
 export type SeasonalSaleRow = {
   id: string;
   slug: string;
@@ -332,6 +371,8 @@ export const adminApi = createApi({
     "KitReservation",
     "TreatmentKit",
     "KitEnrollment",
+    "Campaign",
+    "Lead",
     "Consultation",
     "ConsultationType",
     "ConsultationBlock",
@@ -431,6 +472,32 @@ export const adminApi = createApi({
       query: () => "/admin/kits/enrollments",
       transformResponse: (res: { enrollments: KitEnrollmentRow[] }) => res.enrollments,
       providesTags: [{ type: "KitEnrollment", id: "LIST" }],
+    }),
+
+    listCampaigns: builder.query<CampaignRow[], void>({
+      query: () => "/admin/campaigns",
+      transformResponse: (res: { campaigns: CampaignRow[] }) => res.campaigns,
+      providesTags: [{ type: "Campaign", id: "LIST" }],
+    }),
+    createCampaign: builder.mutation<CampaignRow, Partial<CampaignRow>>({
+      query: (body) => ({ url: "/admin/campaigns", method: "POST", body }),
+      invalidatesTags: [{ type: "Campaign", id: "LIST" }],
+    }),
+    updateCampaign: builder.mutation<CampaignRow, Partial<CampaignRow> & { id: string }>({
+      query: ({ id, ...body }) => ({ url: `/admin/campaigns/${id}`, method: "PUT", body }),
+      invalidatesTags: [{ type: "Campaign", id: "LIST" }],
+    }),
+    deleteCampaign: builder.mutation<void, string>({
+      query: (id) => ({ url: `/admin/campaigns/${id}`, method: "DELETE" }),
+      invalidatesTags: [{ type: "Campaign", id: "LIST" }],
+    }),
+    listLeads: builder.query<LeadRow[], void>({
+      query: () => "/admin/leads",
+      transformResponse: (res: { leads: LeadRow[] }) => res.leads,
+      providesTags: [{ type: "Lead", id: "LIST" }],
+    }),
+    exportLeadsCsv: builder.query<string, void>({
+      query: () => ({ url: "/admin/leads/export.csv", responseHandler: "text" }),
     }),
 
     listReservationKits: builder.query<ReservationKitRow[], void>({
@@ -660,6 +727,12 @@ export const {
   useUpdateTreatmentKitMutation,
   useDeleteTreatmentKitMutation,
   useListKitEnrollmentsQuery,
+  useListCampaignsQuery,
+  useCreateCampaignMutation,
+  useUpdateCampaignMutation,
+  useDeleteCampaignMutation,
+  useListLeadsQuery,
+  useLazyExportLeadsCsvQuery,
   useListReservationKitsQuery,
   useCreateReservationKitMutation,
   useUpdateReservationKitMutation,

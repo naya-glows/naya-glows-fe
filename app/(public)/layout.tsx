@@ -2,6 +2,7 @@ import Script from "next/script";
 import Footer from "../components/layout/Footer";
 import Navbar from "../components/layout/Navbar";
 import RouteTransitionCleanup from "../components/RouteTransitionCleanup";
+import SpinToWinPopup from "./helpers/SpinToWinPopup";
 
 export default function PublicLayout({
   children,
@@ -14,6 +15,7 @@ export default function PublicLayout({
       <Navbar />
       <main className="overflow-x-hidden">{children}</main>
       <Footer />
+      <SpinToWinPopup />
       {/* Scoped to the public site only — this used to be in the root
           layout, which also wraps /admin, putting the chat bubble on every
           admin page too. */}

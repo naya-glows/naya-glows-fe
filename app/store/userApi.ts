@@ -389,6 +389,42 @@ export const userApi = createApi({
     >({
       query: (slug) => `/sales/${slug}`,
     }),
+    getActiveCampaign: builder.query<
+      {
+        campaign: {
+          id: string;
+          name: string;
+          popupHeadline: string;
+          popupCopy: string;
+          popupImage: string | null;
+          ctaText: string;
+          landingPath: string;
+          rewardValueNgn: number;
+          redemptionRules: string | null;
+          termsText: string | null;
+          socialLinks: { platform: string; url: string }[];
+          popupFrequencyDays: number;
+          consentText: string;
+        } | null;
+      },
+      void
+    >({
+      query: () => "/campaigns/active",
+    }),
+    submitLead: builder.mutation<
+      { lead: { id: string; rewardCode: string; rewardExpiresAt: string; rewardValueNgn: number } },
+      {
+        campaignId: string;
+        fullName: string;
+        phone: string;
+        address: string;
+        email?: string;
+        socialHandle?: string;
+        consentGiven: boolean;
+      }
+    >({
+      query: (body) => ({ url: "/leads", method: "POST", body }),
+    }),
     submitConsultation: builder.mutation<
       { request: { id: string } },
       {
@@ -596,6 +632,8 @@ export const {
   useVerifyPaymentQuery,
   useGetContentQuery,
   useGetActiveSaleQuery,
+  useGetActiveCampaignQuery,
+  useSubmitLeadMutation,
   useListReservationKitsQuery,
   useCreateReservationMutation,
   useGetReservationQuery,

@@ -24,6 +24,7 @@ import {
   Tag,
   Gift,
   Layers,
+  PartyPopper,
 } from "lucide-react";
 import { useAdminAuth } from "../../store/useAdminAuth";
 
@@ -33,6 +34,7 @@ const navItems = [
   { href: "/admin/sales", label: "Sales & Combos", icon: Tag },
   { href: "/admin/reservations", label: "BF Reservations", icon: Gift },
   { href: "/admin/kits", label: "Treatment Kits", icon: Layers },
+  { href: "/admin/campaigns", label: "Campaigns & Leads", icon: PartyPopper },
   { href: "/admin/content", label: "Content", icon: FileText },
   { href: "/admin/orders", label: "Orders", icon: ShoppingCart },
   { href: "/admin/subscriptions", label: "Subscriptions", icon: Repeat },
