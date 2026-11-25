@@ -15,6 +15,7 @@ import InfluencerSection from "./helpers/InfluencerSection";
 import VideoShowcaseSection from "./helpers/VideoShowcaseSection";
 import SignatureShowcaseSection from "./helpers/SignatureShowcaseSection";
 import ImageShowcaseSection from "./helpers/ImageShowcaseSection";
+import BusinessDirectorySection from "./helpers/BusinessDirectorySection";
 import SectionGate from "./helpers/SectionGate";
 
 type Props = {};
@@ -71,6 +72,7 @@ const Main = (props: Props) => {
       <SectionGate sectionKey="home.whyChoose">
         <WhyChooseSection />
       </SectionGate>
+      <BusinessDirectorySection />
       {/* <BannerSection /> */}
     </>
   );

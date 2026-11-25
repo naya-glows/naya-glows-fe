@@ -278,6 +278,12 @@ export type WholesaleInquiryRow = {
   message: string | null;
   status: string;
   createdAt: string;
+  type: "WHOLESALE" | "CORPORATE_GIFTING" | "WHITE_LABEL";
+  estimatedQuantity: string | null;
+  budget: string | null;
+  deadline: string | null;
+  feeNgn: number | null;
+  paid: boolean;
 };
 
 export const adminApi = createApi({

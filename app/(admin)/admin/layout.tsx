@@ -35,7 +35,7 @@ const navItems = [
   { href: "/admin/orders", label: "Orders", icon: ShoppingCart },
   { href: "/admin/subscriptions", label: "Subscriptions", icon: Repeat },
   { href: "/admin/consultations", label: "Consultations", icon: CalendarHeart },
-  { href: "/admin/wholesale", label: "Wholesale", icon: Building2 },
+  { href: "/admin/wholesale", label: "Business Inquiries", icon: Building2 },
   { href: "/admin/influencers", label: "Influencers", icon: Megaphone },
   { href: "/admin/contact-messages", label: "Contact Messages", icon: Mail },
   { href: "/admin/newsletter", label: "Newsletter", icon: MailPlus },

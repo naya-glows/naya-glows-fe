@@ -46,6 +46,8 @@ const footerLinks = {
     ],
     Business: [
         { name: "Wholesale Inquiries", href: "/wholesale" },
+        { name: "Corporate Gifting", href: "/corporate-gifting" },
+        { name: "White-Label Services", href: "/white-label" },
         { name: "Our Branches", href: "/branches" },
         { name: "Skin Education", href: "/skin-education" },
     ],

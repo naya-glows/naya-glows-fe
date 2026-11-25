@@ -470,10 +470,52 @@ export const userApi = createApi({
       query: ({ id, reference }) => `/consultations/${id}/verify?reference=${encodeURIComponent(reference)}`,
     }),
     submitWholesaleInquiry: builder.mutation<
-      { inquiry: { id: string } },
-      { businessName: string; contactName: string; email: string; phone?: string; message?: string }
+      { inquiry: { id: string; type: string; feeNgn: number | null } },
+      {
+        businessName: string;
+        contactName: string;
+        email: string;
+        phone?: string;
+        message?: string;
+        type?: "WHOLESALE" | "CORPORATE_GIFTING" | "WHITE_LABEL";
+        estimatedQuantity?: string;
+        budget?: string;
+        deadline?: string;
+      }
     >({
       query: (body) => ({ url: "/wholesale-inquiries", method: "POST", body }),
+    }),
+    getWholesaleInquiry: builder.query<
+      {
+        inquiry: {
+          id: string;
+          businessName: string;
+          type: string;
+          feeNgn: number | null;
+          paid: boolean;
+        };
+      },
+      string
+    >({
+      query: (id) => `/wholesale-inquiries/${id}`,
+    }),
+    payWholesaleInquiry: builder.mutation<{ authorizationUrl: string }, string>({
+      query: (id) => ({ url: `/wholesale-inquiries/${id}/pay`, method: "POST" }),
+    }),
+    verifyWholesaleInquiryPayment: builder.query<
+      {
+        inquiry: {
+          id: string;
+          businessName: string;
+          type: string;
+          feeNgn: number | null;
+          paid: boolean;
+        };
+      },
+      { id: string; reference: string }
+    >({
+      query: ({ id, reference }) =>
+        `/wholesale-inquiries/${id}/verify?reference=${encodeURIComponent(reference)}`,
     }),
     submitContactMessage: builder.mutation<
       { contactMessage: { id: string } },
@@ -568,6 +610,9 @@ export const {
   useTrackOrderQuery,
   useSubmitConsultationMutation,
   useSubmitWholesaleInquiryMutation,
+  useGetWholesaleInquiryQuery,
+  usePayWholesaleInquiryMutation,
+  useVerifyWholesaleInquiryPaymentQuery,
   useSubmitContactMessageMutation,
   useSubscribeNewsletterMutation,
   useGetPublicSettingsQuery,
