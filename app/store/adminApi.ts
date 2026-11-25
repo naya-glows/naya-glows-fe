@@ -10,6 +10,35 @@ import type { RootState } from "./store";
 import { clearAuth as clearAdminAuth, ADMIN_TOKEN_KEY, type AuthUser } from "./adminAuthSlice";
 import type { Product } from "@/lib/products";
 
+export type ComboRow = {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  coverImage: string | null;
+  price: number;
+  productSlugs: string[];
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type SeasonalSaleRow = {
+  id: string;
+  slug: string;
+  name: string;
+  discountPercent: number;
+  productSlugs: string[];
+  startDate: string;
+  endDate: string;
+  isActive: boolean;
+  bannerHeadline: string;
+  bannerCopy: string;
+  bannerImage: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
 const rawBaseQuery = fetchBaseQuery({
   baseUrl: process.env.NEXT_PUBLIC_API_URL,
   prepareHeaders: (headers, { getState }) => {
@@ -215,6 +244,8 @@ export const adminApi = createApi({
     "EmailCampaign",
     "BudgetEntry",
     "Influencer",
+    "Combo",
+    "SeasonalSale",
   ],
   endpoints: (builder) => ({
     login: builder.mutation<
@@ -252,6 +283,51 @@ export const adminApi = createApi({
     }),
     uploadImage: builder.mutation<{ url: string }, FormData>({
       query: (formData) => ({ url: "/uploads", method: "POST", body: formData }),
+    }),
+
+    listCombos: builder.query<ComboRow[], void>({
+      query: () => "/admin/combos",
+      transformResponse: (res: { combos: ComboRow[] }) => res.combos,
+      providesTags: [{ type: "Combo", id: "LIST" }],
+    }),
+    createCombo: builder.mutation<ComboRow, Partial<ComboRow>>({
+      query: (body) => ({ url: "/admin/combos", method: "POST", body }),
+      invalidatesTags: [
+        { type: "Combo", id: "LIST" },
+        { type: "Product", id: "LIST" },
+      ],
+    }),
+    updateCombo: builder.mutation<ComboRow, Partial<ComboRow> & { slug: string }>({
+      query: ({ slug, ...body }) => ({ url: `/admin/combos/${slug}`, method: "PUT", body }),
+      invalidatesTags: [
+        { type: "Combo", id: "LIST" },
+        { type: "Product", id: "LIST" },
+      ],
+    }),
+    deleteCombo: builder.mutation<void, string>({
+      query: (slug) => ({ url: `/admin/combos/${slug}`, method: "DELETE" }),
+      invalidatesTags: [
+        { type: "Combo", id: "LIST" },
+        { type: "Product", id: "LIST" },
+      ],
+    }),
+
+    listSales: builder.query<SeasonalSaleRow[], void>({
+      query: () => "/admin/sales",
+      transformResponse: (res: { sales: SeasonalSaleRow[] }) => res.sales,
+      providesTags: [{ type: "SeasonalSale", id: "LIST" }],
+    }),
+    createSale: builder.mutation<SeasonalSaleRow, Partial<SeasonalSaleRow>>({
+      query: (body) => ({ url: "/admin/sales", method: "POST", body }),
+      invalidatesTags: [{ type: "SeasonalSale", id: "LIST" }],
+    }),
+    updateSale: builder.mutation<SeasonalSaleRow, Partial<SeasonalSaleRow> & { slug: string }>({
+      query: ({ slug, ...body }) => ({ url: `/admin/sales/${slug}`, method: "PUT", body }),
+      invalidatesTags: [{ type: "SeasonalSale", id: "LIST" }],
+    }),
+    deleteSale: builder.mutation<void, string>({
+      query: (slug) => ({ url: `/admin/sales/${slug}`, method: "DELETE" }),
+      invalidatesTags: [{ type: "SeasonalSale", id: "LIST" }],
     }),
 
     listContent: builder.query<ContentBlockRow[], void>({
@@ -393,6 +469,14 @@ export const {
   useUpdateProductMutation,
   useDeleteProductMutation,
   useUploadImageMutation,
+  useListCombosQuery,
+  useCreateComboMutation,
+  useUpdateComboMutation,
+  useDeleteComboMutation,
+  useListSalesQuery,
+  useCreateSaleMutation,
+  useUpdateSaleMutation,
+  useDeleteSaleMutation,
   useListContentQuery,
   useUpsertContentMutation,
   useDeleteContentMutation,

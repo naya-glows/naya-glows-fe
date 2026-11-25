@@ -27,6 +27,11 @@ export type Product = {
   // Undefined/missing means in stock — only an explicit `false` (from the
   // backend, once an admin marks it) takes a product out of purchase.
   inStock?: boolean;
+  // Set only on the synthetic Product row a Combo upserts for itself (see
+  // Combo in backend/prisma/schema.prisma) — lets the storefront tell a
+  // bundle apart from a retail product when it matters.
+  isCombo?: boolean;
+  comboProductSlugs?: string[];
 };
 
 // `price`/`originalPrice` below are stored in Naira — the admin's real

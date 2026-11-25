@@ -46,3 +46,7 @@ backend
 
 .vercel
 .env*
+
+# Project owner's own working documents — not part of the codebase.
+NAYA_GLOWS_Website_Updates_Brief.docx
+updated-directives.txt

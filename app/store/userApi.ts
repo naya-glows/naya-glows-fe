@@ -302,6 +302,25 @@ export const userApi = createApi({
     getContent: builder.query<{ block: { key: string; data: unknown } }, string>({
       query: (key) => `/content/${key}`,
     }),
+    getActiveSale: builder.query<
+      {
+        sale: {
+          id: string;
+          slug: string;
+          name: string;
+          discountPercent: number;
+          productSlugs: string[];
+          startDate: string;
+          endDate: string;
+          bannerHeadline: string;
+          bannerCopy: string;
+          bannerImage: string | null;
+        };
+      },
+      string
+    >({
+      query: (slug) => `/sales/${slug}`,
+    }),
     submitConsultation: builder.mutation<
       { request: { id: string } },
       {
@@ -399,6 +418,7 @@ export const {
   useInitializePaymentMutation,
   useVerifyPaymentQuery,
   useGetContentQuery,
+  useGetActiveSaleQuery,
   useTrackOrderQuery,
   useSubmitConsultationMutation,
   useSubmitWholesaleInquiryMutation,
