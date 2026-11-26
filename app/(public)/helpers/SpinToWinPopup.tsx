@@ -98,7 +98,7 @@ export default function SpinToWinPopup() {
               <MissingDetailsPlaceholder className="w-full h-36" />
             )}
             <div className="p-6 text-center">
-              <h2 className="text-xl font-light mb-2">{campaign.popupHeadline}</h2>
+              <h2 className="text-xl font-light mb-2 text-[#16241a]">{campaign.popupHeadline}</h2>
               <p className="text-sm text-[#16241a]/60 mb-6 leading-relaxed">{campaign.popupCopy}</p>
               <button
                 onClick={handleSpin}
@@ -122,7 +122,7 @@ export default function SpinToWinPopup() {
             <div className="w-16 h-16 rounded-full bg-[#d4e8d0] flex items-center justify-center mx-auto mb-5">
               <span className="text-2xl">🎉</span>
             </div>
-            <h2 className="text-2xl font-light mb-2">You won ₦{campaign.rewardValueNgn.toLocaleString()} off!</h2>
+            <h2 className="text-2xl font-light mb-2 text-[#16241a]">You won ₦{campaign.rewardValueNgn.toLocaleString()} off!</h2>
             <p className="text-sm text-[#16241a]/60 mb-6">
               Fill in your details below to claim your reward.
             </p>
@@ -137,7 +137,7 @@ export default function SpinToWinPopup() {
 
         {stage === "form" && (
           <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-3 max-h-[80vh] overflow-y-auto">
-            <h2 className="text-lg font-medium mb-1">Claim Your ₦{campaign.rewardValueNgn.toLocaleString()} Off</h2>
+            <h2 className="text-lg font-medium mb-1 text-[#16241a]">Claim Your ₦{campaign.rewardValueNgn.toLocaleString()} Off</h2>
             <input
               required
               placeholder="Full name"
@@ -198,8 +198,8 @@ export default function SpinToWinPopup() {
             <div className="w-16 h-16 rounded-full bg-[#d4e8d0] flex items-center justify-center mx-auto mb-5">
               <Check size={26} className="text-[#4f7957]" />
             </div>
-            <h2 className="text-xl font-light mb-2">Your reward code</h2>
-            <p className="text-2xl font-bold tracking-wide bg-[#f4faf3] rounded-xl py-3 mb-2">{reward.code}</p>
+            <h2 className="text-xl font-light mb-2 text-[#16241a]">Your reward code</h2>
+            <p className="text-2xl font-bold tracking-wide bg-[#f4faf3] text-[#16241a] rounded-xl py-3 mb-2">{reward.code}</p>
             <p className="text-xs text-[#16241a]/45 mb-5">
               Valid until {new Date(reward.expiresAt).toLocaleDateString()} — enter it at checkout.
             </p>

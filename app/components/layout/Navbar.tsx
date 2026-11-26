@@ -11,6 +11,7 @@ import { useUserAuth } from "../../store/useUserAuth";
 import { useCurrencyDisplay } from "../../store/useCurrencyDisplay";
 import { FREE_SHIPPING_THRESHOLD_NGN } from "@/lib/products";
 import {
+  Search,
   User,
   ShoppingBag,
   ChevronDown,
@@ -150,6 +151,7 @@ const navLinks = [
 
 export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { itemCount } = useCart();
@@ -193,6 +195,7 @@ export default function Navbar() {
   const closeAllMenus = () => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
     setDropdownOpen(false);
+    setSearchOpen(false);
     setMobileMenuOpen(false);
   };
 
@@ -285,10 +288,15 @@ export default function Navbar() {
 
             {/* RIGHT: Action icons */}
             <div className="flex items-center gap-2 flex-shrink-0 ml-auto lg:ml-0">
-              {/* Setch search — replaces the old icon-that-expands-into-a-field
-                  pattern; Setch's own widget script (see layout.tsx) renders
-                  into this slot and handles its own open/expand behavior. */}
-              <div data-setch-search=""></div>
+              {/* Search — the icon itself is back to how it was before Setch;
+                  Setch only renders inside the panel this reveals (below),
+                  not in place of the icon itself. */}
+              <button
+                onClick={() => setSearchOpen(!searchOpen)}
+                className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#1a1a1a] hover:scale-105 transition-transform duration-200 shadow-sm"
+              >
+                {searchOpen ? <X size={16} /> : <Search size={16} />}
+              </button>
 
               {/* Account — desktop only */}
               <Link
@@ -413,6 +421,23 @@ export default function Navbar() {
           )}
         </AnimatePresence>
 
+        {/* ── Search bar — Setch lives inside this reveal, not in place of
+            the icon itself. Always mounted (never removed from the DOM,
+            just animated between height:0/opacity:0 and open) rather than
+            the AnimatePresence mount/unmount the old custom input used —
+            Setch's widget script only scans the DOM once on load, and a
+            slot that gets added later via conditional mounting might never
+            get picked up. ──────────────────────────────────────────── */}
+        <motion.div
+          initial={false}
+          animate={searchOpen ? { height: "auto", opacity: 1 } : { height: 0, opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="overflow-hidden"
+        >
+          <div className="bg-white/95 backdrop-blur-md px-5 lg:px-12 py-4 max-w-[1400px] mx-auto">
+            <div data-setch-search=""></div>
+          </div>
+        </motion.div>
       </nav>
 
       {/* ── MOBILE FULL-SCREEN MENU ─────────────────────────────────────────── */}

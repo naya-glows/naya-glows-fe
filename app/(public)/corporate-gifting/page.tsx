@@ -59,7 +59,7 @@ export default function CorporateGiftingPage() {
           <div className="w-16 h-16 rounded-full bg-white/70 flex items-center justify-center mx-auto mb-6">
             <CheckCircle2 size={28} className="text-[#6a9a72]" />
           </div>
-          <h1 className="text-2xl font-light mb-3">Enquiry sent</h1>
+          <h1 className="text-2xl font-light mb-3 text-[#16241a]">Enquiry sent</h1>
           <p className="text-sm text-[#16241a]/60 leading-relaxed mb-8">
             Thanks for reaching out. We'll follow up to arrange a meeting and discuss your gifting needs —
             or chat with us right away on WhatsApp.

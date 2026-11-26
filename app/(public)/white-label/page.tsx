@@ -70,7 +70,7 @@ export default function WhiteLabelPage() {
                 <p className="text-xs font-semibold uppercase tracking-wide text-[#16241a]/45 mb-1">
                   Consultation Fee
                 </p>
-                <p className="text-2xl font-light">₦50,000</p>
+                <p className="text-2xl font-light text-[#16241a]">₦50,000</p>
                 <p className="text-xs text-[#16241a]/50 mt-1">
                   Paid before we proceed, to discuss your business goals, formulation needs and product range.
                 </p>
@@ -79,7 +79,7 @@ export default function WhiteLabelPage() {
                 <p className="text-xs font-semibold uppercase tracking-wide text-[#16241a]/45 mb-1">
                   Minimum Order Quantity
                 </p>
-                <p className="text-2xl font-light">50 pieces</p>
+                <p className="text-2xl font-light text-[#16241a]">50 pieces</p>
                 <p className="text-xs text-[#16241a]/50 mt-1">Per product/item, for production runs.</p>
               </div>
             </div>

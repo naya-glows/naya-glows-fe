@@ -42,8 +42,8 @@ export default function KitsClient({ kits }: { kits: Product[] }) {
                     <p className="text-xs font-semibold uppercase tracking-wide text-[#4f7957] mb-1">
                       {kit.tagline}
                     </p>
-                    <h2 className="text-xl font-light mb-3">{kit.name}</h2>
-                    <p className="text-2xl font-semibold mb-4">{formatPrice(kit.price)}</p>
+                    <h2 className="text-xl font-light mb-3 text-[#16241a]">{kit.name}</h2>
+                    <p className="text-2xl font-semibold mb-4 text-[#16241a]">{formatPrice(kit.price)}</p>
                     <ul className="flex flex-col gap-2.5 mb-6 flex-1">
                       {kit.benefits.map((b) => (
                         <li key={b} className="flex items-start gap-2 text-xs text-[#16241a]/60 leading-relaxed">
