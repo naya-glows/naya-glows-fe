@@ -161,7 +161,7 @@ function CatalogClientInner({ products }: { products: Product[] }) {
             >
               <button
                 onClick={() => handleSetCollection("Skincare")}
-                className={`flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-full transition-colors ${!isScent
+                className={`flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-full transition-colors cursor-pointer ${!isScent
                     ? "bg-[#16241a] text-white"
                     : isScent
                       ? "text-white/60 hover:text-white"
@@ -174,7 +174,7 @@ function CatalogClientInner({ products }: { products: Product[] }) {
               <div className="relative">
                 <button
                   onClick={() => handleSetCollection("Scent")}
-                  className={`flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-full transition-colors ${isScent ? "bg-white text-[#0e0e0e]" : "text-[#16241a]/60 hover:text-[#16241a]"
+                  className={`flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-full transition-colors cursor-pointer ${isScent ? "bg-white text-[#0e0e0e]" : "text-[#16241a]/60 hover:text-[#16241a]"
                     }`}
                 >
                   <Sparkles size={13} />

@@ -47,13 +47,18 @@ export default function ScentDiscoveryHint({ active }: { active: boolean }) {
     <AnimatePresence>
       {visible && (
         <>
-          {/* Pulsing ring around the Scent button. */}
+          {/* Pulsing ring around the Scent button. The entrance/loop
+              transition has repeat: Infinity, which — if left as the only
+              transition on this element — also governs the exit animation,
+              so AnimatePresence waits forever for an exit that never
+              "completes" and the ring never actually unmounts. Giving the
+              exit its own finite transition fixes that. */}
           <motion.span
             className="pointer-events-none absolute -inset-1 z-20 rounded-full"
             style={{ boxShadow: "0 0 0 2px #8ab88e" }}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: [0.9, 0.2, 0.9], scale: [0.95, 1.08, 0.95] }}
-            exit={{ opacity: 0 }}
+            exit={{ opacity: 0, transition: { duration: 0.25, repeat: 0 } }}
             transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
           />
 
