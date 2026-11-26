@@ -1,38 +1,45 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search } from "lucide-react";
 
 const SHOW_DELAY_MS = 1000;
 const AUTO_DISMISS_MS = 6000;
 
-// A nudge toward the Scent tab, shown on every catalog page load (not
-// gated by localStorage) — a magnifying glass slides in from the search
-// bar up to the Scent toggle, a ring pulses around the button, and a small
-// callout explains why. No full-page overlay: that used to sit on top of
-// the real toggle buttons and swallow clicks meant for them. Dismissed by
-// clicking the Scent tab itself (via `active` flipping false), clicking
-// the callout, or a timeout.
+// A nudge toward the Scent tab, shown once per page load (not gated by
+// localStorage, so a full reload always brings it back) — a magnifying
+// glass slides in from the search bar up to the Scent toggle, a ring
+// pulses around the button, and a small callout explains why. No
+// full-page overlay: that used to sit on top of the real toggle buttons
+// and swallow clicks meant for them. Once dismissed — by clicking either
+// tab, the callout, or the auto-dismiss timeout — it stays gone for the
+// rest of this page's lifetime; only a reload re-arms it.
 export default function ScentDiscoveryHint({ active }: { active: boolean }) {
   const [visible, setVisible] = useState(false);
+  const dismissedRef = useRef(false);
 
   useEffect(() => {
-    if (!active) return;
+    if (!active || dismissedRef.current) return;
     const showTimer = setTimeout(() => setVisible(true), SHOW_DELAY_MS);
     return () => clearTimeout(showTimer);
   }, [active]);
+
+  const dismiss = () => {
+    dismissedRef.current = true;
+    setVisible(false);
+  };
 
   // `active` flips to false the moment the visitor actually clicks the
   // Scent tab — that's the hint doing its job, so it should disappear
   // immediately rather than linger for its own auto-dismiss timeout.
   useEffect(() => {
-    if (!active) setVisible(false);
+    if (!active) dismiss();
   }, [active]);
 
   useEffect(() => {
     if (!visible) return;
-    const dismissTimer = setTimeout(() => setVisible(false), AUTO_DISMISS_MS);
+    const dismissTimer = setTimeout(dismiss, AUTO_DISMISS_MS);
     return () => clearTimeout(dismissTimer);
   }, [visible]);
 
@@ -65,7 +72,7 @@ export default function ScentDiscoveryHint({ active }: { active: boolean }) {
           <motion.div
             role="button"
             tabIndex={0}
-            onClick={() => setVisible(false)}
+            onClick={dismiss}
             className="absolute left-1/2 top-full z-20 mt-3 w-56 -translate-x-1/2 cursor-pointer rounded-xl bg-[#16241a] px-4 py-3 text-center text-xs text-white shadow-xl"
             initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}

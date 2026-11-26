@@ -1,14 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowRight } from "lucide-react";
 import DirectoryTileSkeleton from "./skeletons/DirectoryTileSkeleton";
-
-gsap.registerPlugin(ScrollTrigger);
 
 // Same soft pastel accent set CatalogSection uses for its arrow buttons —
 // reused here so these tiles read as part of the same system rather than
@@ -35,43 +30,8 @@ export default function DirectoryTileGrid({
   tiles: DirectoryTile[];
   isLoading?: boolean;
 }) {
-  const sectionRef = useRef<HTMLElement>(null);
-  const headingRef = useRef<HTMLDivElement>(null);
-  const cardRefs = useRef<(HTMLAnchorElement | null)[]>([]);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      const anim = (el: Element | null, from: gsap.TweenVars, delay = 0) => {
-        if (!el) return;
-        gsap.fromTo(
-          el,
-          { opacity: 0, y: 40, ...from },
-          {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: 1.2,
-            delay,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: el,
-              start: "top 85%",
-              end: "top 30%",
-              toggleActions: "play none none reverse",
-            },
-          },
-        );
-      };
-
-      anim(headingRef.current, {});
-      cardRefs.current.forEach((el, i) => anim(el, { y: 50, scale: 0.97 }, 0.1 + i * 0.1));
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
-
   return (
-    <section ref={sectionRef} className="relative w-full bg-white py-20">
+    <section className="relative w-full bg-white py-20">
       {isLoading && (
         <div className="absolute inset-0 z-50 bg-white">
           <div className="w-[90%] mx-auto max-[1275px]:w-full p-8 sm:p-10 lg:p-14 max-[800px]:px-4">
@@ -81,7 +41,7 @@ export default function DirectoryTileGrid({
       )}
       <div className="w-[90%] mx-auto max-[1275px]:w-full">
         <div className="p-8 sm:p-10 lg:p-14 max-[800px]:px-4">
-          <div ref={headingRef} className="mb-10">
+          <div className="mb-10">
             {eyebrow && (
               <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#9a9ab8] mb-2">{eyebrow}</p>
             )}
@@ -98,9 +58,6 @@ export default function DirectoryTileGrid({
               <Link
                 key={tile.href}
                 href={tile.href}
-                ref={(el) => {
-                  cardRefs.current[i] = el;
-                }}
                 className="group relative block h-[300px] sm:h-[340px] rounded-2xl overflow-hidden"
               >
                 <Image
