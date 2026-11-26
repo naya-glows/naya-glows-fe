@@ -77,7 +77,7 @@ export default function ProductSpotlightSection() {
                 scrollTrigger: {
                     trigger: productRef.current,
                     start: "top center",  // Product center hits viewport center
-                    toggleActions: "play none none reverse",
+                    toggleActions: "play none none none", // was "...reverse" — scrolling back up past this section no longer re-hides it (see ScrollTriggerRefresher.tsx for the full context on why)
                 }
             });
 

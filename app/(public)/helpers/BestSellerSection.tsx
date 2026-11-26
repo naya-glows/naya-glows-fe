@@ -35,7 +35,7 @@ export default function BestSellersSection() {
                             trigger: el,
                             start: "top 80%",
                             end: "top 25%",
-                            toggleActions: "play none none reverse",
+                            toggleActions: "play none none none", // was "...reverse" — scrolling back up past this section no longer re-hides it (see ScrollTriggerRefresher.tsx for the full context on why)
                         },
                     }
                 );
