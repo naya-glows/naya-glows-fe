@@ -4,7 +4,7 @@ import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import { Search, Sparkles, Droplet } from "lucide-react";
+import { Sparkles, Droplet } from "lucide-react";
 import { isInStock, skincareCategories, type Product, type ProductCategory } from "@/lib/products";
 import { useCart } from "../../store/cartSlice";
 import { triggerCartFly } from "../../store/cartFlyBus";
@@ -46,7 +46,6 @@ function CatalogClientInner({ products }: { products: Product[] }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [collection, setCollection] = useState<Collection>("Skincare");
-  const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<FilterValue>("All");
   const [justAdded, setJustAdded] = useState<string | null>(null);
 
@@ -109,10 +108,9 @@ function CatalogClientInner({ products }: { products: Product[] }) {
     return products.filter((p) => {
       const matchesCollection = isScent ? p.category === "Scent" : p.category !== "Scent";
       const matchesCategory = isScent || filter === "All" || p.category === filter;
-      const matchesQuery = p.name.toLowerCase().includes(query.trim().toLowerCase());
-      return matchesCollection && matchesCategory && matchesQuery;
+      return matchesCollection && matchesCategory;
     });
-  }, [products, query, filter, isScent]);
+  }, [products, filter, isScent]);
 
   const toggleWishlist = async (product: Product) => {
     // Auth is still resolving on first load (token hydration + the /me
@@ -212,19 +210,10 @@ function CatalogClientInner({ products }: { products: Product[] }) {
               {isScent ? heroContent.scentSubheading : heroContent.skincareSubheading}
             </p>
 
-            {/* Search */}
+            {/* Setch search — replaces the old in-page-filter search field */}
             {!isScent && (
-              <div className="flex items-center gap-2 max-w-md">
-                <div className="flex-1 flex items-center gap-2.5 bg-white/70 backdrop-blur-md border border-white/60 rounded-full px-5 py-3.5">
-                  <Search size={16} className="text-[#6a9a72] flex-shrink-0" />
-                  <input
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    type="text"
-                    placeholder="Search your product"
-                    className="w-full bg-transparent outline-none text-sm placeholder:text-[#16241a]/35"
-                  />
-                </div>
+              <div className="max-w-md">
+                <div data-setch-search=""></div>
               </div>
             )}
           </div>
@@ -282,13 +271,10 @@ function CatalogClientInner({ products }: { products: Product[] }) {
               <GlassCard className="text-center py-20 px-6">
                 <p className="text-lg font-medium mb-2">No products found</p>
                 <p className="text-sm text-[#16241a]/50 mb-6">
-                  Try a different search term or category.
+                  Try a different category.
                 </p>
                 <button
-                  onClick={() => {
-                    setQuery("");
-                    setFilter("All");
-                  }}
+                  onClick={() => setFilter("All")}
                   className="text-sm font-semibold bg-[#16241a] text-white px-6 py-2.5 rounded-full"
                 >
                   Clear filters

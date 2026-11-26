@@ -18,6 +18,7 @@ import ImageShowcaseSection from "./helpers/ImageShowcaseSection";
 import ServicesDirectorySection from "./helpers/ServicesDirectorySection";
 import BusinessDirectorySection from "./helpers/BusinessDirectorySection";
 import SectionGate from "./helpers/SectionGate";
+import ScrollTriggerRefresher from "./helpers/ScrollTriggerRefresher";
 
 type Props = {};
 
@@ -80,6 +81,7 @@ const Main = (props: Props) => {
         <WhyChooseSection />
       </SectionGate>
       {/* <BannerSection /> */}
+      <ScrollTriggerRefresher />
     </>
   );
 };

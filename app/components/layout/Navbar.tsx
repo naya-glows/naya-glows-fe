@@ -1,21 +1,16 @@
 "use client";
 
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence, useAnimationControls } from "framer-motion";
 import { CART_LANDED_EVENT } from "../../store/cartFlyBus";
 import { useCart } from "../../store/cartSlice";
 import { useUserAuth } from "../../store/useUserAuth";
 import { useCurrencyDisplay } from "../../store/useCurrencyDisplay";
+import { FREE_SHIPPING_THRESHOLD_NGN } from "@/lib/products";
 import {
-  FREE_SHIPPING_THRESHOLD_NGN,
-  getProducts,
-  type Product,
-} from "@/lib/products";
-import {
-  Search,
   User,
   ShoppingBag,
   ChevronDown,
@@ -155,14 +150,12 @@ const navLinks = [
 
 export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { itemCount } = useCart();
   const { user } = useUserAuth();
   const { format: formatPrice } = useCurrencyDisplay();
   const cartIconControls = useAnimationControls();
-  const router = useRouter();
 
   // The "All Products" mega-menu's 12 preview thumbnails used to only start
   // fetching the instant the dropdown opened — racing its ~220ms open
@@ -179,54 +172,6 @@ export default function Navbar() {
       });
     });
   }, []);
-
-  // Search — products are fetched once, lazily, the first time the search
-  // bar is opened (not on every keystroke, not on every page load), then
-  // filtered entirely client-side. The query itself is debounced so typing
-  // fast doesn't re-filter (and re-render the results dropdown) on every
-  // keystroke.
-  const [searchProducts, setSearchProducts] = useState<Product[] | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
-
-  useEffect(() => {
-    if (!searchOpen || searchProducts) return;
-    getProducts().then(setSearchProducts);
-  }, [searchOpen, searchProducts]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setDebouncedSearchQuery(searchQuery), 300);
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
-
-  // Closing the search bar (Escape, toggle, navigating away) always starts
-  // the next open with a clean slate rather than showing stale results.
-  useEffect(() => {
-    if (!searchOpen) {
-      setSearchQuery("");
-      setDebouncedSearchQuery("");
-    }
-  }, [searchOpen]);
-
-  const searchResults = useMemo(() => {
-    const q = debouncedSearchQuery.trim().toLowerCase();
-    if (!q || !searchProducts) return [];
-    return searchProducts
-      .filter(
-        (p) =>
-          p.name.toLowerCase().includes(q) ||
-          p.tagline.toLowerCase().includes(q) ||
-          p.category.toLowerCase().includes(q),
-      )
-      .slice(0, 6);
-  }, [debouncedSearchQuery, searchProducts]);
-
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchResults.length === 0) return;
-    router.push(`/products/${searchResults[0].slug}`);
-    setSearchOpen(false);
-  };
 
   useEffect(() => {
     const handler = () => {
@@ -248,7 +193,6 @@ export default function Navbar() {
   const closeAllMenus = () => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
     setDropdownOpen(false);
-    setSearchOpen(false);
     setMobileMenuOpen(false);
   };
 
@@ -341,13 +285,10 @@ export default function Navbar() {
 
             {/* RIGHT: Action icons */}
             <div className="flex items-center gap-2 flex-shrink-0 ml-auto lg:ml-0">
-              {/* Search */}
-              <button
-                onClick={() => setSearchOpen(!searchOpen)}
-                className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#1a1a1a] hover:scale-105 transition-transform duration-200 shadow-sm"
-              >
-                {searchOpen ? <X size={16} /> : <Search size={16} />}
-              </button>
+              {/* Setch search — replaces the old icon-that-expands-into-a-field
+                  pattern; Setch's own widget script (see layout.tsx) renders
+                  into this slot and handles its own open/expand behavior. */}
+              <div data-setch-search=""></div>
 
               {/* Account — desktop only */}
               <Link
@@ -472,76 +413,6 @@ export default function Navbar() {
           )}
         </AnimatePresence>
 
-        {/* ── Search bar ──────────────────────────────────────────────────── */}
-        <AnimatePresence initial={false}>
-          {searchOpen && (
-            <motion.div
-              key="desktop-search"
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="overflow-hidden"
-            >
-              <div className="bg-white/95 backdrop-blur-md px-5 lg:px-12 py-4 max-w-[1400px] mx-auto">
-                <form onSubmit={handleSearchSubmit}>
-                  <input
-                    autoFocus
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search for serums, cleansers, body care…"
-                    className="w-full bg-transparent text-black placeholder:text-black/30 text-base lg:text-lg font-light border-b border-black/15 pb-3 outline-none focus:border-black/40 transition-colors"
-                  />
-                </form>
-
-                {searchQuery.trim() && (
-                  <div className="pt-4 pb-1">
-                    {!searchProducts ? (
-                      <p className="text-sm text-black/40 py-2">Loading…</p>
-                    ) : searchResults.length === 0 ? (
-                      <p className="text-sm text-black/40 py-2">
-                        No products found for &ldquo;{searchQuery}&rdquo;.
-                      </p>
-                    ) : (
-                      <div className="flex flex-col divide-y divide-black/[0.06]">
-                        {searchResults.map((product) => (
-                          <Link
-                            key={product.slug}
-                            href={`/products/${product.slug}`}
-                            onClick={() => setSearchOpen(false)}
-                            className="flex items-center gap-3 py-2.5 group"
-                          >
-                            <div className="relative w-11 h-11 rounded-lg bg-[#f5f0ea] flex-shrink-0 overflow-hidden">
-                              <Image
-                                src={product.image}
-                                alt={product.name}
-                                fill
-                                sizes="44px"
-                                className="object-cover group-hover:scale-105 transition-transform duration-300"
-                              />
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <p className="text-sm font-medium text-black group-hover:text-[#c9a87c] transition-colors truncate">
-                                {product.name}
-                              </p>
-                              <p className="text-xs text-black/40 truncate">
-                                {product.category}
-                              </p>
-                            </div>
-                            <span className="text-sm font-semibold text-black flex-shrink-0">
-                              {formatPrice(product.price)}
-                            </span>
-                          </Link>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </nav>
 
       {/* ── MOBILE FULL-SCREEN MENU ─────────────────────────────────────────── */}
