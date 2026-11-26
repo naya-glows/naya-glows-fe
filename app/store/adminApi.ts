@@ -608,6 +608,9 @@ export const adminApi = createApi({
       query: ({ slug, ...body }) => ({ url: `/admin/consultations/types/${slug}`, method: "PUT", body }),
       invalidatesTags: [{ type: "ConsultationType", id: "LIST" }],
     }),
+    getConsultationCalendarFeedUrl: builder.query<{ url: string }, void>({
+      query: () => "/admin/consultations/calendar-feed-url",
+    }),
     listConsultationBlocks: builder.query<ConsultationBlockRow[], void>({
       query: () => "/admin/consultations/blocks",
       transformResponse: (res: { blocks: ConsultationBlockRow[] }) => res.blocks,
@@ -754,6 +757,7 @@ export const {
   useCancelConsultationMutation,
   useListConsultationTypesAdminQuery,
   useUpdateConsultationTypeMutation,
+  useGetConsultationCalendarFeedUrlQuery,
   useListConsultationBlocksQuery,
   useCreateConsultationBlockMutation,
   useDeleteConsultationBlockMutation,

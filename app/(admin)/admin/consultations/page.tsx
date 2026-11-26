@@ -2,13 +2,14 @@
 
 import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
-import { Trash2 } from "lucide-react";
+import { Trash2, Copy, Check } from "lucide-react";
 import {
   useListConsultationsQuery,
   useRescheduleConsultationMutation,
   useCancelConsultationMutation,
   useListConsultationTypesAdminQuery,
   useUpdateConsultationTypeMutation,
+  useGetConsultationCalendarFeedUrlQuery,
   useListConsultationBlocksQuery,
   useCreateConsultationBlockMutation,
   useDeleteConsultationBlockMutation,
@@ -113,6 +114,7 @@ export default function AdminConsultationsPage() {
       </div>
 
       <ConsultationTypesSettings />
+      <CalendarFeed />
       <BlockedDates />
 
       {selected && (
@@ -231,6 +233,57 @@ function ConsultationTypesSettings() {
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+function CalendarFeed() {
+  const { data, isLoading } = useGetConsultationCalendarFeedUrlQuery();
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    if (!data?.url) return;
+    try {
+      await navigator.clipboard.writeText(data.url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error("Couldn't copy — select and copy the URL manually.");
+    }
+  };
+
+  return (
+    <div className="bg-white/60 backdrop-blur-xl border border-white/60 rounded-2xl p-5 mb-10">
+      <h2 className="text-sm font-semibold uppercase tracking-wide text-[#16241a]/50 mb-2">
+        Google Calendar Feed
+      </h2>
+      <p className="text-xs text-[#16241a]/50 mb-4 leading-relaxed">
+        Add this URL in Google Calendar (Settings → Add calendar → From URL) to see upcoming
+        bookings alongside your own calendar. It refreshes every few hours, not instantly. Treat it
+        like a password — anyone with the link can see booking details.
+      </p>
+      {isLoading ? (
+        <p className="text-sm text-[#16241a]/50">Loading…</p>
+      ) : !data?.url ? (
+        <p className="text-sm text-[#c0574c]">Feed isn't configured on the server yet.</p>
+      ) : (
+        <div className="flex items-center gap-2">
+          <input
+            readOnly
+            value={data.url}
+            onFocus={(e) => e.target.select()}
+            className="flex-1 bg-white/70 border border-white/60 rounded-xl px-3.5 py-2.5 text-xs font-mono outline-none"
+          />
+          <button
+            type="button"
+            onClick={handleCopy}
+            className="flex-shrink-0 flex items-center gap-1.5 text-xs font-semibold bg-[#16241a] text-white px-3.5 py-2.5 rounded-full"
+          >
+            {copied ? <Check size={13} /> : <Copy size={13} />}
+            {copied ? "Copied" : "Copy"}
+          </button>
+        </div>
+      )}
     </div>
   );
 }
