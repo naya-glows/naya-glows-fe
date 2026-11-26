@@ -19,6 +19,11 @@ import { defaultBestSellersContent, type BestSellersContent } from "@/lib/conten
 import { defaultTestimonialsContent, type TestimonialsContent } from "@/lib/content/homeTestimonials";
 import { defaultCategoriesContent, type CategoriesContent } from "@/lib/content/homeCategories";
 import { defaultWhyChooseContent, type WhyChooseContent } from "@/lib/content/homeWhyChoose";
+import {
+  defaultServicesDirectoryContent,
+  defaultBusinessDirectoryContent,
+  type DirectoryContent,
+} from "@/lib/content/homeDirectory";
 import { SectionShell } from "./SectionShell";
 import { HeroEditor } from "./sections/HeroEditor";
 import { IngredientsEditor } from "./sections/IngredientsEditor";
@@ -28,6 +33,7 @@ import { BestSellersEditor } from "./sections/BestSellersEditor";
 import { TestimonialsEditor } from "./sections/TestimonialsEditor";
 import { CategoriesEditor } from "./sections/CategoriesEditor";
 import { WhyChooseEditor } from "./sections/WhyChooseEditor";
+import { DirectoryEditor } from "./sections/DirectoryEditor";
 
 // Rendered in the real homepage's own section order (app/(public)/page.tsx),
 // not registry.ts declaration order, so the editor reads top-to-bottom the
@@ -41,6 +47,8 @@ type Draft = {
   "home.testimonials": TestimonialsContent;
   "home.categories": CategoriesContent;
   "home.whyChoose": WhyChooseContent;
+  "home.servicesDirectory": DirectoryContent;
+  "home.businessDirectory": DirectoryContent;
 };
 
 type DraftKey = keyof Draft;
@@ -54,6 +62,8 @@ const SECTION_TITLES: Record<DraftKey, string> = {
   "home.testimonials": "Testimonials",
   "home.categories": "Shop Categories",
   "home.whyChoose": "Why Choose Naya",
+  "home.servicesDirectory": "Services & Programmes",
+  "home.businessDirectory": "For Businesses",
 };
 
 function clone<T>(value: T): T {
@@ -70,6 +80,8 @@ export function HomepageGroup() {
   const testimonialsQ = useGetContentQuery("home.testimonials", { skip });
   const categoriesQ = useGetContentQuery("home.categories", { skip });
   const whyChooseQ = useGetContentQuery("home.whyChoose", { skip });
+  const servicesDirectoryQ = useGetContentQuery("home.servicesDirectory", { skip });
+  const businessDirectoryQ = useGetContentQuery("home.businessDirectory", { skip });
 
   const { data: blocks } = useListContentQuery();
   const overriddenKeys = new Set(blocks?.map((b) => b.key));
@@ -89,7 +101,9 @@ export function HomepageGroup() {
     !bestSellersQ.isLoading &&
     !testimonialsQ.isLoading &&
     !categoriesQ.isLoading &&
-    !whyChooseQ.isLoading;
+    !whyChooseQ.isLoading &&
+    !servicesDirectoryQ.isLoading &&
+    !businessDirectoryQ.isLoading;
 
   useEffect(() => {
     if (hydrated.current || !allLoaded) return;
@@ -105,6 +119,14 @@ export function HomepageGroup() {
       "home.testimonials": mergeContent(defaultTestimonialsContent, testimonialsQ.data?.block?.data),
       "home.categories": mergeContent(defaultCategoriesContent, categoriesQ.data?.block?.data),
       "home.whyChoose": mergeContent(defaultWhyChooseContent, whyChooseQ.data?.block?.data),
+      "home.servicesDirectory": mergeContent(
+        defaultServicesDirectoryContent,
+        servicesDirectoryQ.data?.block?.data,
+      ),
+      "home.businessDirectory": mergeContent(
+        defaultBusinessDirectoryContent,
+        businessDirectoryQ.data?.block?.data,
+      ),
     };
     setDraft(clone(initial));
     setSaved(clone(initial));
@@ -249,6 +271,30 @@ export function HomepageGroup() {
         <WhyChooseEditor
           data={draft["home.whyChoose"]}
           onChange={(p) => updateSection("home.whyChoose", p)}
+        />
+      </SectionShell>
+
+      <SectionShell
+        title={SECTION_TITLES["home.servicesDirectory"]}
+        customized={overriddenKeys.has("home.servicesDirectory")}
+        visible={isVisible("home.servicesDirectory")}
+        onToggleVisible={() => toggleVisible("home.servicesDirectory")}
+      >
+        <DirectoryEditor
+          data={draft["home.servicesDirectory"]}
+          onChange={(p) => updateSection("home.servicesDirectory", p)}
+        />
+      </SectionShell>
+
+      <SectionShell
+        title={SECTION_TITLES["home.businessDirectory"]}
+        customized={overriddenKeys.has("home.businessDirectory")}
+        visible={isVisible("home.businessDirectory")}
+        onToggleVisible={() => toggleVisible("home.businessDirectory")}
+      >
+        <DirectoryEditor
+          data={draft["home.businessDirectory"]}
+          onChange={(p) => updateSection("home.businessDirectory", p)}
         />
       </SectionShell>
 

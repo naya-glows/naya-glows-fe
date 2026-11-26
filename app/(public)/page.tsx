@@ -45,6 +45,12 @@ const Main = (props: Props) => {
       <SectionGate sectionKey="home.howItWorks">
         <HowItWorksSection />
       </SectionGate>
+      <SectionGate sectionKey="home.servicesDirectory">
+        <ServicesDirectorySection />
+      </SectionGate>
+      <SectionGate sectionKey="home.businessDirectory">
+        <BusinessDirectorySection />
+      </SectionGate>
       <ProductSpotlightSection />
       <SignatureShowcaseSection />
       <SectionGate sectionKey="home.bestSellers">
@@ -73,8 +79,6 @@ const Main = (props: Props) => {
       <SectionGate sectionKey="home.whyChoose">
         <WhyChooseSection />
       </SectionGate>
-      <ServicesDirectorySection />
-      <BusinessDirectorySection />
       {/* <BannerSection /> */}
     </>
   );

@@ -529,7 +529,7 @@ export default function ContactPage() {
                         We invite you to reach out for a personalised skincare consultation.
                     </p>
                     <p>Let's Stay Connected</p>
-                    <p>© 2024 All Rights Reserved</p>
+                    <p>© {new Date().getFullYear()} All Rights Reserved</p>
                 </div>
 
                 {/* Big display word */}

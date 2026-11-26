@@ -6,6 +6,7 @@ import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowRight } from "lucide-react";
+import DirectoryTileSkeleton from "./skeletons/DirectoryTileSkeleton";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -26,11 +27,13 @@ export default function DirectoryTileGrid({
   headingBold,
   headingLight,
   tiles,
+  isLoading,
 }: {
   eyebrow?: string;
   headingBold: string;
   headingLight: string;
   tiles: DirectoryTile[];
+  isLoading?: boolean;
 }) {
   const sectionRef = useRef<HTMLElement>(null);
   const headingRef = useRef<HTMLDivElement>(null);
@@ -68,7 +71,14 @@ export default function DirectoryTileGrid({
   }, []);
 
   return (
-    <section ref={sectionRef} className="w-full bg-white py-20">
+    <section ref={sectionRef} className="relative w-full bg-white py-20">
+      {isLoading && (
+        <div className="absolute inset-0 z-50 bg-white">
+          <div className="w-[90%] mx-auto max-[1275px]:w-full p-8 sm:p-10 lg:p-14 max-[800px]:px-4">
+            <DirectoryTileSkeleton />
+          </div>
+        </div>
+      )}
       <div className="w-[90%] mx-auto max-[1275px]:w-full">
         <div className="p-8 sm:p-10 lg:p-14 max-[800px]:px-4">
           <div ref={headingRef} className="mb-10">

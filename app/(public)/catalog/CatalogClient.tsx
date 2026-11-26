@@ -18,6 +18,7 @@ import GlassCard from "../helpers/glass/GlassCard";
 import ProductGridCard from "../helpers/ProductGridCard";
 import PhoneMockup from "../helpers/glass/PhoneMockup";
 import { AppHomeScreen, ProductDetailScreen } from "../helpers/glass/PhoneScreens";
+import ScentDiscoveryHint from "./ScentDiscoveryHint";
 
 type FilterValue = "All" | ProductCategory;
 type Collection = "Skincare" | "Scent";
@@ -170,14 +171,17 @@ function CatalogClientInner({ products }: { products: Product[] }) {
                 <Droplet size={13} />
                 {heroContent.skincareToggleLabel}
               </button>
-              <button
-                onClick={() => handleSetCollection("Scent")}
-                className={`flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-full transition-colors ${isScent ? "bg-white text-[#0e0e0e]" : "text-[#16241a]/60 hover:text-[#16241a]"
-                  }`}
-              >
-                <Sparkles size={13} />
-                {heroContent.scentToggleLabel}
-              </button>
+              <div className="relative">
+                <button
+                  onClick={() => handleSetCollection("Scent")}
+                  className={`flex items-center gap-1.5 text-sm font-medium px-4 py-2 rounded-full transition-colors ${isScent ? "bg-white text-[#0e0e0e]" : "text-[#16241a]/60 hover:text-[#16241a]"
+                    }`}
+                >
+                  <Sparkles size={13} />
+                  {heroContent.scentToggleLabel}
+                </button>
+                <ScentDiscoveryHint active={!isScent} />
+              </div>
             </div>
 
             <p

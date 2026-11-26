@@ -64,8 +64,8 @@ export function SectionShell({
                 }`}
               >
                 <span
-                  className={`absolute top-0.5 h-3.5 w-3.5 rounded-full bg-white transition-transform ${
-                    visible ? "translate-x-[17px]" : "translate-x-0.5"
+                  className={`absolute left-0.5 top-0.5 h-3.5 w-3.5 rounded-full bg-white shadow-sm transition-transform ${
+                    visible ? "translate-x-[14px]" : "translate-x-0"
                   }`}
                 />
               </button>

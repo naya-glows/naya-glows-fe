@@ -249,7 +249,7 @@ export default function Footer() {
 
                         {/* Copyright */}
                         <div className="text-white/30 text-xs text-center">
-                            © 2024 NAYA GLOWS. All rights reserved.
+                            © {new Date().getFullYear()} NAYA GLOWS. All rights reserved.
                         </div>
                     </div>
                 </div>

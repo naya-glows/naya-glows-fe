@@ -35,27 +35,20 @@ export default function SpinToWinPopup() {
   useEffect(() => {
     if (!campaign) return;
     try {
+      // Only a completed claim permanently retires the popup — closing it
+      // with the X (or just not finishing) is not a opt-out and must not
+      // suppress it on the next visit; it should keep reappearing until
+      // the visitor actually claims a reward.
       if (localStorage.getItem(storageKey(campaign.id, "completed")) === "true") return;
-      const lastShown = Number(localStorage.getItem(storageKey(campaign.id, "lastShown")) || 0);
-      const daysSince = (Date.now() - lastShown) / (1000 * 60 * 60 * 24);
-      if (daysSince < campaign.popupFrequencyDays) return;
     } catch {
       // localStorage unavailable (private window, blocked site data) — fall
-      // through and show the popup; worst case it shows more often than
-      // the frequency control intends, which is harmless.
+      // through and show the popup anyway.
     }
     const timer = setTimeout(() => setStage("intro"), 1200);
     return () => clearTimeout(timer);
   }, [campaign]);
 
   const dismiss = () => {
-    if (campaign) {
-      try {
-        localStorage.setItem(storageKey(campaign.id, "lastShown"), String(Date.now()));
-      } catch {
-        // Best-effort only — see the comment in the effect above.
-      }
-    }
     setStage("closed");
   };
 
@@ -233,6 +226,11 @@ export default function SpinToWinPopup() {
             >
               Continue to Shop
             </button>
+            {(campaign.termsText || campaign.redemptionRules) && (
+              <p className="text-[10px] text-[#16241a]/35 mt-4 leading-relaxed">
+                {[campaign.redemptionRules, campaign.termsText].filter(Boolean).join(" ")}
+              </p>
+            )}
           </div>
         )}
       </div>
