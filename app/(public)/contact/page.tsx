@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { Mail, Phone, MapPin, ArrowUpRight, Check } from "lucide-react";
 import { FaInstagram, FaYoutube, FaFacebookF, FaTiktok, FaPinterestP, FaWhatsapp } from "react-icons/fa";
 import { useSectionContent, useSectionLoading } from "../../store/useSectionContent";
+import { useCurrencyDisplay } from "../../store/useCurrencyDisplay";
 import { defaultContactInfoContent } from "@/lib/content/contactInfo";
 import ContactInfoSkeleton from "../helpers/skeletons/ContactInfoSkeleton";
 import { useSubmitContactMessageMutation } from "../../store/userApi";
@@ -156,8 +157,9 @@ function ContactRow({
 export default function ContactPage() {
     const contactInfo = useSectionContent("contact.info", defaultContactInfoContent);
     const contactInfoLoading = useSectionLoading("contact.info");
+    const { format: formatPrice } = useCurrencyDisplay();
     const [skinConcern, setSkinConcern] = useState("Brightening");
-    const [budget, setBudget] = useState("$50 - $100 USD");
+    const [budgetIndex, setBudgetIndex] = useState(1);
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [message, setMessage] = useState("");
@@ -166,6 +168,17 @@ export default function ContactPage() {
     const heroRef = useRef<HTMLDivElement>(null);
     const formRef = useRef<HTMLDivElement>(null);
     const inView = useInView(formRef, { once: true, margin: "-60px" });
+
+    // Naira thresholds, displayed via the site's one currency-formatting
+    // rule (useCurrencyDisplay) — this used to be hardcoded "$50 - $100
+    // USD"-style literal strings, which showed dollars to every visitor
+    // regardless of country instead of only non-Nigerian accounts.
+    const budgets = [
+        `Under ${formatPrice(20000)}`,
+        `${formatPrice(20000)} - ${formatPrice(50000)}`,
+        `${formatPrice(50000)} - ${formatPrice(100000)}`,
+        `${formatPrice(100000)}+`,
+    ];
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
@@ -177,7 +190,7 @@ export default function ContactPage() {
             await submitContactMessage({
                 name,
                 email,
-                subject: `Skin concern: ${skinConcern} · Budget: ${budget}`,
+                subject: `Skin concern: ${skinConcern} · Budget: ${budgets[budgetIndex]}`,
                 message,
             }).unwrap();
             setSent(true);
@@ -223,7 +236,6 @@ export default function ContactPage() {
     }, []);
 
     const skinConcerns = ["Brightening", "Hydration", "Anti-Aging", "Acne"];
-    const budgets = ["Under $30 USD", "$50 - $100 USD", "$101 - $200 USD", "$200+"];
 
     return (
         <main
@@ -403,12 +415,12 @@ export default function ContactPage() {
                                 Monthly Skincare Budget
                             </p>
                             <div className="flex flex-wrap gap-2">
-                                {budgets.map((b) => (
+                                {budgets.map((b, i) => (
                                     <BudgetPill
                                         key={b}
                                         label={b}
-                                        active={budget === b}
-                                        onClick={() => setBudget(b)}
+                                        active={budgetIndex === i}
+                                        onClick={() => setBudgetIndex(i)}
                                     />
                                 ))}
                             </div>
