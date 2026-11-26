@@ -82,7 +82,7 @@ export default function SpinToWinPopup() {
         {stage !== "spinning" && (
           <button
             onClick={dismiss}
-            className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/5 hover:bg-black/10 flex items-center justify-center text-[#16241a]/60"
+            className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-sm flex items-center justify-center text-white transition-colors"
             aria-label="Close"
           >
             <X size={16} />
