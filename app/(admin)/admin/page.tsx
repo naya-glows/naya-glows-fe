@@ -9,6 +9,7 @@ import {
   useListOrdersQuery,
   useGetBudgetSummaryQuery,
 } from "../../store/adminApi";
+import RevenueChart from "./_components/RevenueChart";
 
 export default function AdminOverviewPage() {
   const { data: products } = useListProductsQuery();
@@ -53,6 +54,8 @@ export default function AdminOverviewPage() {
           );
         })}
       </div>
+
+      {orders && <RevenueChart orders={orders} />}
 
       <Link
         href="/admin/budget"
