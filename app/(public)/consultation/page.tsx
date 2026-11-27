@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useMemo, useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import { Check, MessageCircle } from "lucide-react";
 import GlassCard from "../helpers/glass/GlassCard";
 import PageHeader from "../helpers/PageHeader";
+import MonthCalendar from "../helpers/MonthCalendar";
 import {
   useListConsultationTypesQuery,
   useGetConsultationAvailabilityQuery,
@@ -26,16 +27,6 @@ const skinConcerns = [
   "General glow-up",
 ];
 
-function nextNDates(n: number): string[] {
-  const out: string[] = [];
-  const d = new Date();
-  while (out.length < n) {
-    if (d.getDay() !== 0) out.push(d.toISOString().slice(0, 10)); // skip Sundays
-    d.setDate(d.getDate() + 1);
-  }
-  return out;
-}
-
 export default function ConsultationPage() {
   const backendReady = isApiConfigured();
   const { data: typesData } = useListConsultationTypesQuery(undefined, { skip: !backendReady });
@@ -56,7 +47,14 @@ export default function ConsultationPage() {
   const submitting = booking || paying;
 
   const selectedType = types.find((t) => t.slug === typeSlug);
-  const dates = nextNDates(14);
+
+  const bookingWindow = useMemo(() => {
+    const min = new Date();
+    min.setHours(0, 0, 0, 0);
+    const max = new Date(min);
+    max.setMonth(max.getMonth() + 12); // rolling 12-month booking window
+    return { min, max };
+  }, []);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -132,33 +130,16 @@ export default function ConsultationPage() {
           {typeSlug && (
             <div className="flex flex-col gap-3 mb-6">
               <h2 className="text-xs font-semibold uppercase tracking-wide text-[#16241a]/50">2. Choose a date</h2>
-              <div className="flex gap-2 overflow-x-auto pb-1">
-                {dates.map((d) => {
-                  const label = new Date(`${d}T00:00:00Z`).toLocaleDateString("en-NG", {
-                    weekday: "short",
-                    day: "numeric",
-                    month: "short",
-                    timeZone: "UTC",
-                  });
-                  return (
-                    <button
-                      key={d}
-                      type="button"
-                      onClick={() => {
-                        setSelectedDate(d);
-                        setSelectedTime(null);
-                      }}
-                      className={`flex-shrink-0 text-xs font-medium px-3.5 py-2 rounded-full border transition-colors ${
-                        selectedDate === d
-                          ? "bg-[#16241a] text-white border-[#16241a]"
-                          : "bg-white/70 border-white/60 hover:border-[#6a9a72]/50"
-                      }`}
-                    >
-                      {label}
-                    </button>
-                  );
-                })}
-              </div>
+              <MonthCalendar
+                selectedDate={selectedDate}
+                onSelectDate={(d) => {
+                  setSelectedDate(d);
+                  setSelectedTime(null);
+                }}
+                isDateDisabled={(date) => date.getDay() === 0} // Sundays — closed
+                minDate={bookingWindow.min}
+                maxDate={bookingWindow.max}
+              />
             </div>
           )}
 
