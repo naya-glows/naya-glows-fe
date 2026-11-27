@@ -226,6 +226,15 @@ export default function SpinToWinPopup() {
             >
               Continue to Shop
             </button>
+            <button
+              onClick={() => {
+                setStage("closed");
+                router.push("/checkout");
+              }}
+              className="w-full mt-2 text-sm font-semibold text-[#4f7957] py-3 rounded-full hover:bg-[#d4e8d0] transition-colors"
+            >
+              Already have items in your cart? Use it at checkout
+            </button>
             {(campaign.termsText || campaign.redemptionRules) && (
               <p className="text-[10px] text-[#16241a]/35 mt-4 leading-relaxed">
                 {[campaign.redemptionRules, campaign.termsText].filter(Boolean).join(" ")}
