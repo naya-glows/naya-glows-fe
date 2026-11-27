@@ -202,6 +202,7 @@ export default function SpinToWinPopup() {
             <p className="text-2xl font-bold tracking-wide bg-[#f4faf3] text-[#16241a] rounded-xl py-3 mb-2">{reward.code}</p>
             <p className="text-xs text-[#16241a]/45 mb-5">
               Valid until {new Date(reward.expiresAt).toLocaleDateString()} — enter it at checkout.
+              {form.email && ` We've also emailed this code to ${form.email} so it's there whenever you're ready.`}
             </p>
             <p className="text-sm text-[#16241a]/60 mb-3">Follow us so you don't miss the next one:</p>
             <div className="flex items-center justify-center gap-2 mb-6 flex-wrap">
@@ -225,15 +226,6 @@ export default function SpinToWinPopup() {
               className="w-full bg-[#16241a] text-white text-sm font-semibold py-3 rounded-full hover:bg-[#233324] transition-colors"
             >
               Continue to Shop
-            </button>
-            <button
-              onClick={() => {
-                setStage("closed");
-                router.push("/checkout");
-              }}
-              className="w-full mt-2 text-sm font-semibold text-[#4f7957] py-3 rounded-full hover:bg-[#d4e8d0] transition-colors"
-            >
-              Already have items in your cart? Use it at checkout
             </button>
             {(campaign.termsText || campaign.redemptionRules) && (
               <p className="text-[10px] text-[#16241a]/35 mt-4 leading-relaxed">
