@@ -87,7 +87,7 @@ export default function ConsultationPage() {
             subtitle="Tell us about your skin and goals, and one of our specialists will help you build a routine that actually works."
             images={[
               {
-                src: "https://res.cloudinary.com/bhozkz7o/image/upload/v1784381880/naya-glows/legacy/nature-girl1.jpg",
+                src: "https://res.cloudinary.com/bhozkz7o/image/upload/v1795774504/naya-glows/bhdjn8omcikp8b0fx6h1.jpg",
                 alt: "Skincare consultation",
                 afterWord: 3,
               },

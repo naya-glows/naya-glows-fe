@@ -356,7 +356,7 @@ export default function OurStoryPage() {
                             <Image src="https://res.cloudinary.com/bhozkz7o/image/upload/v1784381863/naya-glows/legacy/img_6323.jpg" alt="Skincare" fill className="object-cover" />
                         </div>
                         <div className="relative overflow-hidden rounded-sm">
-                            <Image src="https://res.cloudinary.com/bhozkz7o/image/upload/v1784381880/naya-glows/legacy/nature-girl1.jpg" alt="Natural beauty" fill className="object-cover" />
+                            <Image src="https://res.cloudinary.com/bhozkz7o/image/upload/v1795774504/naya-glows/bhdjn8omcikp8b0fx6h1.jpg" alt="Natural beauty" fill className="object-cover" />
                         </div>
                         <div className="relative overflow-hidden rounded-sm">
                             <Image src="https://res.cloudinary.com/bhozkz7o/image/upload/v1784381849/naya-glows/legacy/body-scrub-with-lemon-and-mint.png" alt="Body scrub" fill className="object-cover" />
