@@ -35,11 +35,23 @@ export default function SpinToWinPopup() {
   useEffect(() => {
     if (!campaign) return;
     try {
-      // Only a completed claim permanently retires the popup — closing it
-      // with the X (or just not finishing) is not a opt-out and must not
-      // suppress it on the next visit; it should keep reappearing until
-      // the visitor actually claims a reward.
-      if (localStorage.getItem(storageKey(campaign.id, "completed")) === "true") return;
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("resetSpin")) {
+        // Manual escape hatch for a visitor whose earlier claim was deleted
+        // on our end (e.g. a test/duplicate lead) — visiting with this
+        // param clears their local "already claimed" flag so the popup can
+        // show again, no DevTools/settings access required on their end.
+        localStorage.removeItem(storageKey(campaign.id, "completed"));
+        params.delete("resetSpin");
+        const newSearch = params.toString();
+        window.history.replaceState(null, "", window.location.pathname + (newSearch ? `?${newSearch}` : ""));
+      } else if (localStorage.getItem(storageKey(campaign.id, "completed")) === "true") {
+        // Only a completed claim permanently retires the popup — closing it
+        // with the X (or just not finishing) is not a opt-out and must not
+        // suppress it on the next visit; it should keep reappearing until
+        // the visitor actually claims a reward.
+        return;
+      }
     } catch {
       // localStorage unavailable (private window, blocked site data) — fall
       // through and show the popup anyway.
